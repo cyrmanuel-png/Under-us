@@ -106,6 +106,12 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .tb{width:100%;height:7px;background:#030506}.tb>div{height:100%;background:var(--glace)}
 .row2{display:flex;gap:8px}
 .mono{font-family:var(--f-chiffre)}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #2E3A42;font-size:13.5px;color:#C4DEE9}
+.srow input{padding:5px 6px;font-size:16px}
+.srow input:disabled{opacity:.6}
+.u{font-style:normal;font-family:var(--f-label);font-size:10px;color:var(--txt-2);min-width:24px}
+.hubtop .hb{flex:none}
+
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 </style>
 </head>
@@ -233,10 +239,25 @@ const firebaseConfig={
 
 const $=s=>document.querySelector(s);
 const app=$('#app');
-const SIZES={maison:{label:'MAISON',max:240},terrain:{label:'TERRAIN',max:360},enorme:{label:'ÉNORME',max:480}};
+const SIZES={maison:{label:'MAISON'},terrain:{label:'TERRAIN'},enorme:{label:'ÉNORME'}};
 const GAMES=['GÉNÉ','RADIO','CHAUF','SERRE','CUVE','SAS','LABO','FILTRE','FORAGE','FUSIBL.','SONDE','ANTEN.'];
 const COLORS=['#FF6A1A','#3E7A99','#D7261E','#8A949C','#2E5E4A','#9CCBE0','#C2A23A','#5A4632'];
-const FREEZE=15000,PENALTY=30000;
+/* Réglages par scénario (questionnaire du 1/11). Unités : min, %, s. Modifiables dans les réglages du hub. */
+const PRESETS={
+ maison:{stMin:3,stMax:5,partie:20,plafond:5,departMin:60,departMax:100,parStation:0,gel:20,penalite:20,recharge:4,debat:90,debatJoueur:30,vote:10},
+ terrain:{stMin:3,stMax:8,partie:30,plafond:7,departMin:65,departMax:85,parStation:0,gel:30,penalite:30,recharge:4,debat:90,debatJoueur:30,vote:10},
+ enorme:{stMin:3,stMax:12,partie:45,plafond:10,departMin:65,departMax:85,parStation:0,gel:30,penalite:30,recharge:4,debat:90,debatJoueur:30,vote:10}};
+const FIELDS=[
+ ['Stations',[['stMin','Stations minimum',''],['stMax','Stations maximum',''],['partie','Durée visée','min']]],
+ ['Compteurs',[['plafond','Plafond d’un système','min'],['departMin','Départ le plus bas','%'],['departMax','Départ le plus haut','%'],['parStation','Bonus par station en plus','s']]],
+ ['Échecs',[['gel','Gel d’une station','s'],['penalite','Temps retiré ailleurs','s']]],
+ ['Réunions et votes',[['recharge','Recharge du bouton','min'],['debat','Débat','s'],['debatJoueur','Débat : + par joueur au-delà de 6','s'],['vote','Vote par joueur','s']]]];
+const LSK='uu-reglages-v1';
+function savedPresets(){try{return JSON.parse(localStorage.getItem(LSK)||'{}')}catch(e){return {}}}
+function presetFor(sz){return Object.assign({},PRESETS[sz],savedPresets()[sz]||{})}
+function storePreset(sz,c){try{const all=savedPresets();all[sz]=c;localStorage.setItem(LSK,JSON.stringify(all))}catch(e){}}
+const C=()=>Object.assign({},PRESETS[meta.size||'terrain'],meta.cfg||{});
+function maxMs(n){const c=C();const nb=n==null?Object.keys(stations).length:n;return (c.plafond*60+c.parStation*Math.max(0,nb-c.stMin))*1000}
 const fmt=ms=>{let s=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const vib=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
@@ -253,8 +274,17 @@ function header(title,right=''){return `<div class="dep head"><div class="plate"
 function screen(html){app.innerHTML=`<div class="frame">${html}</div>`}
 function fatal(msg){screen(header('UNDER US')+`<div class="msg"><h2>OUPS</h2><p>${esc(msg)}</p></div>`+bigBtn('retry','RÉESSAYER'));$('#retry').onclick=()=>location.reload()}
 
-async function keepAwake(){try{if('wakeLock' in navigator){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&role==='station'&&!wakeLock)keepAwake()});
+/* anti-veille : Wake Lock quand le navigateur le permet, + vidéo muette en boucle (indispensable sur iPhone) */
+let nsVideo=null;
+function noSleepVideo(){
+ if(!nsVideo){nsVideo=document.createElement('video');nsVideo.setAttribute('playsinline','');nsVideo.setAttribute('muted','');nsVideo.muted=true;nsVideo.loop=true;
+  nsVideo.style.cssText='position:fixed;width:1px;height:1px;opacity:0.01;pointer-events:none;bottom:0;left:0';
+  nsVideo.src='data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAMpbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAB9AAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAlN0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAB9AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAAfQAAAAAAABAAAAAAHLbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABAAAAAgABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABdm1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAATZzdGJsAAAAtnN0c2QAAAAAAAAAAQAAAKZhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAABAAEABIAAAASAAAAAAAAAABFUxhdmM2MC4zMS4xMDIgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAALGF2Y0MBQsAK/+EAFWdCwAraewEQAAADABAAAAMAIPEiagEABGjOD8gAAAAQcGFzcAAAAAEAAAABAAAAFGJ0cnQAAAAAAAAKOAAACjgAAAAYc3R0cwAAAAAAAAABAAAAAgAAQAAAAAAUc3RzcwAAAAAAAAABAAAAAQAAABxzdHNjAAAAAAAAAAEAAAABAAAAAgAAAAEAAAAcc3RzegAAAAAAAAAAAAAAAgAAAoUAAAAJAAAAFHN0Y28AAAAAAAAAAQAAA1kAAABidWR0YQAAAFptZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAAC1pbHN0AAAAJal0b28AAAAdZGF0YQAAAAEAAAAATGF2ZjYwLjE2LjEwMAAAAAhmcmVlAAAClm1kYXQAAAJvBgX//2vcRem95tlIt5Ys2CDZI+7veDI2NCAtIGNvcmUgMTY0IHIzMTA4IDMxZTE5ZjkgLSBILjI2NC9NUEVHLTQgQVZDIGNvZGVjIC0gQ29weWxlZnQgMjAwMy0yMDIzIC0gaHR0cDovL3d3dy52aWRlb2xhbi5vcmcveDI2NC5odG1sIC0gb3B0aW9uczogY2FiYWM9MCByZWY9MSBkZWJsb2NrPTE6MDowIGFuYWx5c2U9MHgxOjB4MTExIG1lPWhleCBzdWJtZT0yIHBzeT0xIHBzeV9yZD0xLjAwOjAuMDAgbWl4ZWRfcmVmPTAgbWVfcmFuZ2U9MTYgY2hyb21hX21lPTEgdHJlbGxpcz0wIDh4OGRjdD0wIGNxbT0wIGRlYWR6b25lPTIxLDExIGZhc3RfcHNraXA9MSBjaHJvbWFfcXBfb2Zmc2V0PTAgdGhyZWFkcz0xIGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MCB3ZWlnaHRwPTAga2V5aW50PTI1MCBrZXlpbnRfbWluPTEgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD0xMCByYz1jcmYgbWJ0cmVlPTEgY3JmPTIzLjAgcWNvbXA9MC42MCBxcG1pbj0wIHFwbWF4PTY5IHFwc3RlcD00IGlwX3JhdGlvPTEuNDAgYXE9MToxLjAwAIAAAAAOZYiEBb///w9FAAFPf4AAAAAFQZogFfU=';document.body.appendChild(nsVideo)}
+ const p=nsVideo.play();if(p&&p.catch)p.catch(()=>{});
+}
+async function keepAwake(){noSleepVideo();try{if('wakeLock' in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}}catch(e){}}
+document.addEventListener('touchend',()=>{if(role&&nsVideo&&nsVideo.paused)keepAwake()},{passive:true});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&role)keepAwake()});
 
 /* ===== Démarrage ===== */
 async function boot(){
@@ -275,7 +305,7 @@ function home(){
  screen(header('UNDER US','PROTOTYPE')+`
  <div class="tag">IL EST DÉJÀ PARMI VOUS</div>
  <div class="lab mute">TAILLE DE LA PARTIE</div>
- <div class="sizes">${Object.entries(SIZES).map(([k,v])=>`<button class="sz${k===size?' on':''}" data-k="${k}">${plate(`<b>${v.label}</b><span>${fmt(v.max*1000)} par système</span>`)}</button>`).join('')}</div>
+ <div class="sizes">${Object.entries(SIZES).map(([k,v])=>`<button class="sz${k===size?' on':''}" data-k="${k}">${plate(`<b>${v.label}</b><span>${presetFor(k).plafond} min par système</span>`)}</button>`).join('')}</div>
  ${bigBtn('create','CRÉER LA PARTIE (HUB)')}
  <div class="lab mute">OU REJOINDRE AVEC UN CODE</div>
  <div class="join"><input id="jc" maxlength="4" placeholder="K7Q2" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
@@ -290,7 +320,7 @@ async function createRoom(){
  S('tap');const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let c='';
  for(let k=0;k<6;k++){c=Array.from({length:4},()=>A[Math.floor(Math.random()*A.length)]).join('');const s=await db.ref('rooms/'+c+'/meta').get();if(!s.exists())break}
  code=c;role='hub';
- await R('meta').set({hub:uid,size,max:SIZES[size].max,state:'lobby',created:firebase.database.ServerValue.TIMESTAMP});
+ await R('meta').set({hub:uid,size,cfg:presetFor(size),state:'lobby',created:firebase.database.ServerValue.TIMESTAMP});
  history.replaceState(null,'','?hub='+code);
  listenRoom();hubLobby();keepAwake();
 }
@@ -304,11 +334,12 @@ function joinUrl(){return location.origin+location.pathname+'?r='+code}
 function render(){if(role==='hub')hubRender();else if(role==='station')stRender()}
 
 function hubLobby(){
- screen(header('SALLE D’ATTENTE',SIZES[meta.size||size].label)+`
+ screen(`<div class="hubtop">${header('SALLE D’ATTENTE',SIZES[meta.size||size].label)}<button class="hb" id="hSet" aria-label="Réglages">⚙</button></div>`+`
  <div class="qrbox"><div class="qr" id="qr"></div><div class="code"><span class="lab mute">CODE</span><span class="dg">${code}</span><p>Scanne le QR code avec chaque téléphone qui sera une station.</p></div></div>
  <div class="counts"><div class="cnt"><b id="cJ">0</b><span>CONNECTÉS</span></div><div class="cnt"><b id="cR">0</b><span>STATIONS PRÊTES</span></div></div>
  <div class="plist" id="plist"></div>
- ${bigBtn('launch','EN ATTENTE DES STATIONS…')}`);
+ ${bigBtn('launch','EN ATTENTE DES STATIONS…')}<div class="ovl" id="hOvl" hidden></div>`);
+ $('#hSet').onclick=()=>openSettings(true);
  try{new QRCode($('#qr'),{text:joinUrl(),width:200,height:200,colorDark:'#05080B',colorLight:'#EEF6FA',correctLevel:QRCode.CorrectLevel.M})}catch(e){$('#qr').textContent=joinUrl()}
  $('#launch').onclick=launch;hubRender();
 }
@@ -324,31 +355,33 @@ function hubRender(){
   if(!$('#plist'))return;
   $('#cJ').textContent=list.length;$('#cR').textContent=ready.length;
   $('#plist').innerHTML=list.map(([id,p])=>`<div class="pl"><span class="dot" style="background:${esc(p.color||'#8A949C')}"></span><div class="nm"><b>${esc((p.name||'…').toUpperCase())}</b><span>${p.ready?esc(p.loc||''):'Prépare sa station…'}</span></div><span class="led ${p.online===false?'off':p.ready?'ok':'wait'}"></span></div>`).join('')||'<p class="small">Personne pour l’instant.</p>';
-  const b=$('#launch');b.disabled=ready.length<1;b.querySelector('.in').textContent=ready.length?`LANCER · ${ready.length} SYSTÈME${ready.length>1?'S':''}`:'EN ATTENTE DES STATIONS…';
+  const c=C(),b=$('#launch');b.disabled=ready.length<c.stMin;b.querySelector('.in').textContent=ready.length>=c.stMin?`LANCER · ${ready.length} SYSTÈME${ready.length>1?'S':''}`:`ENCORE ${c.stMin-ready.length} STATION${c.stMin-ready.length>1?'S':''} (MIN. ${c.stMin})`;
  }
  if(st==='game'||st==='meeting'||st==='paused')hubTick();
 }
 async function launch(){
- const ready=Object.entries(players).filter(([,p])=>p.ready);if(!ready.length)return;
- S('countdown');const t0=now()+3500,max=meta.max*1000;const upd={};
+ const ready=Object.entries(players).filter(([,p])=>p.ready).slice(0,C().stMax);if(ready.length<C().stMin)return;
+ S('countdown');const c=C(),t0=now()+3500,max=maxMs(ready.length);const upd={};
  const games=GAMES.slice().sort(()=>Math.random()-.5);
- ready.forEach(([id,p],i)=>{upd['stations/'+id]={num:i+1,game:games[i%games.length],loc:p.loc||'',name:p.name||'',endAt:t0+Math.round(max*(.55+Math.random()*.35)),frozenUntil:0}});
- upd['meta/state']='game';upd['meta/startAt']=t0;upd['meta/reason']=null;upd['meta/pausedAt']=null;
+ ready.forEach(([id,p],i)=>{upd['stations/'+id]={num:i+1,game:games[i%games.length],loc:p.loc||'',name:p.name||'',endAt:t0+Math.round(max*(c.departMin+Math.random()*Math.max(0,c.departMax-c.departMin))/100),frozenUntil:0}});
+ upd['meta/state']='game';upd['meta/startAt']=t0;upd['meta/coolUntil']=t0;upd['meta/reason']=null;upd['meta/pausedAt']=null;
  await R().update(upd);
 }
 function hubGame(){
- screen(`<div class="hubtop">${header('UNDER US','<span id="hClock">00:00</span>')}<button class="hb" id="hPause" aria-label="Pause">II</button></div>
+ screen(`<div class="hubtop">${header('UNDER US','<span id="hClock">00:00</span>')}<button class="hb" id="hSet" aria-label="Réglages">⚙</button><button class="hb" id="hPause" aria-label="Pause">II</button></div>
  <div class="urg" id="hUrg">Liaison établie.</div>
  <div class="sg" id="hgrid"></div>
  <button class="meet" id="hMeet">${plate('<div class="mi"><span id="hMeetT">RÉUNION D’URGENCE</span></div>')}</button>
  <div class="ovl" id="hOvl" hidden></div>`);
  $('#hPause').onclick=()=>{if(meta.state==='game')pauseRoom('paused','Pause demandée au hub');else if(meta.state==='paused')resumeRoom()};
- $('#hMeet').onclick=()=>{if(meta.state==='game')pauseRoom('meeting','Réunion d’urgence convoquée au hub')};
+ $('#hMeet').onclick=()=>{if(meta.state==='game'&&now()>=(meta.coolUntil||0))pauseRoom('meeting','Réunion d’urgence convoquée au hub')};
+ $('#hSet').onclick=()=>openSettings(false);
 }
 function remaining(s){const ref=(meta.state==='game')?now():(meta.pausedAt||now());return (s.endAt||0)-ref}
 function hubTick(){
  const g=$('#hgrid');if(!g)return;
- const list=Object.entries(stations).sort((a,b)=>a[1].num-b[1].num);const max=meta.max*1000;
+ const list=Object.entries(stations).sort((a,b)=>a[1].num-b[1].num);const max=maxMs();
+ {const left=(meta.coolUntil||0)-now(),mb=$('#hMeet'),mt=$('#hMeetT');if(mb&&mt&&meta.state==='game'){mb.disabled=left>0;mb.style.opacity=left>0?.55:1;mt.textContent=left>0?'RÉUNION D’URGENCE · '+fmt(left):'RÉUNION D’URGENCE'}}
  const ref=meta.state==='game'?now():(meta.pausedAt||now());
  if(meta.startAt)$('#hClock').textContent=fmt(Math.max(0,ref-meta.startAt));
  g.innerHTML=list.map(([id,s])=>{const r=s.endAt-ref,ratio=r/max,fz=(s.frozenUntil||0)>ref;const off=players[id]&&players[id].online===false;const cls=fz?'':ratio<.12?'crit':ratio<.4?'warn':'';
@@ -364,12 +397,35 @@ function onHubState(st){
  if(st==='game'){o.hidden=true;L('wind',true);L('music',true);return}
  L('music',false);L('crit',false);
  if(st==='meeting'){S((meta.reason||'').startsWith('Corps')?'body':'meetCall');
-  o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">${esc(meta.reason||'RÉUNION')}</span><h3>TOUS AU HUB</h3><p>Les stations sont bloquées et bipent. Les compteurs sont figés. Débattez, votez (à la main pour ce prototype), puis reprenez la mission.</p>${bigBtn('endMeet','FIN DE LA RÉUNION · REPRENDRE')}</div>`;o.hidden=false;$('#endMeet').onclick=resumeRoom}
+  meetingPanel()}
  if(st==='paused'){o.innerHTML=`<div class="pan"><span class="lab" style="color:var(--orange)">PAUSE GÉNÉRALE</span><h3>PARTIE EN PAUSE</h3><p>${esc(meta.reason||'')}</p>${meta.auto?'<p class="small">Reprise automatique dès que la station revient.</p>':bigBtn('resumeB','REPRENDRE')}</div>`;o.hidden=false;const b=$('#resumeB');if(b)b.onclick=resumeRoom}
 }
+let debIv=null;
+function debateSec(){const c=C(),n=Object.values(players).filter(p=>p.ready).length;return c.debat+c.debatJoueur*Math.max(0,n-6)}
+function meetingPanel(){
+ const o=$('#hOvl');clearInterval(debIv);
+ o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">${esc(meta.reason||'RÉUNION')}</span><h3>TOUS AU HUB</h3><p>Les stations sont bloquées et bipent, les compteurs sont figés. Quand tout le monde est là, lancez le débat.</p>${bigBtn('startDeb','COMMENCER LE DÉBAT · '+fmt(debateSec()*1000))}${bigBtn('endMeet','FIN DE LA RÉUNION · REPRENDRE','alt')}</div>`;o.hidden=false;
+ $('#endMeet').onclick=endMeeting;
+ $('#startDeb').onclick=()=>{let t=debateSec();S('tap');
+  const draw=()=>{const p=$('#debT');if(p)p.textContent=fmt(t*1000)};
+  o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">DÉBAT</span><h3>QUI EST L’HÔTE ?</h3><span class="big7" id="debT">${fmt(t*1000)}</span><p>Vote à main levée à la fin du temps (vote sur téléphone : prochaine version, ${C().vote} s par joueur).</p>${bigBtn('skipDeb','TOUT LE MONDE EST D’ACCORD · VOTER','alt')}${bigBtn('endMeet','FIN DE LA RÉUNION · REPRENDRE')}</div>`;
+  $('#endMeet').onclick=endMeeting;$('#skipDeb').onclick=()=>{t=0;draw()};
+  debIv=setInterval(()=>{if(t>0){t--;if(t<=10&&t>0)S('debateTick');draw();if(t===0)S('tally')}},1000)};
+}
+async function endMeeting(){clearInterval(debIv);await resumeRoom(true)}
+function openSettings(editable){
+ const o=$('#hOvl');if(!o)return;const c=C();const ed=editable&&meta.state==='lobby';
+ o.innerHTML=`<div class="pan" style="text-align:left;max-height:90vh;overflow-y:auto"><h3>RÉGLAGES · ${SIZES[meta.size||'terrain'].label}</h3><p>${ed?'Modifiables jusqu’au lancement. Enregistrés sur ce téléphone pour les prochaines parties de cette taille.':'Partie en cours : réglages en lecture seule.'}</p>
+  ${FIELDS.map(([t,rows])=>`<div class="lab" style="color:var(--glace);margin-top:6px">${t.toUpperCase()}</div>${rows.map(([k,l,u])=>`<label class="srow" for="cf_${k}"><span>${l}</span><span style="display:flex;align-items:center;gap:5px"><input id="cf_${k}" data-k="${k}" type="number" inputmode="decimal" value="${c[k]}" ${ed?'':'disabled'} style="width:76px;text-align:right;font-family:var(--f-chiffre)"><i class="u">${u}</i></span></label>`).join('')}`).join('')}
+  <div class="row2" style="margin-top:8px">${ed?bigBtn('cfReset','VALEURS PAR DÉFAUT','alt'):''}${bigBtn('cfOk',ed?'ENREGISTRER':'FERMER')}</div></div>`;
+ o.hidden=false;
+ const read=()=>{const n={};document.querySelectorAll('[data-k]').forEach(i=>{const v=parseFloat(String(i.value).replace(',','.'));n[i.dataset.k]=isFinite(v)?v:c[i.dataset.k]});if(n.departMax<n.departMin)n.departMax=n.departMin;if(n.stMax<n.stMin)n.stMax=n.stMin;return n};
+ const r=$('#cfReset');if(r)r.onclick=()=>{const d=PRESETS[meta.size||'terrain'];document.querySelectorAll('[data-k]').forEach(i=>i.value=d[i.dataset.k])};
+ $('#cfOk').onclick=async()=>{if(ed){const n=read();storePreset(meta.size||'terrain',n);await R('meta/cfg').set(n);S('repaired')}o.hidden=true;o.innerHTML='';if(meta.state==='meeting')meetingPanel();else if(meta.state==='paused')onHubState('paused')};
+}
 async function pauseRoom(state,reason,auto=false){await R('meta').update({state,reason,pausedAt:now(),auto:!!auto})}
-async function resumeRoom(){
- const d=now()-(meta.pausedAt||now());const upd={'meta/state':'game','meta/reason':null,'meta/pausedAt':null,'meta/auto':null};
+async function resumeRoom(afterMeeting){
+ const d=now()-(meta.pausedAt||now());const upd={'meta/state':'game','meta/reason':null,'meta/pausedAt':null,'meta/auto':null};if(afterMeeting===true)upd['meta/coolUntil']=now()+C().recharge*60000;
  Object.entries(stations).forEach(([id,s])=>{upd['stations/'+id+'/endAt']=s.endAt+d;if((s.frozenUntil||0)>(meta.pausedAt||0))upd['stations/'+id+'/frozenUntil']=s.frozenUntil+d});
  await R().update(upd);
 }
@@ -392,6 +448,9 @@ async function joinRoom(c){
  code=c;const m=await db.ref('rooms/'+code+'/meta').get();
  if(!m.exists()){screen(header('UNDER US')+`<div class="msg"><h2>CODE INCONNU</h2><p>Aucune partie « ${esc(code)} ». Vérifie le code affiché sur le hub.</p></div>`+bigBtn('back','RETOUR'));$('#back').onclick=()=>{location.href=location.pathname};return}
  role='station';history.replaceState(null,'','?r='+code);
+ {const pl=(await db.ref('rooms/'+code+'/players').get()).val()||{},mm=m.val()||{},cf=Object.assign({},PRESETS[mm.size||'terrain'],mm.cfg||{});
+  const ready=Object.entries(pl).filter(([id,p])=>p.ready&&id!==uid).length;
+  if(!pl[uid]&&ready>=cf.stMax){screen(header('UNDER US')+`<div class="msg"><h2>PARTIE COMPLÈTE</h2><p>Cette partie a déjà ${cf.stMax} stations, le maximum réglé sur le hub.</p></div>`);return}}
  const ex=(await R('players/'+uid).get()).val();if(ex){me=Object.assign(me,ex)}
  const pref=R('players/'+uid);
  db.ref('.info/connected').on('value',s=>{if(s.val()){pref.child('online').onDisconnect().set(false);pref.child('online').set(true)}});
@@ -457,10 +516,10 @@ function miniGame(){
  const loop=t=>{if(done)return;x+=dir*sp*(1/60);if(x>100){x=100;dir=-1}if(x<0){x=0;dir=1}$('#nd').style.left=x+'%';const left=1-(t-t0)/LIM;$('#tb').style.width=Math.max(0,left*100)+'%';if(left<=0)return finish(false);raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop);
  $('#pull').onclick=()=>{if(done)return;if(x>=zs&&x<=zs+W){ok++;S('tap');sp+=14;place()}else{ko++;S('voteLate');vib(40)}pips();if(ok>=4)finish(true);else if(ko>=2)finish(false)};
  async function finish(win){done=true;cancelAnimationFrame(raf);stView='';lastState=null;
-  if(win){S('success');await R('stations/'+uid+'/endAt').set(now()+meta.max*1000)}
-  else{S('fail');await R('stations/'+uid+'/frozenUntil').set(now()+FREEZE);
+  if(win){S('success');await R('stations/'+uid+'/endAt').set(now()+maxMs())}
+  else{S('fail');await R('stations/'+uid+'/frozenUntil').set(now()+C().gel*1000);
    const ids=Object.keys(stations);const v=ids[Math.floor(Math.random()*ids.length)];
-   await R('stations/'+v+'/endAt').transaction(e=>e==null?e:e-PENALTY)}
+   await R('stations/'+v+'/endAt').transaction(e=>e==null?e:e-C().penalite*1000)}
   render()}
 }
 
