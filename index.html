@@ -250,7 +250,10 @@ const firebaseConfig={
 const $=s=>document.querySelector(s);
 const app=$('#app');
 const SIZES={maison:{label:'MAISON'},terrain:{label:'TERRAIN'},enorme:{label:'ÉNORME'}};
-const GAMES=['GÉNÉ','RADIO','CHAUF','SERRE','CUVE','SAS','LABO','FILTRE','FORAGE','FUSIBL.','SONDE','ANTEN.'];
+const GAMEDEF={gene:['GÉNÉ','Générateur'],infirm:['INFIRM.','Infirmerie'],chauf:['CHAUF','Chaudière'],moteur:['MOTEUR','Motoneige'],sonde:['SONDE','Relevés'],labo:['LABO','Échantillons'],sas:['SAS','Sas de sécurité'],forage:['FORAGE','Forage'],serre:['SERRE','Serre'],radio:['RADIO','Radio'],filtre:['FILTRE','Filtres à air'],fusibl:['FUSIBL.','Tableau électrique'],givre:['GIVRE','Hublot givré'],anten:['ANTEN.','Antenne'],cuve:['CUVE','Cuves d’eau'],ctrl:['CTRL','Salle de contrôle']};
+const GAMES=Object.values(GAMEDEF).map(d=>d[0]);
+const gameKey=t=>Object.keys(GAMEDEF).find(k=>GAMEDEF[k][0]===t)||'gene';
+const gameName=t=>(GAMEDEF[gameKey(t)]||[t,t])[1];
 const COLORS=['#FF6A1A','#3E7A99','#D7261E','#8A949C','#2E5E4A','#9CCBE0','#C2A23A','#5A4632'];
 /* Réglages par scénario (questionnaire du 1/11). Unités : min, %, s. Modifiables dans les réglages du hub. */
 const PRESETS={
@@ -489,6 +492,7 @@ function stPerso(){
 }
 const ROOMS_RE=/^(Cuisine|Salon|Garage|Grenier|Cave|Chambre|Entrée|Jardin)/;
 function stRender(){
+ if(stView==='game'&&meta.state&&meta.state!=='game')closeGame();
  if(stView==='perso'||stView==='game'||stView==='body')return;
  const st=meta.state,mine=stations[uid];
  if(st==='lobby'||!mine){if(lastState!=='lobby-wait'){lastState='lobby-wait';stWait()}return}
@@ -502,7 +506,7 @@ function stShow(key,prev){
  const mine=stations[uid];L('alarm',false);
  const head=header(`STATION ${String(mine.num).padStart(2,'0')} · ${esc(mine.game)}`,esc((mine.loc||'').split(',')[0].toUpperCase()));
  if(key==='game'){if(prev==='lobby-wait'){S('wake');vib([100,60,100])}if(prev==='game-fz')S('unfreeze');L('wind',true);
-  screen(head+`<div class="sys"><span class="lab" style="color:var(--glace)">SYSTÈME VITAL</span><h2>${esc(mine.game)}</h2><p>Touche pour réparer. Ton temps restant n’apparaît que sur le hub.</p></div>${bigBtn('fix','RÉPARER')}<button class="ghost" id="bodyB">SIGNALER UN CORPS</button>`);
+  screen(head+`<div class="sys"><span class="lab" style="color:var(--glace)">SYSTÈME VITAL · ${esc(mine.game)}</span><h2>${esc(gameName(mine.game).toUpperCase())}</h2><p>Touche pour réparer. Ton temps restant n’apparaît que sur le hub.</p></div>${bigBtn('fix','RÉPARER')}<button class="ghost" id="bodyB">SIGNALER UN CORPS</button>`);
   $('#fix').onclick=miniGame;$('#bodyB').onclick=bodyScreen}
  if(key==='game-fz'){screen(head+`<div class="sys frozen"><span class="lab">ÉCHEC · LA STATION GÈLE</span><h2>SYSTÈME GELÉ</h2><span class="big7" id="fzT">00:15</span><p>Une station au hasard a perdu du temps.</p></div><button class="ghost" id="bodyB">SIGNALER UN CORPS</button>`);$('#bodyB').onclick=bodyScreen}
  if(key==='meeting-here'){L('wind',false);if(prev==='meeting')S('tap');screen(head+`<div class="sys paused"><span class="lab" style="color:var(--glace)">RÉUNION AU HUB</span><h2>DÉBAT EN COURS</h2><p>${esc(meta.reason||'')}. La station attend la fin du vote.</p></div>`)}
@@ -518,20 +522,21 @@ function bodyScreen(){
  $('#bx').onclick=()=>{stView='';lastState=null;render()};
 }
 /* mini-jeu : générateur (tirer quand l'aiguille est dans le vert) */
+let gameFrame=null,gameMsg=null;
+function closeGame(){if(gameFrame){gameFrame.remove();gameFrame=null}if(gameMsg){window.removeEventListener('message',gameMsg);gameMsg=null}stView='';lastState=null}
 function miniGame(){
- stView='game';let ok=0,ko=0,x=0,dir=1,sp=55,zs=0,done=false,raf;const W=16,t0=performance.now(),LIM=30000;
- screen(header('GÉNÉRATEUR','4 RÉUSSITES · 2 RATÉS MAX')+`<div class="mg"><div class="lab mute">TIRE QUAND L’AIGUILLE EST DANS LE VERT</div><div class="gauge"><div class="zone" id="zn"></div><div class="needle" id="nd"></div></div><div class="pips" id="pp"></div><div class="tb"><div id="tb"></div></div></div>${bigBtn('pull','TIRER LA POIGNÉE','red')}`);
- const place=()=>{zs=5+Math.random()*(90-W);$('#zn').style.left=zs+'%';$('#zn').style.width=W+'%'};
- const pips=()=>{$('#pp').innerHTML='<span>RÉUSSIES</span>'+[0,1,2,3].map(i=>`<i class="${i<ok?'ok':''}"></i>`).join('')+'<span style="margin-left:12px">RATÉS</span>'+[0,1].map(i=>`<i class="${i<ko?'ko':''}"></i>`).join('')};
- place();pips();
- const loop=t=>{if(done)return;x+=dir*sp*(1/60);if(x>100){x=100;dir=-1}if(x<0){x=0;dir=1}$('#nd').style.left=x+'%';const left=1-(t-t0)/LIM;$('#tb').style.width=Math.max(0,left*100)+'%';if(left<=0)return finish(false);raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop);
- $('#pull').onclick=()=>{if(done)return;if(x>=zs&&x<=zs+W){ok++;S('tap');sp+=14;place()}else{ko++;S('voteLate');vib(40)}pips();if(ok>=4)finish(true);else if(ko>=2)finish(false)};
- async function finish(win){done=true;cancelAnimationFrame(raf);stView='';lastState=null;
-  if(win){S('success');await R('stations/'+uid+'/endAt').set(now()+maxMs())}
-  else{S('fail');await R('stations/'+uid+'/frozenUntil').set(now()+C().gel*1000);
+ const mine=stations[uid];if(!mine)return;stView='game';L('wind',false);S('tap');
+ const f=document.createElement('iframe');f.src='jeux.html?g='+gameKey(mine.game);f.title=gameName(mine.game);f.allow='autoplay';
+ f.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0;z-index:60;background:#0B1218';
+ document.body.appendChild(f);gameFrame=f;
+ gameMsg=async e=>{if(e.source!==f.contentWindow||!e.data||e.data.uu!=='result')return;const win=!!e.data.win;closeGame();
+  if(meta.state!=='game'){render();return}
+  if(win){await R('stations/'+uid+'/endAt').set(now()+maxMs())}
+  else{vib([80,40,80]);await R('stations/'+uid+'/frozenUntil').set(now()+C().gel*1000);
    const ids=Object.keys(stations);const v=ids[Math.floor(Math.random()*ids.length)];
-   await R('stations/'+v+'/endAt').transaction(e=>e==null?e:e-C().penalite*1000)}
-  render()}
+   await R('stations/'+v+'/endAt').transaction(x=>x==null?x:x-C().penalite*1000)}
+  render()};
+ window.addEventListener('message',gameMsg);
 }
 
 boot();
