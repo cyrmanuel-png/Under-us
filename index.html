@@ -118,6 +118,65 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .hubtop .hb{flex:none}
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* v0.3 : rôles, vote, quarantaine */
+.row2 .big{flex:1 1 0;width:auto;min-width:0}
+.row2 .big .in{font-size:17px;padding:11px 6px}
+.hrow{display:flex;align-items:center;gap:8px;background:var(--encre);padding:5px 8px;box-shadow:inset -1px -1px 0 #3E6378}
+.hb.sm{width:36px;height:32px;font-size:20px;line-height:1;padding:0}
+.hrow b{font-size:24px;color:var(--lueur);min-width:22px;text-align:center}.hrow .small{margin-left:auto;text-align:right}
+.del{border:1.5px solid var(--encre);background:#3A1410;color:#FFB0A8;width:32px;height:32px;padding:0;font-size:14px;flex:none}
+.ghost.ice2{background:#16303C;color:var(--glace)}
+.avat{width:54px;height:54px;border-radius:50% 50% 40% 40%;border:3px solid var(--encre);box-shadow:inset 4px 4px 0 rgba(255,255,255,.3),3px 4px 0 var(--encre)}
+.avat.big{width:84px;height:84px}
+.role{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:18px;border:2px solid var(--encre)}
+.role h2{margin:0;font-family:var(--f-titre);font-weight:600;font-size:46px;letter-spacing:3px}
+.role p{margin:0;font-size:14.5px;line-height:1.5;max-width:32ch}
+.role.ch{background:radial-gradient(ellipse at 50% 30%,#2C5A70,#0E1A22 70%)}.role.ch h2,.role.ch .lab{color:var(--glace)}.role.ch p{color:#C8E4F0}
+.role.ho{background:radial-gradient(ellipse at 50% 30%,#4B137F,#22073D 70%)}.role.ho h2,.role.ho .lab{color:#F0DEFF;text-shadow:0 0 14px #C98BFF}.role.ho p{color:#E2C8FF}
+.role .mates{font-size:15px;padding:8px 10px;background:rgba(0,0,0,.35);border:1.5px solid rgba(0,0,0,.5)}
+.crew{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;background:var(--encre);padding:5px 7px}
+.crew.in{justify-content:center;background:rgba(0,0,0,.35)}
+.cm{position:relative;display:flex;align-items:center;gap:4px;font-family:var(--f-titre);font-weight:600;font-size:13px;letter-spacing:.5px;color:var(--txt)}
+.cm i{width:15px;height:15px;border-radius:50%;border:1.5px solid #000;flex:none}
+.cm em{position:absolute;left:-4px;top:-7px;font-style:normal;font-size:11px;color:#FFD34A;text-shadow:0 0 3px #000}
+.cm.mort{color:#6E8FA0;text-decoration:line-through}.cm.mort i{background:#CFE6EF!important;box-shadow:inset 0 0 0 3px #9FBFCC}
+.cm.quar{color:#8A949C;text-decoration:line-through}.cm.quar i{background:repeating-linear-gradient(-45deg,#FF6A1A 0 3px,#0A1218 3px 6px)!important}
+.botrow{display:flex;gap:8px;margin-top:auto;align-items:stretch}.botrow .meet{margin-top:0;flex:1}.botrow .ghost{flex:none;width:86px;font-size:12px}
+.vgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:46vh;overflow-y:auto}
+.vb{display:flex;align-items:center;gap:7px;border:1.5px solid var(--encre);background:#26323A;padding:10px 8px;font-family:var(--f-titre);font-weight:600;font-size:17px;letter-spacing:1px;text-align:left;box-shadow:2px 2px 0 var(--encre);min-width:0;overflow:hidden}
+.vb i{width:20px;height:20px;border-radius:50%;border:1.5px solid #000;flex:none}
+.vb:active{transform:translate(2px,2px);box-shadow:none}
+.big7.sm{font-size:36px;align-self:center;padding:2px 12px}
+.conf{background:#2A0E0C;border:1.5px solid var(--rouge);padding:9px;display:flex;flex-direction:column;gap:8px}.conf p{color:#FFD0C8}
+.victim{display:flex;align-items:center;gap:9px;justify-content:center;background:#CFE6EF;color:var(--encre);padding:7px}
+.victim i{width:26px;height:26px;border-radius:50%;border:2px solid #000;opacity:.6}.victim b{font-family:var(--f-titre);font-size:20px;letter-spacing:1px}.victim span{font-size:12px}
+.tally{display:flex;flex-direction:column;gap:5px;text-align:left}
+.tally.over{flex:1;overflow-y:auto}
+.tr{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:2px 8px;background:#26323A;border:1.5px solid var(--encre);padding:6px 8px}
+.tr i{width:20px;height:20px;border-radius:50%;border:1.5px solid #000}.tr b{font-family:var(--f-titre);font-size:17px;letter-spacing:1px}
+.tr .who{grid-column:2/4;font-size:11.5px;color:var(--txt-2)}
+.tr.top{background:#4A1410}.tr.hoR{background:#2E0B4F}.tr.hoR .lab{color:#F0DEFF}.tr .lab{color:var(--glace)}
+.win{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:18px 12px;border:2px solid var(--encre)}
+.win h2{margin:0;font-family:var(--f-titre);font-weight:600;font-size:34px;letter-spacing:2.5px}.win p{margin:0;font-size:14px}
+.win.ch{background:radial-gradient(ellipse at 50% 30%,#2C5A70,#0E1A22 75%)}.win.ch h2{color:var(--glace)}.win.ch .lab,.win.ch p{color:#C8E4F0}
+.win.ho{background:radial-gradient(ellipse at 50% 30%,#4B137F,#22073D 75%)}.win.ho h2{color:#F0DEFF;text-shadow:0 0 14px #C98BFF}.win.ho .lab,.win.ho p{color:#E2C8FF}
+.qpan h3{font-size:28px}
+.qz{position:relative;height:230px;border:2px solid var(--encre);overflow:hidden;background:#0B1218}
+.qz .snow{position:absolute;inset:0;background:repeating-linear-gradient(100deg,rgba(255,255,255,.0) 0 14px,rgba(255,255,255,.55) 14px 16px,rgba(255,255,255,0) 16px 40px),linear-gradient(#DCEBF1,#7FA7B8);background-size:120px 100%,100% 100%;animation:blz .35s linear infinite}
+@keyframes blz{to{background-position:-120px 20px,0 0}}
+.qz .door{position:absolute;top:0;bottom:0;width:50%;z-index:1;background:repeating-linear-gradient(0deg,#4C5862 0 22px,#3E4952 22px 24px);border:2px solid var(--encre);transition:transform 1s cubic-bezier(.6,0,.3,1)}
+.qz .door::after{content:"";position:absolute;top:44%;width:10px;height:34px;background:var(--orange);border:1.5px solid #000}
+.qz .dl{left:0}.qz .dl::after{right:8px}.qz .dr{right:0}.qz .dr::after{left:8px}
+.qz.open .dl{transform:translateX(-100%)}.qz.open .dr{transform:translateX(100%)}
+.qz .who{position:absolute;z-index:2;left:50%;bottom:14px;width:52px;height:84px;margin-left:-26px;border-radius:26px 26px 8px 8px;background:var(--c);border:3px solid var(--encre);box-shadow:inset 5px 5px 0 rgba(255,255,255,.25);transition:transform 1.8s ease-in,opacity 1.8s ease-in}
+.qz .who::before{content:"";position:absolute;left:10px;right:10px;top:12px;height:20px;border-radius:10px;background:#F2D3B3;border:2px solid #000}
+.qz.walk .who{transform:translateY(-70px) scale(.25);opacity:0}
+.qz .frost{position:absolute;inset:0;z-index:3;background:radial-gradient(ellipse at 50% 50%,rgba(220,235,241,0) 30%,rgba(220,235,241,.9));opacity:0;transition:opacity .8s}
+.qz.shut .frost{opacity:1}
+.qrole{min-height:40px;font-family:var(--f-titre);font-weight:600;font-size:26px;letter-spacing:2px}
+.qrole.ch{color:var(--glace);text-shadow:0 0 10px rgba(156,216,238,.7)}.qrole.ho{color:#F0DEFF;text-shadow:0 0 14px #C98BFF;animation:qpop .5s}
+@keyframes qpop{from{transform:scale(1.4);opacity:0}}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -278,7 +337,16 @@ const vib=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 const S=k=>{try{window.SND&&SND.play(k)}catch(e){}};
 const L=(k,on)=>{try{window.SND&&SND.loop(k,on)}catch(e){}};
 
-let db=null,uid=null,offset=0,code=null,role=null,meta={},players={},stations={},timer=null,wakeLock=null,lastState=null;
+let db=null,uid=null,offset=0,code=null,role=null,meta={},players={},stations={},roles={},timer=null,wakeLock=null,lastState=null;
+/* équipage : joueurs avec station prête + joueurs sans station créés sur le hub */
+const crew=()=>{const k=meta.state!=='lobby'&&meta.crew;return Object.entries(players).filter(([id,p])=>k?!!k[id]:(p.ready||p.nophone))};
+const alive=()=>crew().filter(([,p])=>!p.out);
+const pname=id=>((players[id]||{}).name||'?').toUpperCase();
+const defHosts=n=>n<=6?1:n<=10?2:3;
+const maxHosts=n=>Math.max(1,Math.floor((n-1)/2));
+const nHosts=()=>{const n=crew().length;return Math.min(maxHosts(n),Math.max(1,meta.nHosts||defHosts(n)))};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function crewBand(showRoles){return crew().map(([id,p])=>{const o=p.out,r=roles[id];return `<span class="cm${o?' '+o:''}${showRoles&&r==='h'?' ho':''}" title="${esc(p.name)}"><i style="background:${esc(p.color||'#8A949C')}"></i>${id===meta.chef&&!o?'<em>★</em>':''}<b>${esc((p.name||'?').toUpperCase())}</b></span>`}).join('')}
 const now=()=>Date.now()+offset;
 const R=p=>db.ref('rooms/'+code+(p?'/'+p:''));
 
@@ -316,7 +384,7 @@ async function boot(){
 /* ===== Accueil ===== */
 let size='terrain';
 function home(){
- screen(header('UNDER US','PROTOTYPE')+`
+ screen(header('UNDER US','PROTO 0.3')+`
  <div class="tag">IL EST DÉJÀ PARMI VOUS</div>
  <div class="lab mute">TAILLE DE LA PARTIE</div>
  <div class="sizes">${Object.entries(SIZES).map(([k,v])=>`<button class="sz${k===size?' on':''}" data-k="${k}">${plate(`<b>${v.label}</b><span>${presetFor(k).plafond} min par système</span>`)}</button>`).join('')}</div>
@@ -342,6 +410,7 @@ function listenRoom(){
  R('meta').on('value',s=>{meta=s.val()||{};render()});
  R('players').on('value',s=>{players=s.val()||{};if(role==='hub')autoPause();render()});
  R('stations').on('value',s=>{stations=s.val()||{};render()});
+ if(role==='hub')R('roles').on('value',s=>{roles=s.val()||{};render()});
  if(timer)clearInterval(timer);timer=setInterval(render,250);
 }
 function joinUrl(){return location.origin+location.pathname+'?r='+code}
@@ -350,52 +419,106 @@ function render(){if(role==='hub')hubRender();else if(role==='station')stRender(
 function hubLobby(){
  screen(`<div class="hubtop">${header('SALLE D’ATTENTE',SIZES[meta.size||size].label)}<button class="hb" id="hSet" aria-label="Réglages">⚙</button></div>`+`
  <div class="qrbox"><div class="qr" id="qr"></div><div class="code"><span class="lab mute">CODE</span><span class="dg">${code}</span><p>Scanne le QR code avec chaque téléphone qui sera une station.</p></div></div>
- <div class="counts"><div class="cnt"><b id="cJ">0</b><span>CONNECTÉS</span></div><div class="cnt"><b id="cR">0</b><span>STATIONS PRÊTES</span></div></div>
+ <div class="counts"><div class="cnt"><b id="cJ">0</b><span>JOUEURS</span></div><div class="cnt"><b id="cR">0</b><span>STATIONS PRÊTES</span></div></div>
+ <div class="hrow"><span class="lab mute">HÔTES</span><button class="hb sm" id="hMinus" aria-label="Moins d’hôtes">−</button><b class="mono" id="hN">1</b><button class="hb sm" id="hPlus" aria-label="Plus d’hôtes">+</button><span class="small" id="hInfo"></span></div>
  <div class="plist" id="plist"></div>
+ <button class="ghost ice2" id="addP">+ AJOUTER UN JOUEUR SANS STATION</button>
  ${bigBtn('launch','EN ATTENTE DES STATIONS…')}<div class="ovl" id="hOvl" hidden></div>`);
  $('#hSet').onclick=()=>openSettings(true);
  try{new QRCode($('#qr'),{text:joinUrl(),width:200,height:200,colorDark:'#05080B',colorLight:'#EEF6FA',correctLevel:QRCode.CorrectLevel.M})}catch(e){$('#qr').textContent=joinUrl()}
- $('#launch').onclick=launch;hubRender();
+ const setH=d=>{const n=crew().length;R('meta/nHosts').set(Math.min(maxHosts(n),Math.max(1,nHosts()+d)));S('tap')};
+ $('#hMinus').onclick=()=>setH(-1);$('#hPlus').onclick=()=>setH(1);
+ $('#addP').onclick=addPlayer;
+ $('#plist').onclick=e=>{const b=e.target.closest('[data-del]');if(b){R('players/'+b.dataset.del).remove();S('tap')}};
+ $('#launch').onclick=launch;lobbyHtml='';hubRender();
+}
+let lobbyHtml='';
+function addPlayer(){
+ const o=$('#hOvl');let col=COLORS[Math.floor(Math.random()*COLORS.length)];
+ o.innerHTML=`<div class="pan"><h3>JOUEUR SANS STATION</h3><p>Pour quelqu’un qui joue sans téléphone (ou pour le porteur du hub). Il voit son rôle sur le hub.</p>
+ <input class="txt" id="npN" maxlength="10" placeholder="PRÉNOM" autocomplete="off" style="font-family:var(--f-titre);font-size:22px;letter-spacing:2px;text-transform:uppercase">
+ <div class="colors" style="justify-content:center">${COLORS.map(c=>`<button class="col${c===col?' on':''}" data-c="${c}" style="background:${c}" aria-label="Couleur ${c}"></button>`).join('')}</div>
+ <div class="row2">${bigBtn('npX','ANNULER','alt')}${bigBtn('npOk','AJOUTER')}</div></div>`;o.hidden=false;$('#npN').focus();
+ o.querySelectorAll('.col').forEach(b=>b.onclick=()=>{col=b.dataset.c;o.querySelectorAll('.col').forEach(x=>x.classList.toggle('on',x===b));S('tap')});
+ $('#npX').onclick=()=>{o.hidden=true;o.innerHTML=''};
+ $('#npOk').onclick=async()=>{const n=$('#npN').value.trim();if(!n){$('#npN').classList.add('err');return}
+  await R('players').push({name:n,color:col,nophone:true,loc:'',joined:firebase.database.ServerValue.TIMESTAMP});S('stationBip');o.hidden=true;o.innerHTML=''};
 }
 function hubRender(){
  const st=meta.state;
- if(st!==lastState){lastState=st;
-  if(st==='lobby'&&!$('#qr'))return hubLobby();
-  if(st==='game'||st==='meeting'||st==='paused'){if(!$('#hgrid'))hubGame();onHubState(st)}
+ const key=st==='reveal'?'reveal-'+(meta.revealIdx||0):st;
+ if(key!==lastState){const prev=lastState;lastState=key;
+  if(st==='lobby'){if(!$('#qr'))return hubLobby()}
+  if(st==='reveal')return hubReveal(prev);
+  if(st==='game'||st==='meeting'||st==='paused'){if(!$('#hgrid'))hubGame();onHubState(st,prev)}
   if(st==='over')return hubOver();
  }
  if(st==='lobby'){
-  const list=Object.entries(players);const ready=list.filter(([,p])=>p.ready);
   if(!$('#plist'))return;
-  $('#cJ').textContent=list.length;$('#cR').textContent=ready.length;
-  $('#plist').innerHTML=list.map(([id,p])=>`<div class="pl"><span class="dot" style="background:${esc(p.color||'#8A949C')}"></span><div class="nm"><b>${esc((p.name||'…').toUpperCase())}</b><span>${p.ready?esc(p.loc||''):'Prépare sa station…'}</span></div><span class="led ${p.online===false?'off':p.ready?'ok':'wait'}"></span></div>`).join('')||'<p class="small">Personne pour l’instant.</p>';
-  const c=C(),b=$('#launch');b.disabled=ready.length<c.stMin;b.querySelector('.in').textContent=ready.length>=c.stMin?`LANCER · ${ready.length} SYSTÈME${ready.length>1?'S':''}`:`ENCORE ${c.stMin-ready.length} STATION${c.stMin-ready.length>1?'S':''} (MIN. ${c.stMin})`;
+  const list=Object.entries(players);const ready=list.filter(([,p])=>p.ready&&!p.nophone);const total=crew().length,nh=nHosts();
+  $('#cJ').textContent=total;$('#cR').textContent=ready.length;$('#hN').textContent=nh;
+  $('#hInfo').textContent=total?`${total-nh} chercheur${total-nh>1?'s':''} · ${nh} hôte${nh>1?'s':''}`:'';
+  const html=list.map(([id,p])=>`<div class="pl"><span class="dot" style="background:${esc(p.color||'#8A949C')}"></span><div class="nm"><b>${esc((p.name||'…').toUpperCase())}</b><span>${p.nophone?'Sans station · rôle vu sur le hub':p.ready?esc(p.loc||''):'Prépare sa station…'}</span></div>${p.nophone?`<button class="del" data-del="${esc(id)}" aria-label="Retirer ${esc(p.name)}">✕</button>`:`<span class="led ${p.online===false?'off':p.ready?'ok':'wait'}"></span>`}</div>`).join('')||'<p class="small">Personne pour l’instant.</p>';
+  if(html!==lobbyHtml){lobbyHtml=html;$('#plist').innerHTML=html}
+  const c=C(),b=$('#launch');const needP=2*nh+1;
+  b.disabled=ready.length<c.stMin||total<needP;
+  b.querySelector('.in').textContent=ready.length<c.stMin?`ENCORE ${c.stMin-ready.length} STATION${c.stMin-ready.length>1?'S':''} (MIN. ${c.stMin})`:total<needP?`IL FAUT ${needP} JOUEURS POUR ${nh} HÔTE${nh>1?'S':''}`:`LANCER · ${Math.min(ready.length,c.stMax)} SYSTÈMES · ${total} JOUEURS`;
  }
  if(st==='game'||st==='meeting'||st==='paused')hubTick();
 }
 async function launch(){
- const ready=Object.entries(players).filter(([,p])=>p.ready).slice(0,C().stMax);if(ready.length<C().stMin)return;
- S('countdown');const c=C(),t0=now()+3500,max=maxMs(ready.length);const upd={};
- const games=GAMES.slice().sort(()=>Math.random()-.5);
- ready.forEach(([id,p],i)=>{upd['stations/'+id]={num:i+1,game:games[i%games.length],loc:p.loc||'',name:p.name||'',endAt:t0+Math.round(max*(c.departMin+Math.random()*Math.max(0,c.departMax-c.departMin))/100),frozenUntil:0}});
- upd['meta/state']='game';upd['meta/startAt']=t0;upd['meta/coolUntil']=t0;upd['meta/reason']=null;upd['meta/pausedAt']=null;
+ const c=C();const st=Object.entries(players).filter(([,p])=>p.ready&&!p.nophone).slice(0,c.stMax);
+ const all=crew().map(([id])=>id),nh=nHosts();if(st.length<c.stMin||all.length<2*nh+1)return;
+ S('tap');const upd={};
+ const games=shuffle(GAMES);
+ st.forEach(([id,p],i)=>{upd['stations/'+id]={num:i+1,game:games[i%games.length],loc:p.loc||'',name:p.name||'',endAt:0,frozenUntil:0}});
+ const mix=shuffle(all);const rl={};mix.forEach((id,i)=>rl[id]=i<nh?'h':'c');upd.roles=rl;
+ all.forEach(id=>{upd['players/'+id+'/out']=null});
+ Object.assign(upd,{'meta/state':'reveal','meta/revealOrder':shuffle(all),'meta/revealIdx':0,'meta/chef':all[Math.floor(Math.random()*all.length)],'meta/winner':null,'meta/victim':null,'meta/reason':null,'meta/pausedAt':null,'meta/nHostsUsed':nh,'meta/crew':Object.fromEntries(all.map(id=>[id,true]))});
+ await R().update(upd);
+}
+/* ===== Révélation des rôles : le hub passe de main en main ===== */
+function hubReveal(prev){
+ L('music',false);L('wind',false);
+ if(!Object.keys(players).length||!Object.keys(roles).length){lastState=null;screen(header('UNDER US')+'<div class="msg"><div class="spin"></div></div>');return}
+ const order=(meta.revealOrder||[]).filter(id=>players[id]),i=meta.revealIdx||0;
+ if(i>=order.length){
+  if(prev&&prev.startsWith('reveal'))S('chef');
+  screen(header('CHEF DE MISSION')+`<div class="msg"><span class="lab mute">TIRÉ AU SORT</span><div class="avat big" style="background:${esc((players[meta.chef]||{}).color||'#8A949C')}"></div><h2>${esc(pname(meta.chef))}</h2><p>Dirige la mission. En cas d’égalité au vote, c’est lui qui tranche, seul, parmi les ex æquo. Il peut être chercheur… ou hôte.</p><p class="small">Si le chef disparaît, un nouveau chef est tiré au sort parmi les vivants.</p></div>${bigBtn('goM','LANCER LA MISSION')}`);
+  $('#goM').onclick=startMission;return}
+ const id=order[i],p=players[id]||{};
+ screen(header('RÉVÉLATION DES RÔLES',`${i+1} / ${order.length}`)+`<div class="msg"><span class="lab mute">PASSE LE HUB À</span><div class="avat big" style="background:${esc(p.color||'#8A949C')}"></div><h2>${esc(pname(id))}</h2><p>Les autres détournent les yeux. Seul ${esc(p.name||'')} regarde l’écran.</p></div>${bigBtn('see','JE SUIS '+esc(pname(id))+' · VOIR MON RÔLE')}`);
+ $('#see').onclick=()=>{S('reveal');vib([60,40,60]);
+  const h=roles[id]==='h';const mates=h?Object.keys(roles).filter(x=>x!==id&&roles[x]==='h').map(pname):[];
+  screen(header('TON RÔLE',esc(pname(id)))+(h?`<div class="role ho"><span class="lab">TU ES</span><h2>HÔTE</h2><p>Le parasite vit en toi. Sabote les systèmes (rate les réparations exprès), élimine les chercheurs sans te faire repérer. Pour tuer : main sur l’épaule, la victime s’assoit et se tait.</p><p class="mates">${mates.length?'Les autres hôtes : <b>'+mates.map(esc).join(', ')+'</b>':'Tu es le seul hôte.'}</p></div>`:`<div class="role ch"><span class="lab">TU ES</span><h2>CHERCHEUR</h2><p>Garde les systèmes vitaux en marche en réussissant les réparations. Repère les hôtes et envoie-les en quarantaine lors des votes.</p><p class="mates">Les chercheurs gagnent quand tous les hôtes sont en quarantaine.</p></div>`)+bigBtn('hide','J’AI VU · CACHER ET PASSER'));
+  $('#hide').onclick=()=>{S('tap');screen(header('RÉVÉLATION DES RÔLES')+`<div class="msg"><div class="spin"></div></div>`);R('meta/revealIdx').set(i+1)}};
+}
+async function startMission(){
+ S('countdown');const c=C(),t0=now()+3500,ids=Object.keys(stations),max=maxMs(ids.length);const upd={};
+ ids.forEach(id=>{upd['stations/'+id+'/endAt']=t0+Math.round(max*(c.departMin+Math.random()*Math.max(0,c.departMax-c.departMin))/100)});
+ Object.assign(upd,{'meta/state':'game','meta/startAt':t0,'meta/coolUntil':t0,'meta/reason':null,'meta/pausedAt':null,'meta/revealOrder':null});
  await R().update(upd);
 }
 function hubGame(){
  screen(`<div class="hubtop">${header('UNDER US','<span id="hClock">00:00</span>')}<button class="hb" id="hSet" aria-label="Réglages">⚙</button><button class="hb" id="hPause" aria-label="Pause">II</button></div>
+ <div class="crew" id="hCrew"></div>
  <div class="urg" id="hUrg">Liaison établie.</div>
  <div class="sg" id="hgrid"></div>
- <button class="meet" id="hMeet">${plate('<div class="mi"><span id="hMeetT">RÉUNION D’URGENCE</span></div>')}</button>
+ <div class="botrow"><button class="ghost" id="hBody">☠ CORPS</button><button class="meet" id="hMeet">${plate('<div class="mi"><span id="hMeetT">RÉUNION D’URGENCE</span></div>')}</button></div>
  <div class="ovl" id="hOvl" hidden></div>`);
  $('#hPause').onclick=()=>{if(meta.state==='game')pauseRoom('paused','Pause demandée au hub');else if(meta.state==='paused')resumeRoom()};
  $('#hMeet').onclick=()=>{if(meta.state==='game'&&now()>=(meta.coolUntil||0))pauseRoom('meeting','Réunion d’urgence convoquée au hub')};
- $('#hSet').onclick=()=>openSettings(false);
+ $('#hBody').onclick=()=>{if(meta.state==='game')bodyPicker($('#hOvl'))};
+ $('#hSet').onclick=()=>{if(meta.state!=='meeting'||mPhase==='call')openSettings(false)};
+ crewHtml='';
 }
+let crewHtml='';
 function remaining(s){const ref=(meta.state==='game')?now():(meta.pausedAt||now());return (s.endAt||0)-ref}
 function hubTick(){
  const g=$('#hgrid');if(!g)return;
  const list=Object.entries(stations).sort((a,b)=>a[1].num-b[1].num);const max=maxMs();
  {const left=(meta.coolUntil||0)-now(),mb=$('#hMeet'),mt=$('#hMeetT');if(mb&&mt&&meta.state==='game'){mb.disabled=left>0;mb.style.opacity=left>0?.55:1;mt.textContent=left>0?'RÉUNION D’URGENCE · '+fmt(left):'RÉUNION D’URGENCE'}}
+ {const a=alive().length,t=crew().length;const h=`<span class="lab mute">VIVANTS ${a}/${t}</span>`+crewBand(false);if(h!==crewHtml){crewHtml=h;$('#hCrew').innerHTML=h}}
  const ref=meta.state==='game'?now():(meta.pausedAt||now());
  if(meta.startAt)$('#hClock').textContent=fmt(Math.max(0,ref-meta.startAt));
  g.innerHTML=list.map(([id,s])=>{const r=s.endAt-ref,ratio=r/max,fz=(s.frozenUntil||0)>ref;const off=players[id]&&players[id].online===false;const cls=fz?'':ratio<.12?'crit':ratio<.4?'warn':'';
@@ -403,30 +526,95 @@ function hubTick(){
  const live=list.filter(([,s])=>!((s.frozenUntil||0)>ref)).sort((a,b)=>a[1].endAt-b[1].endAt)[0];
  if(meta.state==='game'&&live)$('#hUrg').innerHTML=`Le plus urgent : <b>${esc(live[1].game)} ${String(live[1].num).padStart(2,'0')}</b> · ${esc(live[1].loc)} · ${fmt(live[1].endAt-ref)}`;
  L('crit',meta.state==='game'&&list.some(([,s])=>(s.endAt-ref)/max<.12));
- if(meta.state==='game'&&list.some(([,s])=>s.endAt-ref<=0)){const dead=list.find(([,s])=>s.endAt-ref<=0)[1];R('meta').update({state:'over',reason:`${dead.game} ${String(dead.num).padStart(2,'0')} est tombé à zéro`,pausedAt:now()})}
+ if(meta.state==='game'&&list.some(([,s])=>s.endAt>0&&s.endAt-ref<=0)){const dead=list.find(([,s])=>s.endAt>0&&s.endAt-ref<=0)[1];setOver('h',`${gameName(dead.game)} (${dead.game} ${String(dead.num).padStart(2,'0')}) est tombé à zéro`)}
 }
-function onHubState(st){
+let overSet=false;
+async function setOver(w,reason){if(overSet)return;overSet=true;await R('meta').update({state:'over',winner:w,reason,pausedAt:now()})}
+async function checkWin(){
+ if(!Object.keys(roles).length)return false;let h=0,c=0;alive().forEach(([id])=>roles[id]==='h'?h++:c++);
+ if(h===0){await setOver('c','Tous les hôtes sont en quarantaine');return true}
+ if(h>=c){await setOver('h',`Les hôtes sont aussi nombreux que les chercheurs (${h} contre ${c})`);return true}
+ return false}
+async function ensureChef(){const p=players[meta.chef];if(p&&!p.out)return null;const a=alive();if(!a.length)return null;const n=a[Math.floor(Math.random()*a.length)][0];await R('meta/chef').set(n);return n}
+function bodyPicker(o){
+ const list=alive();
+ o.innerHTML=`<div class="pan red"><h3>CORPS TROUVÉ</h3><p>Qui a été retrouvé ? La victime reste au sol et se tait jusqu’à la fin de la partie.</p><div class="vgrid">${list.map(([id,p])=>`<button class="vb" data-v="${esc(id)}"><i style="background:${esc(p.color||'#8A949C')}"></i>${esc((p.name||'?').toUpperCase())}</button>`).join('')}</div>${bigBtn('bpX','ANNULER','alt')}</div>`;o.hidden=false;
+ o.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>reportBody(b.dataset.v));
+ o.querySelector('#bpX').onclick=()=>{o.hidden=true;o.innerHTML='';if(role==='station'){stView='';lastState=null;render()}};
+}
+async function reportBody(id){
+ if(meta.state!=='game'&&meta.state!=='paused')return;
+ const upd={};upd['players/'+id+'/out']='mort';
+ Object.assign(upd,{'meta/state':'meeting','meta/reason':'Corps signalé : '+pname(id),'meta/victim':id,'meta/pausedAt':meta.state==='game'?now():(meta.pausedAt||now()),'meta/allHere':null,'meta/auto':null});
+ if(role==='station'){stView='';lastState=null}
+ await R().update(upd);
+}
+function onHubState(st,prev){
  const o=$('#hOvl');if(!o)return;
  $('#hPause').textContent=st==='paused'?'▶':'II';
- if(st==='game'){o.hidden=true;L('wind',true);L('music',true);return}
+ if(st==='game'){clearMeet();o.hidden=true;o.innerHTML='';L('wind',true);L('music',true);return}
  L('music',false);L('crit',false);
- if(st==='meeting'){S((meta.reason||'').startsWith('Corps')?'body':'meetCall');
-  meetingPanel()}
+ if(st==='meeting'){S(meta.victim?'body':'meetCall');meetingStart()}
  if(st==='paused'){o.innerHTML=`<div class="pan"><span class="lab" style="color:var(--orange)">PAUSE GÉNÉRALE</span><h3>PARTIE EN PAUSE</h3><p>${esc(meta.reason||'')}</p>${meta.auto?'<p class="small">Reprise automatique dès que la station revient.</p>':bigBtn('resumeB','REPRENDRE')}</div>`;o.hidden=false;const b=$('#resumeB');if(b)b.onclick=resumeRoom}
 }
-let debIv=null;
-function debateSec(){const c=C(),n=Object.values(players).filter(p=>p.ready).length;return c.debat+c.debatJoueur*Math.max(0,n-6)}
-function meetingPanel(){
- const o=$('#hOvl');clearInterval(debIv);
- o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">${esc(meta.reason||'RÉUNION')}</span><h3>TOUS AU HUB</h3><p>Les stations sonnent l’alarme, les compteurs sont figés. Quand tout le monde est là, lancez le débat : l’alarme s’arrête.</p>${bigBtn('startDeb','TOUT LE MONDE EST LÀ · DÉBAT '+fmt(debateSec()*1000))}${bigBtn('endMeet','FIN DE LA RÉUNION · REPRENDRE','alt')}</div>`;o.hidden=false;
- $('#endMeet').onclick=endMeeting;
- $('#startDeb').onclick=()=>{let t=debateSec();S('tap');R('meta/allHere').set(true);
-  const draw=()=>{const p=$('#debT');if(p)p.textContent=fmt(t*1000)};
-  o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">DÉBAT</span><h3>QUI EST L’HÔTE ?</h3><span class="big7" id="debT">${fmt(t*1000)}</span><p>Vote à main levée à la fin du temps (vote sur téléphone : prochaine version, ${C().vote} s par joueur).</p>${bigBtn('skipDeb','TOUT LE MONDE EST D’ACCORD · VOTER','alt')}${bigBtn('endMeet','FIN DE LA RÉUNION · REPRENDRE')}</div>`;
-  $('#endMeet').onclick=endMeeting;$('#skipDeb').onclick=()=>{t=0;draw()};
-  debIv=setInterval(()=>{if(t>0){t--;if(t<=10&&t>0)S('debateTick');draw();if(t===0)S('tally')}},1000)};
+/* ===== Réunion : appel → débat → vote → dépouillement → quarantaine ===== */
+let mPhase='',mIv=null,mTo=[];
+function clearMeet(){clearInterval(mIv);mIv=null;mTo.forEach(clearTimeout);mTo=[]}
+function debateSec(){const c=C(),n=alive().length;return c.debat+c.debatJoueur*Math.max(0,n-6)}
+async function meetingStart(){
+ clearMeet();mPhase='call';
+ if(meta.victim&&await checkWin())return;
+ const nc=await ensureChef();meetingPanel(nc);
 }
-async function endMeeting(){clearInterval(debIv);await resumeRoom(true)}
+function meetingPanel(newChef){
+ const o=$('#hOvl');clearMeet();mPhase='call';
+ const v=meta.victim&&players[meta.victim];
+ o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">${esc(meta.reason||'RÉUNION')}</span><h3>TOUS AU HUB</h3>${v?`<div class="victim"><i style="background:${esc(v.color||'#8A949C')}"></i><b>${esc(pname(meta.victim))}</b><span>retrouvé mort · se tait jusqu’à la fin</span></div>`:''}${newChef?`<p style="color:#FFD0B0">Nouveau chef de mission : <b>${esc(pname(newChef))}</b> ★</p>`:''}<p>Les stations sonnent, les compteurs sont figés. Quand tout le monde est là, lancez le débat : l’alarme s’arrête.</p>${bigBtn('startDeb','TOUT LE MONDE EST LÀ · DÉBAT '+fmt(debateSec()*1000))}${bigBtn('endMeet','REPRENDRE SANS VOTER','alt')}</div>`;o.hidden=false;
+ $('#endMeet').onclick=endMeeting;
+ $('#startDeb').onclick=()=>{S('tap');R('meta/allHere').set(true);debate()};
+}
+function debate(){
+ const o=$('#hOvl');clearMeet();mPhase='debate';let t=debateSec();
+ o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">DÉBAT</span><h3>QUI EST L’HÔTE ?</h3><span class="big7" id="debT">${fmt(t*1000)}</span><div class="crew in">${crewBand(false)}</div><p>À la fin du temps, chacun vote sur le hub (${C().vote} s par joueur). Sans vote, la personne prend une voix contre elle.</p>${bigBtn('skipDeb','TOUT LE MONDE EST D’ACCORD · VOTER')}${bigBtn('endMeet','REPRENDRE SANS VOTER','alt')}</div>`;
+ $('#endMeet').onclick=endMeeting;$('#skipDeb').onclick=()=>{S('tap');vote()};
+ mIv=setInterval(()=>{t--;const p=$('#debT');if(p)p.textContent=fmt(Math.max(0,t)*1000);if(t<=10&&t>0)S('debateTick');if(t<=0)vote()},1000);
+}
+function vote(){
+ clearMeet();mPhase='vote';S('tally');
+ const voters=shuffle(alive().map(([id])=>id));const ballots={};let k=0;
+ const next=()=>{clearMeet();if(k>=voters.length)return tally(ballots);const v=voters[k];let t=C().vote;
+  const draw=()=>{const o=$('#hOvl');const cand=alive().filter(([id])=>id!==v);
+   o.innerHTML=`<div class="pan"><span class="lab mute">VOTE ${k+1} / ${voters.length}</span><h3>${esc(pname(v))}</h3><p>Qui envoies-tu en quarantaine ?</p><span class="big7 sm" id="vT">${t}</span><div class="vgrid">${cand.map(([id,p])=>`<button class="vb" data-v="${esc(id)}"><i style="background:${esc(p.color||'#8A949C')}"></i>${esc((p.name||'?').toUpperCase())}</button>`).join('')}</div><div id="vConf"></div></div>`;o.hidden=false;
+   o.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{S('tap');const tg=b.dataset.v;$('#vConf').innerHTML=`<div class="conf"><p>Voter contre <b>${esc(pname(tg))}</b> ?</p><div class="row2">${bigBtn('vNo','ANNULER','alt')}${bigBtn('vYes','CONFIRMER','red')}</div></div>`;
+    $('#vNo').onclick=()=>{$('#vConf').innerHTML=''};$('#vYes').onclick=()=>{ballots[v]=tg;S('voteOk');vib(40);k++;next()}})};
+  draw();
+  mIv=setInterval(()=>{t--;const e=$('#vT');if(e)e.textContent=Math.max(0,t);if(t<=3&&t>0)S('debateTick');if(t<=0){ballots[v]=v;S('voteLate');vib([80,40,80]);
+   clearInterval(mIv);const o=$('#hOvl');o.innerHTML=`<div class="pan red"><h3>TROP TARD</h3><p>${esc(pname(v))} n’a pas voté : une voix contre lui.</p></div>`;mTo.push(setTimeout(()=>{k++;next()},1600))}},1000)};
+ next();
+}
+function tally(ballots){
+ clearMeet();mPhase='tally';const cnt={};Object.values(ballots).forEach(x=>cnt[x]=(cnt[x]||0)+1);
+ const rows=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);const top=rows.length?rows[0][1]:0;const tied=rows.filter(r=>r[1]===top).map(r=>r[0]);
+ const o=$('#hOvl');S('tally');
+ o.innerHTML=`<div class="pan"><span class="lab mute">DÉPOUILLEMENT</span><h3>RÉSULTAT</h3><div class="tally">${rows.map(([id,n])=>`<div class="tr${n===top?' top':''}"><i style="background:${esc((players[id]||{}).color||'#8A949C')}"></i><b>${esc(pname(id))}</b><span class="mono">${n} voix</span><div class="who">${Object.entries(ballots).filter(([,t])=>t===id).map(([v])=>esc(pname(v))).join(', ')}</div></div>`).join('')}</div><div id="tAct"></div></div>`;o.hidden=false;
+ if(!tied.length){mTo.push(setTimeout(endMeeting,2500));return}
+ if(tied.length===1){$('#tAct').innerHTML=bigBtn('tGo','ENVOYER '+esc(pname(tied[0]))+' EN QUARANTAINE','red');$('#tGo').onclick=()=>quarantine(tied[0]);return}
+ const ch=meta.chef;S('chef');
+ $('#tAct').innerHTML=`<p style="color:#FFD0B0">Égalité ! Le chef de mission <b>${esc(pname(ch))}</b> ★ tranche seul parmi les ex æquo.</p><div class="vgrid">${tied.map(id=>`<button class="vb" data-t="${esc(id)}"><i style="background:${esc((players[id]||{}).color||'#8A949C')}"></i>${esc(pname(id))}</button>`).join('')}</div><div id="tConf"></div>`;
+ o.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const tg=b.dataset.t;S('tap');$('#tConf').innerHTML=`<div class="conf"><p>${esc(pname(ch))}, tu envoies <b>${esc(pname(tg))}</b> en quarantaine ?</p><div class="row2">${bigBtn('tNo','ANNULER','alt')}${bigBtn('tYes','CONFIRMER','red')}</div></div>`;$('#tNo').onclick=()=>{$('#tConf').innerHTML=''};$('#tYes').onclick=()=>quarantine(tg)});
+}
+function quarantine(id){
+ clearMeet();mPhase='quar';const p=players[id]||{},h=roles[id]==='h';const o=$('#hOvl');S('quarantine');
+ o.innerHTML=`<div class="pan qpan"><span class="lab mute">QUARANTAINE</span><div class="qz" id="qz"><div class="snow"></div><div class="door dl"></div><div class="door dr"></div><div class="who" style="--c:${esc(p.color||'#8A949C')}"></div><div class="frost"></div></div><h3>${esc(pname(id))}</h3><div class="qrole" id="qR"></div></div>`;o.hidden=false;
+ const qz=$('#qz');
+ mTo.push(setTimeout(()=>qz.classList.add('open'),500));
+ mTo.push(setTimeout(()=>qz.classList.add('walk'),1500));
+ mTo.push(setTimeout(()=>{qz.classList.remove('open');qz.classList.add('shut')},3400));
+ mTo.push(setTimeout(()=>{S(h?'roleHo':'roleCh');vib([60,40,60]);const r=$('#qR');r.className='qrole '+(h?'ho':'ch');r.innerHTML=`ÉTAIT ${h?'UN HÔTE':'UN CHERCHEUR'}`},4200));
+ mTo.push(setTimeout(async()=>{await R('players/'+id+'/out').set('quar');if(await checkWin())return;const nc=await ensureChef();
+  if(nc){o.innerHTML=`<div class="pan"><span class="lab mute">CHEF DE MISSION</span><h3>${esc(pname(nc))} ★</h3><p>Nouveau chef tiré au sort parmi les vivants.</p></div>`;S('chef');mTo.push(setTimeout(endMeeting,2600))}else endMeeting()},6000));
+}
+async function endMeeting(){clearMeet();mPhase='';await resumeRoom(true)}
 function openSettings(editable){
  const o=$('#hOvl');if(!o)return;const c=C();const ed=editable&&meta.state==='lobby';
  o.innerHTML=`<div class="pan setpan"><h3>RÉGLAGES · ${SIZES[meta.size||'terrain'].label}</h3><p>${ed?'Modifiables jusqu’au lancement, mémorisés sur ce téléphone.':'Partie en cours : lecture seule.'}</p><div class="setbody">
@@ -437,9 +625,9 @@ function openSettings(editable){
  const r=$('#cfReset');if(r)r.onclick=()=>{const d=PRESETS[meta.size||'terrain'];document.querySelectorAll('[data-k]').forEach(i=>i.value=d[i.dataset.k])};
  $('#cfOk').onclick=async()=>{if(ed){const n=read();storePreset(meta.size||'terrain',n);await R('meta/cfg').set(n);S('repaired')}o.hidden=true;o.innerHTML='';if(meta.state==='meeting')meetingPanel();else if(meta.state==='paused')onHubState('paused')};
 }
-async function pauseRoom(state,reason,auto=false){await R('meta').update({state,reason,pausedAt:now(),auto:!!auto,allHere:null})}
+async function pauseRoom(state,reason,auto=false){await R('meta').update({state,reason,pausedAt:now(),auto:!!auto,allHere:null,victim:null})}
 async function resumeRoom(afterMeeting){
- const d=now()-(meta.pausedAt||now());const upd={'meta/state':'game','meta/reason':null,'meta/pausedAt':null,'meta/auto':null,'meta/allHere':null};if(afterMeeting===true)upd['meta/coolUntil']=now()+C().recharge*60000;
+ const d=now()-(meta.pausedAt||now());const upd={'meta/state':'game','meta/reason':null,'meta/pausedAt':null,'meta/auto':null,'meta/allHere':null,'meta/victim':null};if(afterMeeting===true)upd['meta/coolUntil']=now()+C().recharge*60000;
  Object.entries(stations).forEach(([id,s])=>{upd['stations/'+id+'/endAt']=s.endAt+d;if((s.frozenUntil||0)>(meta.pausedAt||0))upd['stations/'+id+'/frozenUntil']=s.frozenUntil+d});
  await R().update(upd);
 }
@@ -450,9 +638,11 @@ function autoPause(){
  else if(meta.state==='paused'&&meta.auto&&!offline.length){S('repaired');resumeRoom()}
 }
 function hubOver(){
- L('music',false);L('crit',false);S('winHo');
- screen(header('FIN DE PARTIE')+`<div class="msg"><span class="lab" style="color:var(--lueur)">${esc(meta.reason||'')}</span><h2 style="color:#F0DEFF">LA STATION GÈLE</h2><p>Un système vital est tombé à zéro. Les hôtes gagnent.</p></div>${bigBtn('again','REJOUER AVEC LES MÊMES STATIONS')}${bigBtn('newG','NOUVELLE PARTIE','alt')}`);
- $('#again').onclick=async()=>{lastState=null;await R().update({'meta/state':'lobby','meta/reason':null,'meta/pausedAt':null,stations:null})};
+ if(!Object.keys(roles).length||!Object.keys(players).length){lastState=null;return}
+ clearMeet();L('music',false);L('crit',false);L('wind',false);const w=meta.winner||'h';S(w==='c'?'winCh':'winHo');
+ const rows=crew().map(([id,p])=>`<div class="tr ${roles[id]==='h'?'hoR':''}"><i style="background:${esc(p.color||'#8A949C')}"></i><b>${esc(pname(id))}</b><span class="lab">${roles[id]==='h'?'HÔTE':'CHERCHEUR'}</span><div class="who">${p.out==='mort'?'mort':p.out==='quar'?'en quarantaine':'vivant'}${id===meta.chef?' · chef ★':''}</div></div>`).join('');
+ screen(header('FIN DE PARTIE')+`<div class="win ${w==='c'?'ch':'ho'}"><span class="lab">${esc(meta.reason||'')}</span><h2>${w==='c'?'LES CHERCHEURS GAGNENT':'LES HÔTES GAGNENT'}</h2><p>${w==='c'?'Le parasite est enfermé dehors. La station est sauvée.':'Le parasite a pris la station.'}</p></div><div class="tally over">${rows}</div>${bigBtn('again','REJOUER · MÊMES JOUEURS')}${bigBtn('newG','NOUVELLE PARTIE','alt')}`);
+ $('#again').onclick=async()=>{lastState=null;overSet=false;const upd={'meta/state':'lobby','meta/reason':null,'meta/pausedAt':null,'meta/winner':null,'meta/victim':null,'meta/chef':null,'meta/revealIdx':null,'meta/startAt':null,'meta/crew':null,stations:null,roles:null};crew().forEach(([id])=>upd['players/'+id+'/out']=null);await R().update(upd)};
  $('#newG').onclick=()=>{location.href=location.pathname};
 }
 
@@ -494,6 +684,7 @@ function stPerso(){
 const ROOMS_RE=/^(Cuisine|Salon|Garage|Grenier|Cave|Chambre|Entrée|Jardin)/;
 function stRender(){
  if(stView==='game'&&meta.state&&meta.state!=='game')closeGame();
+ if(stView==='body'&&meta.state!=='game'&&meta.state!=='paused'){stView='';lastState=null}
  if(stView==='perso'||stView==='game'||stView==='body')return;
  const st=meta.state,mine=stations[uid];
  if(st==='lobby'||!mine){if(lastState!=='lobby-wait'){lastState='lobby-wait';stWait()}return}
@@ -506,7 +697,8 @@ function stWait(){L('alarm',false);screen(header('STATION PRÊTE','PARTIE '+code
 function stShow(key,prev){
  const mine=stations[uid];L('alarm',false);
  const head=header(`STATION ${String(mine.num).padStart(2,'0')} · ${esc(mine.game)}`,esc((mine.loc||'').split(',')[0].toUpperCase()));
- if(key==='game'){if(prev==='lobby-wait'){S('wake');vib([100,60,100])}if(prev==='game-fz')S('unfreeze');L('wind',true);
+ if(key==='reveal'){L('wind',false);if(prev==='lobby-wait'){S('wake');vib([100,60,100])}screen(head+`<div class="sys paused"><span class="lab" style="color:var(--glace)">MISSION EN PRÉPARATION</span><h2>TOUS AU HUB</h2><p>Le hub révèle les rôles, un joueur à la fois. Ta station se réveillera au lancement de la mission.</p></div>`)}
+ if(key==='game'){if(prev==='lobby-wait'||prev==='reveal'){S('wake');vib([100,60,100])}if(prev==='game-fz')S('unfreeze');L('wind',true);
   screen(head+`<div class="sys"><span class="lab" style="color:var(--glace)">SYSTÈME VITAL · ${esc(mine.game)}</span><h2>${esc(gameName(mine.game).toUpperCase())}</h2><p>Touche pour réparer. Ton temps restant n’apparaît que sur le hub.</p></div>${bigBtn('fix','RÉPARER')}<button class="ghost" id="bodyB">SIGNALER UN CORPS</button>`);
   $('#fix').onclick=miniGame;$('#bodyB').onclick=bodyScreen}
  if(key==='game-fz'){screen(head+`<div class="sys frozen"><span class="lab">ÉCHEC · LA STATION GÈLE</span><h2>SYSTÈME GELÉ</h2><span class="big7" id="fzT">00:15</span><p>Une station au hasard a perdu du temps.</p></div><button class="ghost" id="bodyB">SIGNALER UN CORPS</button>`);$('#bodyB').onclick=bodyScreen}
@@ -514,14 +706,9 @@ function stShow(key,prev){
  if(key==='meeting'){L('wind',false);S((meta.reason||'').startsWith('Corps')?'body':'meetCall');setTimeout(()=>{if(meta.state==='meeting'&&!meta.allHere)L('alarm',true)},900);
   screen(head+`<div class="sys alarm"><span class="lab">⚠ ALERTE ⚠</span><h2>RÉUNION D’URGENCE</h2><p>${esc(meta.reason||'')}. Rends-toi au hub tout de suite.</p></div>`)}
  if(key.startsWith('paused')){L('wind',false);screen(head+`<div class="sys paused"><div class="spin"></div><span class="lab" style="color:var(--orange)">PAUSE GÉNÉRALE</span><h2>PARTIE EN PAUSE</h2><p>${esc(meta.reason||'')}</p></div>`)}
- if(key.startsWith('over')){L('wind',false);S('winHo');screen(head+`<div class="sys"><h2>FIN DE PARTIE</h2><p>${esc(meta.reason||'')}</p></div>`)}
+ if(key.startsWith('over')){L('wind',false);const w=meta.winner||'h';S(w==='c'?'winCh':'winHo');screen(head+`<div class="win ${w==='c'?'ch':'ho'}" style="flex:1"><span class="lab">${esc(meta.reason||'')}</span><h2>${w==='c'?'LES CHERCHEURS GAGNENT':'LES HÔTES GAGNENT'}</h2><p>Les rôles sont affichés sur le hub.</p></div>`)}
 }
-function bodyScreen(){
- stView='body';const others=Object.entries(players).filter(([id])=>id!==uid);
- screen(header('CORPS TROUVÉ')+`<p class="small">Qui as-tu trouvé ? La victime reste au sol et se tait.</p><div class="colors names">${others.map(([id,p])=>`<button class="chip" data-n="${esc(p.name||'?')}">${esc(p.name||'?')}</button>`).join('')}<button class="chip" data-n="un joueur sans téléphone">Joueur sans téléphone</button></div><div class="row2">${bigBtn('bx','ANNULER','alt')}</div>`);
- document.querySelectorAll('[data-n]').forEach(b=>b.onclick=async()=>{stView='';lastState=null;await R('meta').update({state:'meeting',reason:'Corps signalé : '+b.dataset.n,pausedAt:now(),allHere:null})});
- $('#bx').onclick=()=>{stView='';lastState=null;render()};
-}
+function bodyScreen(){stView='body';S('tap');screen(header('CORPS TROUVÉ')+'<div class="ovl" id="sOvl"></div>');bodyPicker($('#sOvl'))}
 /* mini-jeu : générateur (tirer quand l'aiguille est dans le vert) */
 let gameFrame=null,gameMsg=null;
 function closeGame(){if(gameFrame){gameFrame.remove();gameFrame=null}if(gameMsg){window.removeEventListener('message',gameMsg);gameMsg=null}stView='';lastState=null}
