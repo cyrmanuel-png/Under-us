@@ -1290,7 +1290,7 @@ G.ctrl={t:'CTRL',n:'Salle de contrôle',c:'Réflexes',time:40,d:'Des fenêtres d
  api.on(val,'click',()=>api.win())}};
 
 drawHome();
-if(EMB&&G[EMB]){document.body.classList.add('embed');open(EMB)}
+if(EMB&&G[EMB]){document.body.classList.add('embed');open(EMB);try{parent.postMessage({uu:'ready'},'*')}catch(e){}}
 })();
 </script>
 
@@ -1301,5 +1301,8 @@ body.embed{padding:0!important;display:block}
 .embed .screen{border-radius:0}.embed .notch{display:none}
 .embed #backBtn{visibility:hidden;pointer-events:none}
 .embed #rRow,.embed #rCd{display:none!important}
+/* sur téléphone : pas de filtre SVG d'encre (trop lourd pour Safari iOS, écrans blancs) ; on garde traits épais + trames */
+.embed .phone .area{filter:none!important}
+.embed .pot2 svg{filter:none}
 </style>
 </body></html>

@@ -119,6 +119,7 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 </style>
+<link rel="prefetch" href="jeux.html">
 </head>
 <body>
 <div id="app"></div>
@@ -526,10 +527,18 @@ let gameFrame=null,gameMsg=null;
 function closeGame(){if(gameFrame){gameFrame.remove();gameFrame=null}if(gameMsg){window.removeEventListener('message',gameMsg);gameMsg=null}stView='';lastState=null}
 function miniGame(){
  const mine=stations[uid];if(!mine)return;stView='game';L('wind',false);S('tap');
- const f=document.createElement('iframe');f.src='jeux.html?g='+gameKey(mine.game);f.title=gameName(mine.game);f.allow='autoplay';
- f.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0;z-index:60;background:#0B1218';
- document.body.appendChild(f);gameFrame=f;
- gameMsg=async e=>{if(e.source!==f.contentWindow||!e.data||e.data.uu!=='result')return;const win=!!e.data.win;closeGame();
+ const w=document.createElement('div');w.style.cssText='position:fixed;inset:0;z-index:60;background:#0B1218;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center';
+ w.innerHTML=`<div class="lab" style="color:var(--glace)">SYSTÈME ${esc(gameName(mine.game).toUpperCase())}</div><h2 style="margin:0">CHARGEMENT…</h2><div id="gfHelp" style="display:none;flex-direction:column;gap:10px;width:100%;max-width:320px"><p style="margin:0">Le système ne répond pas.</p>${bigBtn('gfRetry','RÉESSAYER')}<button class="ghost" id="gfCancel">RETOUR À LA STATION</button></div>`;
+ const f=document.createElement('iframe');f.title=gameName(mine.game);f.allow='autoplay';
+ f.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;background:#0B1218;opacity:0;transition:opacity .2s';
+ const load=()=>{f.style.opacity='0';f.src='jeux.html?g='+gameKey(mine.game)+'&t='+Date.now()};
+ w.appendChild(f);document.body.appendChild(w);gameFrame=w;load();
+ let tmo=setTimeout(()=>{const h=w.querySelector('#gfHelp');if(h)h.style.display='flex'},8000);
+ w.querySelector('#gfRetry').onclick=()=>{w.querySelector('#gfHelp').style.display='none';load();clearTimeout(tmo);tmo=setTimeout(()=>{w.querySelector('#gfHelp').style.display='flex'},8000)};
+ w.querySelector('#gfCancel').onclick=()=>{clearTimeout(tmo);closeGame();render()};
+ gameMsg=async e=>{if(e.source!==f.contentWindow||!e.data)return;
+  if(e.data.uu==='ready'){clearTimeout(tmo);f.style.opacity='1';return}
+  if(e.data.uu!=='result')return;clearTimeout(tmo);const win=!!e.data.win;closeGame();
   if(meta.state!=='game'){render();return}
   if(win){await R('stations/'+uid+'/endAt').set(now()+maxMs())}
   else{vib([80,40,80]);await R('stations/'+uid+'/frozenUntil').set(now()+C().gel*1000);
