@@ -182,6 +182,43 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .qrole{min-height:40px;font-family:var(--f-titre);font-weight:600;font-size:26px;letter-spacing:2px}
 .qrole.ch{color:var(--glace);text-shadow:0 0 10px rgba(156,216,238,.7)}.qrole.ho{color:#F0DEFF;text-shadow:0 0 14px #C98BFF;animation:qpop .5s}
 @keyframes qpop{from{transform:scale(1.4);opacity:0}}
+
+/* v0.5 : accueil + choix de taille */
+.frame.homef{padding:0;gap:0;background:#03070D;overflow:hidden}
+.homebg{position:absolute;inset:0;overflow:hidden}
+.hsc{position:absolute;inset:0;width:100%;height:100%}
+.hsc .aur{animation:aur 7s ease-in-out infinite alternate}@keyframes aur{from{opacity:.55;transform:translateX(-12px)}to{opacity:1;transform:translateX(12px)}}
+.hsc .blk{animation:bl 1.4s steps(2) infinite}
+.hsc .par{animation:parb 3.6s ease-in-out infinite}@keyframes parb{50%{transform:translateY(-6px);opacity:.75}}
+.blz{position:absolute;inset:-20%;background:repeating-linear-gradient(105deg,transparent 0 22px,rgba(227,241,247,.10) 22px 23px,transparent 23px 58px);animation:blz2 1.2s linear infinite;pointer-events:none}
+@keyframes blz2{to{transform:translate(-58px,22px)}}
+.homec{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;padding:6vh 16px 14px;gap:10px;overflow-y:auto}
+.logow{width:min(100%,380px);filter:drop-shadow(0 6px 0 rgba(5,8,11,.6))}
+.logo{width:100%;height:auto;display:block;overflow:visible}
+.lgt{font-family:var(--f-titre);font-weight:600}
+.lgus{animation:usg 3.2s ease-in-out infinite}@keyframes usg{50%{filter:drop-shadow(0 0 10px #C98BFF)}}
+.tagline{margin-top:-4px;transform:rotate(-2deg)}
+.tagline span{display:inline-block;font-family:var(--f-label);font-size:13px;letter-spacing:2.5px;color:#F0DEFF;background:#22073D;border:2px solid var(--encre);padding:5px 12px;box-shadow:3px 4px 0 var(--encre);text-shadow:0 0 8px #C98BFF}
+.hact{margin-top:auto;width:100%;max-width:400px;display:flex;flex-direction:column;gap:10px;padding-bottom:8vh}
+.hsep{display:flex;align-items:center;gap:8px;color:var(--txt-2);font-family:var(--f-label);font-size:11px;letter-spacing:1px}
+.hsep::before,.hsep::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,transparent,#3E6378)}.hsep::after{transform:scaleX(-1)}
+.hsep span{text-shadow:0 1px 0 #000}
+.hhelp{text-align:center;color:#C7DCE5;background:rgba(3,7,13,.72);border:1.5px solid #05080B;padding:7px 10px}
+.ver{position:absolute;right:10px;bottom:8px;font-family:var(--f-chiffre);font-size:10px;color:#5E7F90}
+.szq{display:flex;flex-direction:column;gap:3px}.szq .lab{color:var(--glace);font-size:13px}
+.szl{display:flex;flex-direction:column;gap:12px}
+.szc{position:relative;display:flex;gap:12px;align-items:stretch;text-align:left;border:2px solid var(--encre);background:#1C252C;padding:0;box-shadow:4px 5px 0 var(--encre);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);transition:transform .12s}
+.szc:active{transform:translate(2px,3px)}
+.szi{flex:none;width:118px;border-right:2px solid var(--encre);background:#0E2232}.szi svg{display:block;width:100%;height:100%}
+.szt{display:flex;flex-direction:column;gap:4px;padding:10px 34px 10px 0;min-width:0}
+.szt b{font-family:var(--f-titre);font-weight:600;font-size:26px;letter-spacing:2.5px;line-height:1}
+.szt>span{font-size:12.5px;color:var(--txt-2);line-height:1.35}
+.szm{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px}
+.szm i{font-style:normal;display:flex;align-items:center;gap:4px;font-family:var(--f-chiffre);font-size:12px;color:var(--glace)}.szm svg{width:13px;height:13px}
+.szck{position:absolute;right:8px;top:8px;width:24px;height:24px;display:grid;place-items:center;border:2px solid var(--encre);background:#2A353D;color:transparent;font-weight:700;font-size:15px}
+.szc.on{background:#2A1A0F;box-shadow:4px 5px 0 var(--encre),inset 0 0 0 3px var(--orange)}
+.szc.on .szt b{color:var(--orange)}.szc.on .szck{background:var(--orange);color:var(--encre)}
+.szc.on .szi{background:#14293A}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -388,18 +425,110 @@ async function boot(){
 
 /* ===== Accueil ===== */
 let size='terrain';
+const SIZE_TXT={maison:'Dans une maison ou un appartement. Parties courtes et serrées.',terrain:'Maison et jardin, cour ou petit terrain. La partie de référence.',enorme:'Grand domaine, parc, colonie. Beaucoup de joueurs et de stations.'};
+function titleArt(){return `<svg class="logo" viewBox="0 0 360 236" role="img" aria-label="Under Us">
+<defs>
+<linearGradient id="lgO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC9A0"/><stop offset=".45" stop-color="#FF6A1A"/><stop offset="1" stop-color="#B84A10"/></linearGradient>
+<linearGradient id="lgV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0DEFF"/><stop offset=".4" stop-color="#C98BFF"/><stop offset="1" stop-color="#6A1FB0"/></linearGradient>
+<linearGradient id="lgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C8892"/><stop offset=".5" stop-color="#4C5862"/><stop offset="1" stop-color="#2E373E"/></linearGradient>
+<pattern id="lgH" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)"><rect width="1.6" height="5" fill="#05080B"/></pattern>
+<filter id="lgG" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>
+<clipPath id="lgU"><text x="246" y="210" text-anchor="middle" class="lgt" font-size="104" letter-spacing="4">US</text></clipPath>
+</defs>
+<g transform="rotate(-4 180 80)">
+ <path d="M28 22H338L350 34V122L338 134H28L16 122V34Z" fill="#05080B" transform="translate(6 7)"/>
+ <path d="M28 22H338L350 34V122L338 134H28L16 122V34Z" fill="url(#lgS)" stroke="#05080B" stroke-width="4"/>
+ <path d="M30 28H336" stroke="#A9B4BC" stroke-width="3" opacity=".7"/>
+ <path d="M16 96H350V122L338 134H28L16 122Z" fill="url(#lgH)" opacity=".35"/>
+ ${[[30,36],[336,36],[30,120],[336,120],[120,30],[246,30],[120,126],[246,126]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="#8A949C" stroke="#05080B" stroke-width="2"/><circle cx="${x-1}" cy="${y-1}" r="1.3" fill="#D5DEE4"/>`).join('')}
+ <text x="185" y="120" text-anchor="middle" class="lgt" font-size="112" letter-spacing="7" fill="#05080B">UNDER</text>
+ <text x="180" y="114" text-anchor="middle" class="lgt" font-size="112" letter-spacing="7" fill="url(#lgO)" stroke="#05080B" stroke-width="5" paint-order="stroke">UNDER</text>
+ <path d="M16 34L28 22H338L350 34L340 40L330 33L318 44L306 34L292 41L280 31L262 39L248 30L230 42L214 31L196 39L180 30L164 41L146 32L130 40L112 30L96 42L80 32L62 40L46 31L30 42Z" fill="#E4F3F9" stroke="#05080B" stroke-width="3" stroke-linejoin="round"/>
+ ${[[60,134,22],[96,134,34],[150,134,18],[214,134,40],[262,134,24],[318,134,30]].map(([x,y,h])=>`<path d="M${x-7} ${y} L${x} ${y+h} L${x+7} ${y}Z" fill="#CFE6EF" stroke="#05080B" stroke-width="2.5" stroke-linejoin="round"/><path d="M${x-2} ${y+3} L${x} ${y+h*.6}" stroke="#fff" stroke-width="1.5"/>`).join('')}
+</g>
+<g class="lgus">
+ <text x="246" y="210" text-anchor="middle" class="lgt" font-size="104" letter-spacing="4" fill="#C98BFF" filter="url(#lgG)" opacity=".9">US</text>
+ <text x="251" y="216" text-anchor="middle" class="lgt" font-size="104" letter-spacing="4" fill="#05080B">US</text>
+ <text x="246" y="210" text-anchor="middle" class="lgt" font-size="104" letter-spacing="4" fill="url(#lgV)" stroke="#05080B" stroke-width="5" paint-order="stroke">US</text>
+ <g clip-path="url(#lgU)" fill="none" stroke-linecap="round">
+  <path d="M190 150 Q206 170 200 190 T214 222" stroke="#22073D" stroke-width="7"/><path d="M190 150 Q206 170 200 190 T214 222" stroke="#F0DEFF" stroke-width="2"/>
+  <path d="M262 132 Q252 160 270 178 T262 220" stroke="#22073D" stroke-width="7"/><path d="M262 132 Q252 160 270 178 T262 220" stroke="#F0DEFF" stroke-width="2"/>
+  <path d="M296 150 Q284 168 300 196" stroke="#22073D" stroke-width="5"/><path d="M296 150 Q284 168 300 196" stroke="#F0DEFF" stroke-width="1.5"/>
+ </g>
+ <circle cx="206" cy="176" r="5" fill="#F0DEFF" stroke="#05080B" stroke-width="2"/><circle cx="274" cy="190" r="4" fill="#F0DEFF" stroke="#05080B" stroke-width="2"/>
+</g>
+</svg>`}
+function homeScene(){return `<svg class="hsc" viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+<defs>
+<linearGradient id="hsK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#03070D"/><stop offset=".55" stop-color="#0B1E2C"/><stop offset=".8" stop-color="#1B3A4C"/></linearGradient>
+<linearGradient id="hsA" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4BE38A" stop-opacity="0"/><stop offset=".3" stop-color="#4BE38A" stop-opacity=".55"/><stop offset=".65" stop-color="#C98BFF" stop-opacity=".45"/><stop offset="1" stop-color="#C98BFF" stop-opacity="0"/></linearGradient>
+<linearGradient id="hsI" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A4F63"/><stop offset="1" stop-color="#081420"/></linearGradient>
+<radialGradient id="hsP" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#C98BFF" stop-opacity=".7"/><stop offset="1" stop-color="#8A2BE2" stop-opacity="0"/></radialGradient>
+<filter id="hsB"><feGaussianBlur stdDeviation="9"/></filter>
+<pattern id="hsH" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><rect width="1.6" height="6" fill="#05080B"/></pattern>
+</defs>
+<rect width="400" height="800" fill="url(#hsK)"/>
+${Array.from({length:46},(_,i)=>{const x=(i*97)%400,y=(i*53)%430,r=i%7?0.9:1.6;return `<circle cx="${x}" cy="${y}" r="${r}" fill="#E3F1F7" opacity="${i%3?.5:.9}"/>`}).join('')}
+<g class="aur" filter="url(#hsB)"><path d="M-40 170 C60 110 140 230 230 150 S360 120 440 170 L440 210 C360 160 300 200 230 196 S70 160 -40 220Z" fill="url(#hsA)"/><path d="M-40 250 C80 200 170 290 260 230 S380 220 440 250 L440 270 C360 250 290 280 230 270 S80 240 -40 280Z" fill="url(#hsA)" opacity=".6"/></g>
+<path d="M0 520 L60 470 L110 500 L170 440 L230 495 L290 455 L340 490 L400 460 L400 560 L0 560Z" fill="#2E4D5E" opacity=".85"/>
+<path d="M0 548 L80 512 L150 536 L220 505 L300 534 L400 510 L400 600 L0 600Z" fill="#456A7C"/>
+<g stroke="#05080B" stroke-width="2.5" stroke-linejoin="round">
+ <rect x="128" y="506" width="74" height="34" fill="#3E4952"/><rect x="198" y="494" width="58" height="46" fill="#4C5862"/>
+ <path d="M256 540 V512 A26 26 0 0 1 308 512 V540Z" fill="#5A6770"/>
+ <rect x="96" y="520" width="34" height="20" fill="#3E4952"/>
+ <path d="M230 494 V440" stroke-width="3"/><path d="M222 452 H238 M224 466 H236" stroke-width="2"/>
+ <path d="M128 506 L165 496 L202 506Z" fill="#CFE6EF"/>
+</g>
+<circle class="blk" cx="230" cy="438" r="3.5" fill="#E0302A"/>
+${[[138,516],[154,516],[170,516],[186,516],[208,504],[224,504],[240,504],[106,526],[272,520],[288,520]].map(([x,y])=>`<rect x="${x}" y="${y}" width="9" height="7" fill="#FFB347" stroke="#05080B" stroke-width="1.2"/>`).join('')}
+<path d="M0 560 Q100 548 200 556 T400 552 L400 640 L0 640Z" fill="#DCEBF1" stroke="#05080B" stroke-width="3"/>
+<path d="M0 590 Q120 580 220 590 T400 586 L400 640 L0 640Z" fill="url(#hsH)" opacity=".12"/>
+<path d="M0 632 L400 632 L400 800 L0 800Z" fill="url(#hsI)"/>
+<path d="M0 632 L40 646 L70 636 L110 650 L150 638 L190 652 L230 640 L270 654 L310 640 L350 650 L400 638" fill="none" stroke="#9CD8EE" stroke-width="2" opacity=".6"/>
+<g class="par">
+ <ellipse cx="210" cy="728" rx="150" ry="48" fill="url(#hsP)" filter="url(#hsB)"/>
+ <path d="M40 760 C90 690 160 780 220 712 S330 700 372 748" fill="none" stroke="#05080B" stroke-width="34" stroke-linecap="round"/>
+ <path d="M40 760 C90 690 160 780 220 712 S330 700 372 748" fill="none" stroke="#2A0B4A" stroke-width="27" stroke-linecap="round"/>
+ <path d="M40 760 C90 690 160 780 220 712 S330 700 372 748" fill="none" stroke="#4B137F" stroke-width="6" stroke-dasharray="2 14" stroke-linecap="round"/>
+ ${[[82,722],[150,738],[206,722],[262,706],[320,716]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="#F0DEFF" stroke="#05080B" stroke-width="2"/>`).join('')}
+</g>
+${[[30,660,50,700],[120,646,96,690],[300,652,330,700],[360,700,384,740],[180,770,150,800]].map(([a,b,c,d])=>`<path d="M${a} ${b} L${(a+c)/2+6} ${(b+d)/2} L${c} ${d}" fill="none" stroke="#05080B" stroke-width="2"/><path d="M${a} ${b} L${(a+c)/2+6} ${(b+d)/2} L${c} ${d}" fill="none" stroke="#9CD8EE" stroke-width=".8"/>`).join('')}
+</svg>`}
 function home(){
- screen(header('UNDER US','PROTO 0.4')+`
- <div class="tag">IL EST DÉJÀ PARMI VOUS</div>
- <div class="lab mute">TAILLE DE LA PARTIE</div>
- <div class="sizes">${Object.entries(SIZES).map(([k,v])=>`<button class="sz${k===size?' on':''}" data-k="${k}">${plate(`<b>${v.label}</b><span>${presetFor(k).plafond} min par système</span>`)}</button>`).join('')}</div>
- ${bigBtn('create','CRÉER LA PARTIE (HUB)')}
- <div class="lab mute">OU REJOINDRE AVEC UN CODE</div>
- <div class="join"><input id="jc" maxlength="4" placeholder="K7Q2" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
- <p class="small">Le téléphone qui crée la partie devient le hub. Les autres scannent le QR code et deviennent des stations.</p>`);
- document.querySelectorAll('.sz').forEach(b=>b.onclick=()=>{size=b.dataset.k;S('tap');home()});
- $('#create').onclick=createRoom;
+ screen(`<div class="homebg">${homeScene()}<div class="blz"></div></div>
+ <div class="homec">
+  <div class="logow">${titleArt()}</div>
+  <div class="tagline"><span>IL EST DÉJÀ PARMI VOUS</span></div>
+  <div class="hact">
+   ${bigBtn('newG','NOUVELLE PARTIE')}
+   <div class="hsep"><span>OU REJOINDRE UNE PARTIE</span></div>
+   <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
+   <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
+  </div>
+  <span class="ver">PROTO 0.5</span>
+ </div>`);
+ document.querySelector('.frame').classList.add('homef');
+ $('#newG').onclick=()=>{S('tap');sizePick()};
  $('#jb').onclick=()=>{const v=$('#jc').value.trim().toUpperCase();if(v.length!==4){$('#jc').classList.add('err');return}joinRoom(v)};
+}
+function sizeIllu(k){
+ const S_='stroke="#05080B" stroke-width="2.5" stroke-linejoin="round"';
+ const win=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="6" fill="#FFB347" stroke="#05080B" stroke-width="1.2"/>`;
+ const base=`<path d="M0 62 Q40 56 80 60 T150 58 L150 80 L0 80Z" fill="#DCEBF1" ${S_}/>`;
+ const sky=`<rect width="150" height="80" fill="#0E2232"/>${[[14,12],[40,22],[70,8],[120,16],[136,30],[98,26]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1" fill="#E3F1F7"/>`).join('')}`;
+ let g='';
+ if(k==='maison')g=`<rect x="54" y="38" width="44" height="24" fill="#4C5862" ${S_}/><path d="M50 40 L76 26 L102 40Z" fill="#CFE6EF" ${S_}/>${win(62,46)}${win(80,46)}<path d="M88 30 V22 H94 V34" fill="#3E4952" ${S_}/>`;
+ if(k==='terrain')g=`<rect x="22" y="42" width="38" height="20" fill="#3E4952" ${S_}/><rect x="58" y="34" width="34" height="28" fill="#4C5862" ${S_}/><path d="M92 62 V48 A16 16 0 0 1 124 48 V62Z" fill="#5A6770" ${S_}/>${win(28,48)}${win(42,48)}${win(64,42)}${win(78,42)}${win(103,50)}<path d="M74 34 V16" ${S_} fill="none"/><circle cx="74" cy="15" r="2.5" fill="#E0302A"/><path d="M128 62 L132 52 L136 62 M140 62 L143 54 L146 62" fill="none" ${S_}/>`;
+ if(k==='enorme')g=`<rect x="6" y="46" width="30" height="16" fill="#3E4952" ${S_}/><rect x="34" y="36" width="30" height="26" fill="#4C5862" ${S_}/><rect x="62" y="28" width="22" height="34" fill="#3E4952" ${S_}/><path d="M84 62 V46 A18 18 0 0 1 120 46 V62Z" fill="#5A6770" ${S_}/><rect x="118" y="44" width="28" height="18" fill="#4C5862" ${S_}/>${win(12,51)}${win(40,42)}${win(50,42)}${win(40,52)}${win(67,34)}${win(67,46)}${win(96,48)}${win(124,49)}<path d="M73 28 V6 M66 14 H80 M68 20 H78" fill="none" ${S_}/><circle cx="73" cy="5" r="2.5" fill="#E0302A"/><path d="M130 44 L138 30 M126 36 A10 10 0 0 0 142 34Z" fill="#8A949C" ${S_}/>`;
+ return `<svg viewBox="0 0 150 80" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${sky}${g}${base}</svg>`}
+function sizePick(){
+ const ico={t:'<svg viewBox="0 0 16 16"><circle cx="8" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 5v4l2.5 1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',p:'<svg viewBox="0 0 16 16"><rect x="4" y="1.5" width="8" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 12h2" stroke="currentColor" stroke-width="2"/></svg>'};
+ screen(header('NOUVELLE PARTIE','CHOIX DU TERRAIN')+`
+ <div class="szq"><span class="lab">OÙ SE DÉROULE LA MISSION ?</span><span class="small">Les temps s’adaptent à la taille. Tout reste réglable dans le salon.</span></div>
+ <div class="szl">${Object.entries(SIZES).map(([k,v])=>{const p=presetFor(k);return `<button class="szc${k===size?' on':''}" data-k="${k}" aria-pressed="${k===size}"><div class="szi">${sizeIllu(k)}</div><div class="szt"><b>${v.label}</b><span>${SIZE_TXT[k]}</span><div class="szm"><i>${ico.t}${p.plafond} min / système</i><i>${ico.p}${p.stMin} à ${p.stMax} stations</i></div></div><span class="szck" aria-hidden="true">✓</span></button>`}).join('')}</div>
+ ${bigBtn('create','CRÉER LA PARTIE')}<button class="ghost ice2" id="back">← RETOUR</button>`);
+ document.querySelectorAll('.szc').forEach(b=>b.onclick=()=>{size=b.dataset.k;S('tap');document.querySelectorAll('.szc').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)})});
+ $('#create').onclick=createRoom;$('#back').onclick=()=>{S('tap');home()};
 }
 
 /* ===== HUB ===== */
