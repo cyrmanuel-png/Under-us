@@ -915,45 +915,38 @@ G.serre={t:'SERRE',n:'Serre',c:'Réflexes',time:23,noDeco:true,d:'Les légumes d
   S.forEach((s,i)=>{if(s.t>=0){s.t+=dt/s.d;set(i,s.t);if(s.t>=1)api.fail('Plant gelé')}})});
  bs.forEach((b,i)=>api.on(b,'pointerdown',()=>{if(S[i].t>=0){S[i].t=-1;set(i,0);wet(i);saved++;sE.textContent=saved+'/18';beep(760,.05);if(saved>=18)api.win()}else{beep(200,.04)}}))}};
 /* 10 RADIO */
-G.radio={t:'RADIO',n:'Radio',c:'Adresse',time:55,d:'Le signal de la base dérive. Tourne la grosse molette pour garder l’aiguille rouge dans la bande verte 3 secondes d’affilée. 4 liaisons à verrouiller : après chacune, le signal saute sur une autre fréquence.',init(a,api){
- const K='#05080B',X0=42,X1=318,sx=v=>X0+(X1-X0)*v/100,MX=110,MY=318,KX=262,KY=300;
- const ticks=Array.from({length:41},(_,i)=>{const x=sx(i*2.5);return `<path d="M${x} 126 V${i%5===0?110:118}" stroke="#FFB04A" stroke-width="${i%5===0?2:1}"/>`}).join('')+Array.from({length:9},(_,i)=>`<text x="${sx(i*12.5)}" y="104" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="12" fill="#FFB04A">${118+i}</text>`).join('');
- const mt=Array.from({length:13},(_,i)=>{const an=(-60+i*10)*Math.PI/180;const r1=62,r2=i%2?56:52;return `<path d="M${MX+Math.sin(an)*r1} ${MY-Math.cos(an)*r1} L${MX+Math.sin(an)*r2} ${MY-Math.cos(an)*r2}" stroke="${i>9?'#E0302A':K}" stroke-width="${i%2?1.2:2}"/>`}).join('');
- a.innerHTML=`<svg viewBox="0 0 360 560" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
- <defs><filter id="rglo" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/><feGaussianBlur in="SourceGraphic" stdDeviation="9" result="c"/><feMerge><feMergeNode in="c"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><pattern id="spk" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="2.4" fill="#0E1418"/></pattern></defs>
- <rect width="360" height="560" fill="#18212A"/>
- <rect x="8" y="10" width="344" height="540" rx="8" fill="#3A4852" stroke="${K}" stroke-width="3"/><rect x="12" y="14" width="336" height="6" rx="3" fill="#5E6A74"/>${[[22,26],[338,26],[22,536],[338,536]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="#8A949C" stroke="${K}" stroke-width="1.2"/>`).join('')}
- <rect x="110" y="30" width="140" height="24" fill="#26323A" stroke="${K}" stroke-width="2"/><text x="180" y="47" text-anchor="middle" font-family="Allerta Stencil" font-size="11" fill="#C4DEE9">RÉCEPTEUR HF · R-39</text>
- <rect x="22" y="66" width="316" height="118" rx="6" fill="#26323A" stroke="${K}" stroke-width="3"/><rect x="30" y="74" width="300" height="102" fill="#1A0E04" stroke="${K}" stroke-width="2"/><rect x="30" y="74" width="300" height="102" fill="#FFB04A" opacity=".1"/>
- ${ticks}<path d="M${X0} 126 H${X1}" stroke="#FFB04A" stroke-width="1.5"/><text x="${X0}" y="166" font-family="Allerta Stencil" font-size="10" fill="#A8743A">MHz</text>
- <g id="band"><rect id="bandR" x="0" y="80" width="28" height="90" fill="#4BE38A" opacity=".28"/><path id="bandL" d="" stroke="#4BE38A" stroke-width="2"/></g>
- <g id="nd"><path d="M0 78 V172" stroke="${K}" stroke-width="6"/><path d="M0 78 V172" stroke="#E0302A" stroke-width="3"/></g>
- <path d="M34 80 H326" stroke="rgba(255,255,255,.12)" stroke-width="10"/>
- <text x="300" y="166" text-anchor="end" font-family="Share Tech Mono" font-size="14" fill="#FFD08A" id="fq">121,5</text>
- <rect x="30" y="206" width="160" height="128" rx="6" fill="#26323A" stroke="${K}" stroke-width="3"/><path d="M40 330 V236 Q110 210 180 236 V330Z" fill="#E8DCC0" stroke="${K}" stroke-width="2"/>${mt}
- <text x="${MX}" y="${MY-20}" text-anchor="middle" font-family="Allerta Stencil" font-size="9" fill="${K}">SIGNAL</text><text x="54" y="268" font-family="Share Tech Mono" font-size="9" fill="${K}">S1</text><text x="160" y="268" font-family="Share Tech Mono" font-size="9" fill="#E0302A">+20</text>
- <g id="mn"><path d="M${MX} ${MY} V${MY-60}" stroke="${K}" stroke-width="2.5" stroke-linecap="round"/></g><circle cx="${MX}" cy="${MY}" r="6" fill="#3A4852" stroke="${K}" stroke-width="2"/>
- <circle cx="${KX}" cy="${KY}" r="70" fill="#26323A" stroke="${K}" stroke-width="3"/>${Array.from({length:24},(_,i)=>`<path d="M${KX} ${KY-66} V${KY-60}" stroke="#86AEC1" stroke-width="1.5" transform="rotate(${i*15} ${KX} ${KY})"/>`).join('')}
- <g class="rring"><circle cx="${KX}" cy="${KY}" r="63" fill="none" stroke="#FF2A20" stroke-width="7" filter="url(#rglo)"/><circle cx="${KX}" cy="${KY}" r="63" fill="none" stroke="#FF8A80" stroke-width="2"/></g><g id="knob" style="cursor:grab"><circle cx="${KX}" cy="${KY}" r="56" fill="#1A1A1A" stroke="${K}" stroke-width="3"/>${Array.from({length:30},(_,i)=>`<rect x="${KX-3}" y="${KY-58}" width="6" height="9" rx="2" fill="#333" stroke="${K}" stroke-width="1" transform="rotate(${i*12} ${KX} ${KY})"/>`).join('')}<circle cx="${KX}" cy="${KY}" r="42" fill="#2A2A2A" stroke="${K}" stroke-width="2"/><circle cx="${KX}" cy="${KY}" r="42" fill="none" stroke="#5A5A5A" stroke-width="2" stroke-dasharray="50 220" transform="rotate(200 ${KX} ${KY})"/><path d="M${KX} ${KY-40} V${KY-20}" stroke="#FF6A1A" stroke-width="5" stroke-linecap="round"/><circle cx="${KX-14}" cy="${KY-14}" r="7" fill="#444"/></g>
- <text x="${KX}" y="${KY+88}" text-anchor="middle" font-family="Allerta Stencil" font-size="10" fill="#C4DEE9">ACCORD</text>
- <text x="30" y="362" font-family="Allerta Stencil" font-size="10" fill="#C4DEE9">VERROUILLAGE</text>${Array.from({length:10},(_,i)=>`<rect class="seg" x="${30+i*16}" y="370" width="12" height="18" fill="#22303A" stroke="${K}" stroke-width="1.5"/>`).join('')}
- <rect x="24" y="404" width="200" height="132" rx="6" fill="#26323A" stroke="${K}" stroke-width="3"/><rect x="32" y="412" width="184" height="116" fill="#3A4852"/><rect x="32" y="412" width="184" height="116" fill="url(#spk)"/>
- <rect x="244" y="408" width="96" height="30" fill="${K}"/><text x="292" y="429" text-anchor="middle" font-family="Share Tech Mono" font-size="15" fill="#FF9A4A">CANAL 16</text>
- <circle id="rx" cx="258" cy="462" r="6" fill="#33404A" stroke="${K}" stroke-width="1.5"/><text x="270" y="466" font-family="Allerta Stencil" font-size="9" fill="#C4DEE9">RÉCEPTION</text>
- <circle cx="270" cy="508" r="12" fill="#8A949C" stroke="${K}" stroke-width="2"/><circle cx="270" cy="508" r="5" fill="${K}"/><text x="292" y="512" font-family="Allerta Stencil" font-size="9" fill="#C4DEE9">CASQUE</text>
+G.radio={t:'RADIO',n:'Radio',c:'Adresse',time:55,noDeco:true,d:'Le signal de la base dérive. Tourne la grosse molette pour garder l’aiguille rouge dans la bande verte 3 secondes d’affilée. 4 liaisons à verrouiller : après chacune, le signal saute sur une autre fréquence.',init(a,api){
+ const K='#05080B',X0=40,X1=320,sx=v=>X0+(X1-X0)*v/100,MX=106,MY=252,KX=268.5,KY=225.4,NH=69,NW=NH*60/292;
+ const ticks=Array.from({length:41},(_,i)=>{const x=sx(i*2.5);return `<path d="M${x} 106 V${i%5===0?92:99}" stroke="#FFD08A" stroke-width="${i%5===0?2:1}"/>`}).join('')+Array.from({length:9},(_,i)=>`<text x="${sx(i*12.5)}" y="87" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="#FFD08A">${118+i}</text>`).join('');
+ const mt=Array.from({length:13},(_,i)=>{const an=(-60+i*10)*Math.PI/180;const r1=66,r2=i%2?60:56;return `<path d="M${MX+Math.sin(an)*r1} ${MY-Math.cos(an)*r1} L${MX+Math.sin(an)*r2} ${MY-Math.cos(an)*r2}" stroke="${i>9?'#C0302A':K}" stroke-width="${i%2?1.2:2.2}"/>`}).join('');
+ a.innerHTML=`<svg viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
+ <defs><filter id="rglo" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/><feGaussianBlur in="SourceGraphic" stdDeviation="9" result="c"/><feMerge><feMergeNode in="c"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+ <image href="img/radio_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/>
+ <text x="180" y="36" text-anchor="middle" font-family="Allerta Stencil" font-size="10" fill="#3A2208">RÉCEPTEUR HF · R-39</text>
+ ${ticks}<path d="M${X0} 106 H${X1}" stroke="#FFD08A" stroke-width="1.5"/><text x="${X0}" y="123" font-family="Allerta Stencil" font-size="9" fill="#FFD08A" opacity=".8">MHz</text>
+ <g id="band"><rect id="bandR" x="0" y="72" width="28" height="54" fill="#4BE38A" opacity=".3"/><path id="bandL" d="" stroke="#4BE38A" stroke-width="2"/></g>
+ <g id="nd"><path d="M0 71 V127" stroke="${K}" stroke-width="6"/><path d="M0 71 V127" stroke="#E0302A" stroke-width="3"/></g>
+ <text x="322" y="123" text-anchor="end" font-family="Share Tech Mono" font-size="13" fill="#FFE8B8" id="fq">121,5</text>
+ ${mt}<text x="${MX}" y="${MY-24}" text-anchor="middle" font-family="Allerta Stencil" font-size="8.5" fill="${K}">SIGNAL</text><text x="46" y="196" font-family="Share Tech Mono" font-size="9" fill="${K}">S1</text><text x="150" y="196" font-family="Share Tech Mono" font-size="9" fill="#C0302A">+20</text>
+ <g id="mn"><image href="img/ra_needle.webp" x="${MX-NW/2}" y="${MY-NH*.9}" width="${NW}" height="${NH}"/></g>
+ <g class="rring"><circle cx="${KX}" cy="${KY}" r="61" fill="none" stroke="#FF2A20" stroke-width="6" filter="url(#rglo)"/></g>
+ <g id="knob" style="cursor:grab"><circle cx="${KX}" cy="${KY}" r="60" fill="transparent"/><image href="img/ra_knob.webp" x="${KX-53}" y="${KY-53}" width="106" height="106"/></g>
+ ${Array.from({length:10},(_,i)=>`<rect class="seg" x="${26.5+i*17.1}" y="285.5" width="10" height="15.5" fill="#05080B"/>`).join('')}
+ <text x="288.5" y="351" text-anchor="middle" font-family="Share Tech Mono" font-size="17" fill="#FF9A4A">CANAL 16</text>
+ <circle id="rx" cx="311.6" cy="402.8" r="5.5" fill="#33404A" stroke="${K}" stroke-width="1"/>
  </svg>`;
  const sv=a.querySelector('svg'),band=a.querySelector('#bandR'),bl=a.querySelector('#bandL'),nd=a.querySelector('#nd'),mn=a.querySelector('#mn'),kn=a.querySelector('#knob'),fq=a.querySelector('#fq'),segs=[...a.querySelectorAll('.seg')],rx=a.querySelector('#rx');
- let s=70,vs=0,v=22,hold=0,rot=0,last=null,t=0,won=0;const st=document.createElement('div');st.className='statrow';st.style.cssText='position:absolute;left:0;right:0;bottom:0;justify-content:center;gap:10px';a.appendChild(st);const updW=()=>st.innerHTML='LIAISONS '+pips(won,4,'ok');updW();
+ let s=70,vs=0,v=22,hold=0,rot=0,last=null,t=0,won=0;const st=document.createElement('div');st.className='statrow';st.style.cssText='position:absolute;left:0;right:0;top:0;justify-content:center;gap:10px';a.appendChild(st);const updW=()=>st.innerHTML='LIAISONS '+pips(won,4,'ok');updW();
  api.info('Liaison avec la base côtière.');
  const toSvg=e=>{const p=sv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(sv.getScreenCTM().inverse())};
  api.on(kn,'pointerdown',e=>{kn.setPointerCapture(e.pointerId);const p=toSvg(e);last=Math.atan2(p.y-KY,p.x-KX)});
  api.on(kn,'pointermove',e=>{if(last===null)return;const p=toSvg(e);const an=Math.atan2(p.y-KY,p.x-KX);let d=(an-last)*180/Math.PI;if(d>180)d-=360;if(d<-180)d+=360;last=an;rot+=d;v=Math.max(0,Math.min(100,v+d/360*45));kn.setAttribute('transform',`rotate(${rot} ${KX} ${KY})`);if(Math.random()<.2)beep(1800,.01,'sine',.015)});
  ['pointerup','pointercancel'].forEach(ev=>api.on(kn,ev,()=>last=null));
  api.loop(dt=>{t+=dt;vs+=rnd(-60,60)*dt;vs*=.985;vs=Math.max(-19,Math.min(19,vs));s+=vs*dt;if(s<8){s=8;vs=Math.abs(vs)}if(s>92){s=92;vs=-Math.abs(vs)}
-  const bx=sx(s);band.setAttribute('x',bx-14);bl.setAttribute('d',`M${bx-14} 80 V170 M${bx+14} 80 V170`);nd.setAttribute('transform',`translate(${sx(v)} 0)`);fq.textContent=(118+v*.08).toFixed(1).replace('.',',');
+  const bx=sx(s);band.setAttribute('x',bx-14);bl.setAttribute('d',`M${bx-14} 72 V126 M${bx+14} 72 V126`);nd.setAttribute('transform',`translate(${sx(v)} 0)`);fq.textContent=(118+v*.08).toFixed(1).replace('.',',');
   const diff=Math.abs(v-s),str=Math.max(0,1-diff/18);const ang=-58+str*104+Math.sin(t*11)*3+Math.sin(t*4.3)*2+rnd(-1.5,1.5);mn.setAttribute('transform',`rotate(${ang} ${MX} ${MY})`);
-  if(diff<5){hold+=dt;rx.setAttribute('fill','#4BE38A')}else{hold=Math.max(0,hold-dt*2);rx.setAttribute('fill',str>.3?'#F2B21E':'#33404A')}
-  const n=Math.floor(hold/3*10);segs.forEach((g,i)=>g.setAttribute('fill',i<n?(i<7?'#4BE38A':'#F2B21E'):'#22303A'));if(hold>=3){won++;hold=0;updW();beep(880,.08);setTimeout(()=>beep(1320,.12),90);buzz(40);if(won>=4){api.win();return}s=v>50?rnd(8,35):rnd(65,92);vs=0}})}};
+  if(diff<5){hold+=dt;rx.setAttribute('fill','#4BE38A')}else{hold=Math.max(0,hold-dt*2);rx.setAttribute('fill',str>.3?'#F2B21E':'#5A1A14')}
+  const n=Math.floor(hold/3*10);segs.forEach((g,i)=>g.setAttribute('fill',i<n?(i<7?'#4BE38A':'#F2B21E'):'#05080B'));if(hold>=3){won++;hold=0;updW();beep(880,.08);setTimeout(()=>beep(1320,.12),90);buzz(40);if(won>=4){api.win();return}s=v>50?rnd(8,35):rnd(65,92);vs=0}})}};
 
 /* 11 FILTRE */
 G.filtre={t:'FILTRE',n:'Filtres à air',c:'Tri',time:40,noTimer:true,d:'Trie les filtres qui arrivent : glisse à gauche s’il est propre, à droite s’il est encrassé (ou utilise les boutons). Tu as moins de 2 secondes par filtre. 10 filtres, 2 erreurs maximum.',init(a,api){
