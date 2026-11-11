@@ -263,6 +263,13 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .avat{border-radius:50%}.avat.big{width:120px;height:120px}
 .cm.mort i{background-blend-mode:luminosity;filter:grayscale(1) brightness(1.3)}.cm.quar i{filter:grayscale(.6)}
 .qz .who{width:92px;height:92px;margin-left:-46px;border-radius:50%;bottom:40px;box-shadow:none}.qz .who::before{display:none}
+
+.szc{flex-direction:column;gap:0}
+.szi{width:100%;height:clamp(78px,13vh,112px);flex:none;border-right:0;border-bottom:2px solid var(--encre)}
+.szi img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 72%}
+.szt{padding:7px 40px 9px 12px;gap:3px}.szt b{font-size:22px}.szt>span{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.szck{top:auto;bottom:10px}
+.szl{gap:10px}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -517,22 +524,13 @@ function home(){
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
   </div>
-  <span class="ver">PROTO 0.7</span>
+  <span class="ver">PROTO 0.8</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};
  $('#jb').onclick=()=>{const v=$('#jc').value.trim().toUpperCase();if(v.length!==4){$('#jc').classList.add('err');return}joinRoom(v)};
 }
-function sizeIllu(k){
- const S_='stroke="#05080B" stroke-width="2.5" stroke-linejoin="round"';
- const win=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="6" fill="#FFB347" stroke="#05080B" stroke-width="1.2"/>`;
- const base=`<path d="M0 62 Q40 56 80 60 T150 58 L150 80 L0 80Z" fill="#DCEBF1" ${S_}/>`;
- const sky=`<rect width="150" height="80" fill="#0E2232"/>${[[14,12],[40,22],[70,8],[120,16],[136,30],[98,26]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1" fill="#E3F1F7"/>`).join('')}`;
- let g='';
- if(k==='maison')g=`<rect x="54" y="38" width="44" height="24" fill="#4C5862" ${S_}/><path d="M50 40 L76 26 L102 40Z" fill="#CFE6EF" ${S_}/>${win(62,46)}${win(80,46)}<path d="M88 30 V22 H94 V34" fill="#3E4952" ${S_}/>`;
- if(k==='terrain')g=`<rect x="22" y="42" width="38" height="20" fill="#3E4952" ${S_}/><rect x="58" y="34" width="34" height="28" fill="#4C5862" ${S_}/><path d="M92 62 V48 A16 16 0 0 1 124 48 V62Z" fill="#5A6770" ${S_}/>${win(28,48)}${win(42,48)}${win(64,42)}${win(78,42)}${win(103,50)}<path d="M74 34 V16" ${S_} fill="none"/><circle cx="74" cy="15" r="2.5" fill="#E0302A"/><path d="M128 62 L132 52 L136 62 M140 62 L143 54 L146 62" fill="none" ${S_}/>`;
- if(k==='enorme')g=`<rect x="6" y="46" width="30" height="16" fill="#3E4952" ${S_}/><rect x="34" y="36" width="30" height="26" fill="#4C5862" ${S_}/><rect x="62" y="28" width="22" height="34" fill="#3E4952" ${S_}/><path d="M84 62 V46 A18 18 0 0 1 120 46 V62Z" fill="#5A6770" ${S_}/><rect x="118" y="44" width="28" height="18" fill="#4C5862" ${S_}/>${win(12,51)}${win(40,42)}${win(50,42)}${win(40,52)}${win(67,34)}${win(67,46)}${win(96,48)}${win(124,49)}<path d="M73 28 V6 M66 14 H80 M68 20 H78" fill="none" ${S_}/><circle cx="73" cy="5" r="2.5" fill="#E0302A"/><path d="M130 44 L138 30 M126 36 A10 10 0 0 0 142 34Z" fill="#8A949C" ${S_}/>`;
- return `<svg viewBox="0 0 150 80" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${sky}${g}${base}</svg>`}
+function sizeIllu(k){return `<img src="img/size_${k}.webp" alt="" loading="eager">`}
 function sizePick(){
  const ico={t:'<svg viewBox="0 0 16 16"><circle cx="8" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 5v4l2.5 1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',p:'<svg viewBox="0 0 16 16"><rect x="4" y="1.5" width="8" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 12h2" stroke="currentColor" stroke-width="2"/></svg>'};
  screen(header('NOUVELLE PARTIE','CHOIX DU TERRAIN')+`
