@@ -719,56 +719,38 @@ G.infirm={t:'INFIRM.',n:'Infirmerie',c:'Rythme',time:35,d:'Touche l’écran pil
  api.on(c,'pointerdown',()=>{const p=peaks.find(p=>!p.hit&&!p.gone&&Math.abs(p.x-mx)<20);if(p){p.hit=true;ok++;spd+=22;flashG=1;beep(990,.05);upd();if(ok>=7)api.win()}else miss()})}};
 /* 3 CHAUF */
 G.chauf={t:'CHAUF',n:'Chaudière',c:'Rythme',time:35,d:'La pression chute en continu et la zone verte se déplace. Appuie sur le gros bouton rouge, par petits coups, pour garder la colonne dans la zone verte, au total 10 secondes. Trop bas : la chaudière gèle. Trop haut : surpression.',init(a,api){
- const K='#05080B',TX=180,T0=78,T1=324,TH=T1-T0,VX=180,VY=512;const py=p=>T1-p/100*TH;
- const ticks=Array.from({length:21},(_,i)=>{const yy=T1-i*TH/20;return `<path d="M${TX-34} ${yy} H${TX-(i%2?40:46)} M${TX+34} ${yy} H${TX+(i%2?40:46)}" stroke="#E8DCC0" stroke-width="${i%2?1.2:2}"/>${i%4===0?`<text x="${TX-52}" y="${yy+4}" text-anchor="end" font-family="Share Tech Mono" font-size="11" fill="#E8DCC0">${i/2}</text>`:''}`}).join('');
+ const K='#05080B',TX=180,T0=65.6,T1=293.0,TH=T1-T0,VX=180,VY=438,GL=154.5,GR=204.9,GW=GR-GL;const py=p=>T1-p/100*TH;
  a.innerHTML=`<svg viewBox="0 0 360 560" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
- <defs><radialGradient id="cglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FF7A2A" stop-opacity=".55"/><stop offset="1" stop-color="#FF7A2A" stop-opacity="0"/></radialGradient>
- <linearGradient id="liq" x1="0" x2="1"><stop offset="0" stop-color="#B8300E"/><stop offset=".45" stop-color="#FF7A2A"/><stop offset="1" stop-color="#C2400E"/></linearGradient>
- <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#0A0E12"/><stop offset=".5" stop-color="#18222A"/><stop offset="1" stop-color="#0A0E12"/></linearGradient>
+ <defs><linearGradient id="liq" x1="0" x2="1"><stop offset="0" stop-color="#B8300E"/><stop offset=".45" stop-color="#FF7A2A"/><stop offset="1" stop-color="#C2400E"/></linearGradient>
  <filter id="vglo" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter></defs>
- <rect width="360" height="560" fill="#16120F"/>${Array.from({length:14},(_,r)=>Array.from({length:7},(_,k)=>`<rect x="${k*56-(r%2?28:0)}" y="${r*40}" width="54" height="38" fill="${(r+k)%3?'#2A1F19':'#2F231C'}" stroke="#120D0A" stroke-width="2"/>`).join('')).join('')}
- <ellipse cx="60" cy="520" rx="120" ry="80" fill="url(#cglow)" class="flick"/><ellipse cx="300" cy="520" rx="120" ry="80" fill="url(#cglow)" class="flick" style="animation-delay:.6s"/>
- <path d="M24 560 V120 Q24 92 52 92 H120" fill="none" stroke="${K}" stroke-width="20"/><path d="M24 560 V120 Q24 92 52 92 H120" fill="none" stroke="#B8703E" stroke-width="15"/><path d="M19 560 V120 Q19 88 52 87 H120" fill="none" stroke="#F2B88A" stroke-width="3"/>
- <path d="M336 560 V190 Q336 162 308 162 H236" fill="none" stroke="${K}" stroke-width="20"/><path d="M336 560 V190 Q336 162 308 162 H236" fill="none" stroke="#B8703E" stroke-width="15"/><path d="M331 560 V190 Q331 158 308 157" fill="none" stroke="#F2B88A" stroke-width="3"/>
- ${[[24,240],[24,380],[336,280],[336,400]].map(([x,y])=>`<rect x="${x-14}" y="${y-6}" width="28" height="12" fill="#8A5530" stroke="${K}" stroke-width="2"/>`).join('')}
- <rect x="${TX-62}" y="${T0-26}" width="124" height="${TH+52}" rx="14" fill="#8A6A3A" stroke="${K}" stroke-width="3.5"/><rect x="${TX-58}" y="${T0-22}" width="10" height="${TH+44}" rx="5" fill="#D9B87A"/><rect x="${TX+48}" y="${T0-22}" width="10" height="${TH+44}" rx="5" fill="#5A4220"/>
- ${[T0-14,T1+14].map(yy=>[TX-50,TX+50].map(xx=>`<circle cx="${xx}" cy="${yy}" r="4" fill="#E8C98A" stroke="${K}" stroke-width="1.2"/>`).join('')).join('')}
- <rect x="${TX-46}" y="${T0-6}" width="92" height="${TH+12}" fill="#2A1C10" stroke="${K}" stroke-width="2"/>${ticks}
- <rect x="${TX-26}" y="${T0}" width="52" height="${TH}" rx="6" fill="url(#glass)" stroke="${K}" stroke-width="3"/>
- <rect x="${TX-24}" y="${T0+2}" width="48" height="${TH*.08}" fill="#E0302A" opacity=".45"/><rect x="${TX-24}" y="${T1-TH*.1}" width="48" height="${TH*.1-2}" fill="#9CD8EE" opacity=".35"/>
- <g id="zone"><rect id="zr" x="${TX-24}" y="0" width="48" height="10" fill="#4BE38A" opacity=".22"/><path id="zb" d="" fill="none" stroke="#4BE38A" stroke-width="3.5"/></g>
- <rect id="liq" x="${TX-20}" y="${T1}" width="40" height="0" rx="4" fill="url(#liq)"/><rect id="men" x="${TX-20}" y="${T1}" width="40" height="5" rx="2.5" fill="#FFD3A0"/>
+ <rect width="360" height="560" fill="#0B0D10"/>
+ <image href="img/chauf_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/>
+ <rect x="${GL+2}" y="${T0-4}" width="${GW-4}" height="${TH*.08+4}" fill="#E0302A" opacity=".4"/><rect x="${GL+2}" y="${T1-TH*.1}" width="${GW-4}" height="${TH*.1+4}" fill="#9CD8EE" opacity=".3"/>
+ <g id="zone"><rect id="zr" x="${GL+2}" y="0" width="${GW-4}" height="10" fill="#4BE38A" opacity=".25"/><path id="zb" d="" fill="none" stroke="#4BE38A" stroke-width="4"/></g>
+ <rect id="liq" x="${GL+5}" y="${T1}" width="${GW-10}" height="0" rx="4" fill="url(#liq)"/><rect id="men" x="${GL+5}" y="${T1}" width="${GW-10}" height="5" rx="2.5" fill="#FFD3A0"/>
  <g id="bub" pointer-events="none"></g>
- <path d="M${TX-18} ${T0+8} V${T1-8}" stroke="#FFFFFF" stroke-width="5" opacity=".18" stroke-linecap="round"/><path d="M${TX-10} ${T0+8} V${T0+120}" stroke="#FFFFFF" stroke-width="2" opacity=".25"/>
- <rect x="${TX-14}" y="${T0-46}" width="28" height="22" rx="3" fill="#8A6A3A" stroke="${K}" stroke-width="2.5"/><rect x="${TX-6}" y="${T0-62}" width="12" height="18" fill="#5A4220" stroke="${K}" stroke-width="2"/><circle cx="${TX}" cy="${T0-64}" r="5" fill="#E0302A" stroke="${K}" stroke-width="1.5"/>
- 
+ <path d="M${GL+9} ${T0} V${T1}" stroke="#FFFFFF" stroke-width="4" opacity=".14" stroke-linecap="round"/>
  <g id="smoke" pointer-events="none"></g>
- <rect x="10" y="190" width="86" height="88" rx="6" fill="#26323A" stroke="${K}" stroke-width="2.5"/><text x="53" y="208" text-anchor="middle" font-family="Allerta Stencil" font-size="9" fill="#C4DEE9">STABILISÉ</text><rect x="18" y="214" width="70" height="30" fill="${K}"/><text id="st" x="53" y="236" text-anchor="middle" font-family="Share Tech Mono" font-size="19" fill="#4BE38A">0,0</text><text x="53" y="258" text-anchor="middle" font-family="Share Tech Mono" font-size="9" fill="#86AEC1">SUR 10 s</text><rect x="18" y="264" width="70" height="6" fill="${K}"/><rect id="sb" x="18" y="264" width="0" height="6" fill="#4BE38A"/>
- <rect x="264" y="200" width="86" height="56" rx="6" fill="#26323A" stroke="${K}" stroke-width="2.5"/><text x="307" y="218" text-anchor="middle" font-family="Allerta Stencil" font-size="9" fill="#C4DEE9">FOYER</text><circle id="f1" cx="285" cy="238" r="6" fill="#33404A" stroke="${K}"/><circle id="f2" cx="307" cy="238" r="6" fill="#33404A" stroke="${K}"/><circle id="f3" cx="329" cy="238" r="6" fill="#33404A" stroke="${K}"/>
- <path d="M0 ${VY} H360" stroke="${K}" stroke-width="26"/><path d="M0 ${VY} H360" stroke="#B8703E" stroke-width="20"/><path d="M0 ${VY-7} H360" stroke="#F2B88A" stroke-width="3"/>
- <g id="vbtn" style="cursor:pointer"><rect x="${VX-74}" y="${VY-162}" width="148" height="176" fill="transparent"/>
- <circle class="vglow" cx="${VX}" cy="${VY-66}" r="50" fill="#F2B21E" opacity=".3" filter="url(#vglo)"/>
- <rect x="${VX-62}" y="${VY-124}" width="124" height="124" rx="10" fill="#3A4852" stroke="${K}" stroke-width="3"/><rect x="${VX-62}" y="${VY-124}" width="124" height="5" rx="3" fill="#6E7A84"/><rect x="${VX-54}" y="${VY-116}" width="108" height="108" rx="6" fill="none" stroke="#F2B21E" stroke-width="3" stroke-dasharray="10 6"/>${[[-50,-112],[50,-112],[-50,-12],[50,-12]].map(([dx,dy])=>`<circle cx="${VX+dx}" cy="${VY+dy}" r="4" fill="#8A949C" stroke="${K}" stroke-width="1.2"/>`).join('')}
- 
- <ellipse cx="${VX}" cy="${VY-56}" rx="46" ry="36" fill="#26323A" stroke="${K}" stroke-width="3"/><ellipse cx="${VX}" cy="${VY-56}" rx="38" ry="29" fill="${K}"/>
- <g id="cap" style="transition:transform .07s ease-out"><path d="M${VX-34} ${VY-74} V${VY-60} A34 26 0 0 0 ${VX+34} ${VY-60} V${VY-74}Z" fill="#A8180F" stroke="${K}" stroke-width="2.5"/><ellipse cx="${VX}" cy="${VY-74}" rx="34" ry="26" fill="#E0302A" stroke="${K}" stroke-width="2.5"/><ellipse cx="${VX-10}" cy="${VY-82}" rx="16" ry="8" fill="#FF9A94" opacity=".85"/><ellipse cx="${VX+12}" cy="${VY-66}" rx="14" ry="6" fill="#B8201A" opacity=".6"/></g>
- <path d="M${VX-46} ${VY-56} A46 36 0 0 0 ${VX+46} ${VY-56} L${VX+38} ${VY-56} A38 29 0 0 1 ${VX-38} ${VY-56}Z" fill="#3A4852" stroke="${K}" stroke-width="2"/><path d="M${VX-40} ${VY-44} A44 32 0 0 0 ${VX+20} ${VY-24}" fill="none" stroke="#6E7A84" stroke-width="2"/>
- <rect x="${VX-56}" y="${VY-160}" width="112" height="24" fill="${K}" stroke="#F2B21E" stroke-width="2"/><text x="${VX}" y="${VY-143}" text-anchor="middle" font-family="Allerta Stencil" font-size="12" fill="#F2B21E">TOUCHE ICI</text><path class="harrow" d="M${VX-8} ${VY-132} L${VX} ${VY-125} L${VX+8} ${VY-132}" fill="none" stroke="#F2B21E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
- <g class="haze" pointer-events="none"><ellipse cx="80" cy="140" rx="120" ry="40" fill="#CFC6BC" opacity=".08"/><ellipse cx="280" cy="300" rx="140" ry="46" fill="#CFC6BC" opacity=".07"/><ellipse cx="160" cy="420" rx="160" ry="40" fill="#CFC6BC" opacity=".06"/></g>
+ <text x="69" y="200" text-anchor="middle" font-family="Allerta Stencil" font-size="8" fill="#C4DEE9">STABILISÉ</text><text id="st" x="69" y="224" text-anchor="middle" font-family="Share Tech Mono" font-size="20" fill="#4BE38A">0,0</text><rect x="38" y="231" width="62" height="5" fill="#16202A"/><rect id="sb" x="38" y="231" width="0" height="5" fill="#4BE38A"/>
+ ${[264.5,290.4,315.2].map((x,k)=>`<image id="f${k+1}" href="img/ch_lamp_off.webp" x="${x-12.5}" y="${218.8-12.5}" width="25" height="25"/>`).join('')}
+ <g id="vbtn" style="cursor:pointer"><rect x="30" y="300" width="300" height="260" fill="transparent"/>
+ <circle class="vglow" cx="${VX}" cy="380" r="58" fill="#F2B21E" opacity=".3" filter="url(#vglo)"/>
+ <image id="bR" href="img/ch_btn.webp" x="${VX-52}" y="327" width="104" height="108"/><image id="bP" href="img/ch_btn_on.webp" x="${VX-52}" y="330" width="104" height="102" style="display:none"/>
+ <text x="${VX}" y="510" text-anchor="middle" font-family="Allerta Stencil" font-size="13" fill="#F2B21E">APPUIE PAR PETITS COUPS</text><path class="harrow" d="M${VX-8} 482 L${VX} 475 L${VX+8} 482" fill="none" stroke="#F2B21E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
  </svg>`;
- const liq=a.querySelector('#liq'),men=a.querySelector('#men'),zr=a.querySelector('#zr'),zb=a.querySelector('#zb'),st=a.querySelector('#st'),sb=a.querySelector('#sb'),cap=a.querySelector('#cap'),sm=a.querySelector('#smoke'),bub=a.querySelector('#bub'),fl=[1,2,3].map(i=>a.querySelector('#f'+i));
+ const liq=a.querySelector('#liq'),men=a.querySelector('#men'),zr=a.querySelector('#zr'),zb=a.querySelector('#zb'),st=a.querySelector('#st'),sb=a.querySelector('#sb'),bR=a.querySelector('#bR'),bP=a.querySelector('#bP'),sm=a.querySelector('#smoke'),bub=a.querySelector('#bub'),fl=[1,2,3].map(i=>a.querySelector('#f'+i));
  let p=55,ins=0,v=0,t=0,rot=0,bt=0;const NS='http://www.w3.org/2000/svg';
- const puff=(xx,yy,c,big)=>{const el=document.createElementNS(NS,'circle');el.setAttribute('cx',xx+rnd(-4,4));el.setAttribute('cy',yy);el.setAttribute('r',big?rnd(10,16):rnd(6,10));el.setAttribute('fill',c);el.setAttribute('class','gpuff');sm.appendChild(el);setTimeout(()=>el.remove(),1500)};
+ const puff=(xx,yy,c,big)=>{const el=document.createElementNS(NS,'image'),r=big?rnd(14,20):rnd(9,13);el.setAttribute('href',Math.random()<.5?'img/ch_smoke1.webp':'img/ch_smoke2.webp');el.setAttribute('x',xx+rnd(-4,4)-r);el.setAttribute('y',yy-r);el.setAttribute('width',r*2);el.setAttribute('height',r*2);el.setAttribute('opacity',c==='#B9B0A6'?.6:1);el.setAttribute('class','gpuff');sm.appendChild(el);setTimeout(()=>el.remove(),1500)};
  api.info('Garde la colonne de pression dans la zone verte qui bouge.');
  api.loop(dt=>{t+=dt;const zc=55+Math.sin(t*.7)*14+Math.sin(t*1.9)*4,lo=zc-14,hi=zc+14;
   v-=34*dt;p+=v*dt;v*=.94;p-=10*dt;if(p<0)p=0;const ly=py(Math.min(p,100));liq.setAttribute('y',ly);liq.setAttribute('height',Math.max(0,T1-ly));men.setAttribute('y',ly-2);
-  zr.setAttribute('y',py(hi));zr.setAttribute('height',py(lo)-py(hi));zb.setAttribute('d',`M${TX-32} ${py(hi)} H${TX-24} V${py(lo)} H${TX-32} M${TX+32} ${py(hi)} H${TX+24} V${py(lo)} H${TX+32}`);
-  const inside=p>=lo&&p<=hi;if(inside){ins+=dt;st.textContent=ins.toFixed(1).replace('.',',');sb.setAttribute('width',Math.min(70,ins/10*70));if(ins>=10)api.win()}
-  liq.setAttribute('opacity',inside?1:.85);fl.forEach((f,i)=>f.setAttribute('fill',p>25+i*25?'#FF6A1A':'#33404A'));
-  if(Math.random()<dt*(1+p/12))puff(TX,T0-66,'#DCE2E5',p>70);if(Math.random()<dt*1.2)puff(120,92,'#B9B0A6',false);
-  bt-=dt;if(bt<=0&&p>8){bt=.25;const b=document.createElementNS(NS,'circle');b.setAttribute('cx',TX+rnd(-14,14));b.setAttribute('cy',T1-6);b.setAttribute('r',rnd(1.5,3.5));b.setAttribute('fill','#FFD3A0');b.setAttribute('class','cbub');b.style.setProperty('--h',(-(T1-ly-10))+'px');bub.appendChild(b);setTimeout(()=>b.remove(),1300)}
+  zr.setAttribute('y',py(hi));zr.setAttribute('height',py(lo)-py(hi));zb.setAttribute('d',`M${GL-6} ${py(hi)} H${GL+2} V${py(lo)} H${GL-6} M${GR+6} ${py(hi)} H${GR-2} V${py(lo)} H${GR+6}`);
+  const inside=p>=lo&&p<=hi;if(inside){ins+=dt;st.textContent=ins.toFixed(1).replace('.',',');sb.setAttribute('width',Math.min(62,ins/10*62));if(ins>=10)api.win()}
+  liq.setAttribute('opacity',inside?1:.85);fl.forEach((f,i)=>{const on=p>25+i*25;if(f._on!==on){f._on=on;f.setAttribute('href',on?'img/ch_lamp_on.webp':'img/ch_lamp_off.webp')}});
+  if(Math.random()<dt*(1+p/12))puff(TX+4,4,'#DCE2E5',p>70);if(Math.random()<dt*1.2)puff(150,10,'#B9B0A6',false);
+  bt-=dt;if(bt<=0&&p>8){bt=.25;const b=document.createElementNS(NS,'circle');b.setAttribute('cx',TX+rnd(-16,16));b.setAttribute('cy',T1-6);b.setAttribute('r',rnd(1.5,3.5));b.setAttribute('fill','#FFD3A0');b.setAttribute('class','cbub');b.style.setProperty('--h',(-(T1-ly-10))+'px');bub.appendChild(b);setTimeout(()=>b.remove(),1300)}
   if(p<10)api.fail('Plus de pression');if(p>92)api.fail('Surpression')});
- api.on(a.querySelector('#vbtn'),'pointerdown',()=>{v+=26;cap.style.transform='translateY(11px)';api.after(()=>cap.style.transform='translateY(0)',90);beep(300,.04,'triangle');buzz(15);puff(VX+70,VY-30,'#DCE2E5',true)})}};
+ api.on(a.querySelector('#vbtn'),'pointerdown',()=>{v+=26;bR.style.display='none';bP.style.display='';api.after(()=>{bR.style.display='';bP.style.display='none'},110);beep(300,.04,'triangle');buzz(15);puff(VX+72,400,'#DCE2E5',true)})}};
 
 /* 4 MOTEUR */
 G.moteur={t:'MOTEUR',n:'Motoneige',c:'Mémoire',time:23,d:'Regarde la séquence d’allumage des voyants du guidon, puis reproduis-la en les touchant. Trois séquences de plus en plus longues. Une erreur et le moteur cale.',init(a,api){
