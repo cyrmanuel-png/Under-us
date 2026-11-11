@@ -718,7 +718,7 @@ G.infirm={t:'INFIRM.',n:'Infirmerie',c:'Rythme',time:35,d:'Touche l’écran pil
  api.on(c,'pointerdown',()=>{const p=peaks.find(p=>!p.hit&&!p.gone&&Math.abs(p.x-mx)<20);if(p){p.hit=true;ok++;spd+=22;flashG=1;beep(990,.05);upd();if(ok>=7)api.win()}else miss()})}};
 /* 3 CHAUF */
 G.chauf={t:'CHAUF',n:'Chaudière',c:'Rythme',time:35,d:'La pression chute en continu et la zone verte se déplace. Appuie sur le gros bouton rouge, par petits coups, pour garder la colonne dans la zone verte, au total 10 secondes. Trop bas : la chaudière gèle. Trop haut : surpression.',init(a,api){
- const K='#05080B',TX=180,T0=65.6,T1=293.0,TH=T1-T0,VX=180,VY=438,GL=154.5,GR=204.9,GW=GR-GL;const py=p=>T1-p/100*TH;
+ const K='#05080B',TX=180,T0=84.5,T1=280.1,TH=T1-T0,VX=180,VY=438,GL=155.8,GR=204.5,GW=GR-GL;const py=p=>T1-p/100*TH;
  a.innerHTML=`<svg viewBox="0 0 360 560" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
  <defs><linearGradient id="liq" x1="0" x2="1"><stop offset="0" stop-color="#B8300E"/><stop offset=".45" stop-color="#FF7A2A"/><stop offset="1" stop-color="#C2400E"/></linearGradient>
  <filter id="vglo" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter></defs>
@@ -730,8 +730,8 @@ G.chauf={t:'CHAUF',n:'Chaudière',c:'Rythme',time:35,d:'La pression chute en con
  <g id="bub" pointer-events="none"></g>
  <path d="M${GL+9} ${T0} V${T1}" stroke="#FFFFFF" stroke-width="4" opacity=".14" stroke-linecap="round"/>
  <g id="smoke" pointer-events="none"></g>
- <text x="69" y="200" text-anchor="middle" font-family="Allerta Stencil" font-size="8" fill="#C4DEE9">STABILISÉ</text><text id="st" x="69" y="224" text-anchor="middle" font-family="Share Tech Mono" font-size="20" fill="#4BE38A">0,0</text><rect x="38" y="231" width="62" height="5" fill="#16202A"/><rect id="sb" x="38" y="231" width="0" height="5" fill="#4BE38A"/>
- ${[264.5,290.4,315.2].map((x,k)=>`<image id="f${k+1}" href="img/ch_lamp_off.webp" x="${x-12.5}" y="${218.8-12.5}" width="25" height="25"/>`).join('')}
+ <text x="64" y="200" text-anchor="middle" font-family="Allerta Stencil" font-size="8" fill="#C4DEE9">STABILISÉ</text><text id="st" x="64" y="224" text-anchor="middle" font-family="Share Tech Mono" font-size="20" fill="#4BE38A">0,0</text><rect x="33" y="231" width="62" height="5" fill="#16202A"/><rect id="sb" x="33" y="231" width="0" height="5" fill="#4BE38A"/>
+ ${[266.9,297.7,328.2].map((x,k)=>`<image id="f${k+1}" href="img/ch_lamp_off.webp" x="${x-12.5}" y="${219.5-12}" width="24" height="24"/>`).join('')}
  <g id="vbtn" style="cursor:pointer"><rect x="30" y="300" width="300" height="260" fill="transparent"/>
  <circle class="vglow" cx="${VX}" cy="380" r="58" fill="#F2B21E" opacity=".3" filter="url(#vglo)"/>
  <image id="bR" href="img/ch_btn.webp" x="${VX-52}" y="327" width="104" height="108"/><image id="bP" href="img/ch_btn_on.webp" x="${VX-52}" y="330" width="104" height="102" style="display:none"/>
@@ -753,11 +753,11 @@ G.chauf={t:'CHAUF',n:'Chaudière',c:'Rythme',time:35,d:'La pression chute en con
 
 /* 4 MOTEUR */
 G.moteur={t:'MOTEUR',n:'Motoneige',c:'Mémoire',time:23,d:'Regarde la séquence d’allumage des voyants du guidon, puis reproduis-la en les touchant. Trois séquences de plus en plus longues. Une erreur et le moteur cale.',init(a,api){
- const cols=['#9CD8EE','#FF6A1A','#4BE38A','#E0302A'],labs=['PHARE','CHAUFFE','STARTER','ALLUM.'],tones=[440,554,659,784],LX=[62.3,140.6,219,297.4],LY=324.2,NM=['phare','chauffe','starter','allum'],DS=57,DO=DS*1.4,K='#05080B';
+ const cols=['#9CD8EE','#FF6A1A','#4BE38A','#E0302A'],labs=['PHARE','CHAUFFE','STARTER','ALLUM.'],tones=[440,554,659,784],LX=[63.2,140.6,218.6,296.0],LY=324.5,NM=['phare','chauffe','starter','allum'],DS=57,DO=DS*1.4,K='#05080B';
  const lamp=(i)=>`<g class="lp" data-i="${i}" style="cursor:pointer"><circle cx="${LX[i]}" cy="${LY}" r="38" fill="transparent"/><image class="off" href="img/mt_${NM[i]}_off.webp" x="${LX[i]-DS/2}" y="${LY-DS/2}" width="${DS}" height="${DS}"/><image class="on" href="img/mt_${NM[i]}_on.webp" x="${LX[i]-DO/2}" y="${LY-DO/2}" width="${DO}" height="${DO}" style="display:none"/></g>`;
  a.innerHTML=`<svg viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
  <image href="img/moto_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/>
- <text x="136.6" y="419" text-anchor="middle" font-family="Share Tech Mono" font-size="17" fill="#FF9A4A" id="rpm">0000</text>
+ <text x="129" y="425" text-anchor="middle" font-family="Share Tech Mono" font-size="17" fill="#FF9A4A" id="rpm">0000</text>
  ${[0,1,2,3].map(lamp).join('')}
  <g id="ban"><rect id="banR" x="40" y="196" width="280" height="56" rx="10" fill="#05080B" fill-opacity=".88" stroke="#9CD8EE" stroke-width="4"/><g id="banI" transform="translate(0 -76)"><path d="M64 300 Q82 282 100 300 Q82 318 64 300Z" fill="none" stroke="#9CD8EE" stroke-width="4"/><circle cx="82" cy="300" r="6" fill="#9CD8EE"/></g><text id="banT" x="198" y="238" text-anchor="middle" font-family="Barlow Condensed,Impact,sans-serif" font-weight="600" font-size="34" letter-spacing="3" fill="#9CD8EE">REGARDE</text></g><g id="banA" class="harrow">${LX.map(lx=>`<path d="M${lx-9} 262 L${lx} 272 L${lx+9} 262" fill="none" stroke="#9CD8EE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}</g>
  </svg><div class="statrow" style="position:absolute;left:0;right:0;top:0"><span id="ph">REGARDE</span><span id="rd"></span></div>`;
@@ -775,10 +775,10 @@ G.sonde={t:'SONDE',n:'Relevés',c:'Mémoire',time:60,d:'Les quatre capteurs affi
   (x,y)=>`<path d="M${x} ${y+20} V${y-6}" stroke="${K}" stroke-width="3"/><g class="spin" style="animation-duration:1.2s;transform-box:view-box;transform-origin:${x}px ${y-6}px">${[0,120,240].map(r=>`<g transform="rotate(${r} ${x} ${y-6})"><path d="M${x} ${y-6} H${x+16}" stroke="${K}" stroke-width="2.5"/><path d="M${x+16} ${y-12} A6 6 0 0 1 ${x+16} ${y}" fill="#F2F4F5" stroke="${K}" stroke-width="2"/></g>`).join('')}</g><circle cx="${x}" cy="${y-6}" r="3" fill="#8A949C" stroke="${K}"/>`,
   (x,y)=>`<circle cx="${x}" cy="${y}" r="20" fill="#E8DCC0" stroke="${K}" stroke-width="3"/><circle cx="${x}" cy="${y}" r="23" fill="none" stroke="#8A949C" stroke-width="3"/>${[-120,-60,0,60,120].map(r=>`<path d="M${x} ${y-17} V${y-12}" stroke="${K}" stroke-width="1.5" transform="rotate(${r} ${x} ${y})"/>`).join('')}<path class="wob" d="M${x} ${y+2} L${x} ${y-14}" stroke="#E0302A" stroke-width="2.5" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="2.5" fill="${K}"/>`,
   (x,y)=>`<path d="M${x} ${y-24} C${x+14} ${y-6} ${x+16} ${y+4} ${x+16} ${y+8} A16 16 0 0 1 ${x-16} ${y+8} C${x-16} ${y+4} ${x-14} ${y-6} ${x} ${y-24}Z" fill="#3E9BE0" stroke="${K}" stroke-width="2.5"/><path d="M${x-8} ${y+2} Q${x-9} ${y+12} ${x-2} ${y+16}" stroke="#BDE3FA" stroke-width="3" fill="none" stroke-linecap="round"/><text x="${x+4}" y="${y+13}" text-anchor="middle" font-family="Allerta Stencil" font-size="11" fill="${K}">%</text>`];
- const HO=[[54.7,211.5],[218.8,211.5],[54.7,306.6],[218.8,306.6]],DW=[[129,211.7],[293,211.7],[129,306.8],[293,306.8]],TI=[[98.7,172],[263,172],[98.7,267.5],[263,267.5]],IM=['thermo','anemo','baro','goutte'];
+ const HO=[[46.4,228.7],[219.4,228.7],[46.4,323.2],[219.4,323.2]],DW=[[123.3,222.1],[296.4,222.1],[123.3,316.6],[296.4,316.6]],TI=[[94.5,183],[267.5,183],[94.5,277.5],[267.5,277.5]],IM=['thermo','anemo','baro','goutte'];
  const inst=(i)=>{const [hx,hy]=HO[i],[x,y]=DW[i],[tx,ty]=TI[i];return `<g class="ins" data-i="${i}" style="cursor:pointer">
-  <rect x="${hx-36}" y="${ty-14}" width="160" height="96" fill="transparent"/>
-  <text x="${tx}" y="${ty+3.5}" text-anchor="middle" font-family="Allerta Stencil" font-size="9.5" fill="#E3F1F7" letter-spacing=".6">${L[i]}</text>
+  <rect x="${hx-30}" y="${ty-14}" width="166" height="96" fill="transparent"/>
+  <text x="${tx}" y="${ty+3.5}" text-anchor="middle" font-family="Allerta Stencil" font-size="9.5" fill="#3A2208" letter-spacing=".6">${L[i]}</text>
   <image href="img/sd_${IM[i]}.webp" x="${hx-24.5}" y="${hy-24.5}" width="49" height="49"/>
   <rect x="${x-36}" y="${y-22}" width="72" height="44" fill="#2E1C06" opacity=".85"/><rect x="${x-36}" y="${y-22}" width="72" height="9" fill="#000" opacity=".5"/><rect x="${x-36}" y="${y+13}" width="72" height="9" fill="#000" opacity=".5"/>
   <rect class="halo" id="h${i}" x="${x-30}" y="${y-20}" width="60" height="40" fill="#FFB04A" opacity=".5" filter="url(#bl)"/><text class="dg neon" id="d${i}" x="${x}" y="${y+15}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="44" fill="#FFE08A" stroke="#FFF6D0" stroke-width="1" filter="url(#glo)">0</text>
@@ -788,10 +788,10 @@ G.sonde={t:'SONDE',n:'Relevés',c:'Mémoire',time:60,d:'Les quatre capteurs affi
  a.innerHTML=`<svg viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
  <defs><filter id="glo" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="b1"/><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b2"/><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="b3"/><feMerge><feMergeNode in="b3"/><feMergeNode in="b2"/><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="bl" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter></defs>
  <image href="img/sonde_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/>
- <text id="msg" x="180" y="138.5" text-anchor="middle" font-family="Share Tech Mono" font-size="15" fill="#4BE38A">MÉMORISE · 3</text>
+ <text id="msg" x="180" y="153" text-anchor="middle" font-family="Share Tech Mono" font-size="15" fill="#4BE38A">MÉMORISE · 3</text>
  ${[0,1,2,3].map(inst).join('')}
- <polyline points="46,432 68,418 90,424 112,408 134,414 156,402 178,410 200,404" fill="none" stroke="#C0302A" stroke-width="2"/>
- <g id="ok" style="cursor:pointer;opacity:.45"><circle cx="282.8" cy="408.7" r="46" fill="transparent"/><image id="okR" href="img/sd_btn.webp" x="${282.8-39}" y="${408.7-39}" width="78" height="78"/><image id="okP" href="img/sd_btn_on.webp" x="${282.8-39}" y="${408.7-39}" width="78" height="78" style="display:none"/><text x="282.8" y="${408.7+4}" text-anchor="middle" font-family="Allerta Stencil" font-size="9.5" fill="#2A1004">VALIDER</text></g>
+ <polyline points="50,428 72,414 94,420 116,404 138,410 160,398 182,406 202,400" fill="none" stroke="#C0302A" stroke-width="2"/>
+ <g id="ok" style="cursor:pointer;opacity:.45"><circle cx="290" cy="409.4" r="46" fill="transparent"/><image id="okR" href="img/sd_btn.webp" x="${290-41}" y="${409.4-41}" width="82" height="82"/><image id="okP" href="img/sd_btn_on.webp" x="${290-41}" y="${409.4-41}" width="82" height="82" style="display:none"/><text x="290" y="${409.4+4}" text-anchor="middle" font-family="Allerta Stencil" font-size="9.5" fill="#2A1004">VALIDER</text></g>
  </svg><div class="statrow" style="position:absolute;left:24px;right:24px;top:0"><span>JUSTES <span id="w"></span></span><span>FAUX <span id="f"></span></span></div>`;
  const ins=[...a.querySelectorAll('.ins')],dg=[0,1,2,3].map(i=>a.querySelector('#d'+i)),msg=a.querySelector('#msg'),ok=a.querySelector('#ok'),taps=[...a.querySelectorAll('.tap')];
  let wins=0,fails=0,v=[],u=[],phase='mem';
@@ -807,7 +807,7 @@ G.sonde={t:'SONDE',n:'Relevés',c:'Mémoire',time:60,d:'Les quatre capteurs affi
 
 /* 6 LABO */
 G.labo={t:'LABO',n:'Échantillons',c:'Mémoire',time:38,noDeco:true,d:'Touche les éprouvettes deux par deux pour révéler leur contenu et retrouver les paires d’échantillons identiques. 7 erreurs maximum.',init(a,api){
- const deck=shuffle([0,1,2,3,4,5,0,1,2,3,4,5]),CX=[76.6,146.2,215.5,285.1],SH=[180.7,277.8,374.6],TH=88,TW=TH*172/614;
+ const deck=shuffle([0,1,2,3,4,5,0,1,2,3,4,5]),CX=[76.6,146.2,215.5,285.1],SH=[180.7,277.8,374.6],TH=88,TW=TH*170/530;
  const tube=(k,i)=>{const x=CX[i%4],y=SH[Math.floor(i/4)]-3-TH;return `<g class="lt" data-i="${i}" style="cursor:pointer"><rect x="${x-32}" y="${y-4}" width="64" height="${TH+8}" fill="transparent"/><ellipse class="okg" cx="${x}" cy="${y+TH-2}" rx="22" ry="6" fill="#4BE38A" opacity="0" filter="url(#lbl)"/><image class="cl" href="img/lb_closed.webp" x="${x-TW/2}" y="${y}" width="${TW}" height="${TH}"/><image class="op" href="img/lb_t${k}.webp" x="${x-TW/2}" y="${y}" width="${TW}" height="${TH}" style="display:none"/></g>`};
  a.innerHTML=`<svg viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%"><defs><filter id="lbl" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="4"/></filter></defs><image href="img/labo_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/>${deck.map(tube).join('')}<text x="180" y="449" text-anchor="middle" font-family="Allerta Stencil" font-size="12" fill="#C4DEE9" letter-spacing="2">LABO · GLACE</text></svg><div class="statrow" style="position:absolute;left:0;right:0;top:0"><span>PAIRES <span id="p" class="mono" style="font-size:16px;color:var(--vert)">0/6</span></span><span>ERREURS <span id="e"></span></span></div>`;
  const bs=[...a.querySelectorAll('.lt')],pE=a.querySelector('#p'),eE=a.querySelector('#e');let up=[],err=0,pairs=0,lock=false;eE.innerHTML=pips(0,7,'ko');
@@ -816,12 +816,12 @@ G.labo={t:'LABO',n:'Échantillons',c:'Mémoire',time:38,noDeco:true,d:'Touche le
  bs.forEach(b=>api.on(b,'pointerdown',()=>{if(lock||b._up||b._done)return;b._up=1;show(b,1);up.push(b);beep(520,.03);if(up.length===2){const [p,q]=up;if(deck[p.dataset.i]===deck[q.dataset.i]){[p,q].forEach(t=>{t._done=1;t.querySelector('.okg').setAttribute('opacity','.8')});up=[];pairs++;pE.textContent=pairs+'/6';beep(880);if(pairs===6)api.after(()=>api.win(),300)}else{lock=true;err++;eE.innerHTML=pips(err,7,'ko');beep(150);if(err>=7){api.fail('Échantillons mélangés');return}api.after(()=>{[p,q].forEach(t=>{t._up=0;show(t,0)});up=[];lock=false},700)}}}))}};
 /* 7 SAS */
 G.sas={t:'SAS',n:'Sas de sécurité',c:'Mémoire',time:55,d:'Trois portes blindées à ouvrir l’une après l’autre. Chaque code s’affiche 2 secondes, en grande partie recouvert de givre : devine les chiffres cachés et retape-le. 2 erreurs permises au total.',init(a,api){
- const K='#05080B',OX=98,OY=31.5,OW=164,OH=150,LW=OW*443/876,RW=OW-LW,KX=[104.3,179.7,255.3],KY=[277,327,377.2,427.6],KW=64,KH=45,SX=62.3,SY=204.9,SW=235.1,SH=41.4,LAB=[1,2,3,4,5,6,7,8,9,'C',0,'←'];
+ const K='#05080B',OX=96.1,OY=44.8,OW=169,OH=136,LW=OW*443/876,RW=OW-LW,KX=[114.5,179,243.8],KY=[284.8,329.5,374.6,420.3],KW=56,KH=42,SX=79.9,SY=216.1,SW=198.9,SH=37.8,LAB=[1,2,3,4,5,6,7,8,9,'C',0,'←'];
  const key=(n,q)=>{const x=KX[q%3],y=KY[Math.floor(q/3)];return `<g class="sk" data-n="${n}" style="cursor:pointer"><image class="kr" href="img/sas_key.webp" x="${x-KW/2}" y="${y-KH/2}" width="${KW}" height="${KH}" preserveAspectRatio="none"/><image class="kp" href="img/sas_key_on.webp" x="${x-KW/2}" y="${y-KH/2}" width="${KW}" height="${KH}" preserveAspectRatio="none" style="display:none"/><text x="${x}" y="${y+8}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="26" font-weight="700" style="fill:#E3F1F7;stroke:#05080B;stroke-width:3px;paint-order:stroke" pointer-events="none">${n}</text></g>`};
  a.innerHTML=`<svg viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
  <defs><clipPath id="sop"><rect x="${OX}" y="${OY}" width="${OW}" height="${OH}"/></clipPath><filter id="sgb" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6"/></filter></defs>
  <image href="img/sas_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/>
- <circle id="lh" cx="180" cy="15" r="20" fill="#E0302A" opacity=".45" filter="url(#sgb)"/>
+ <circle id="lh" cx="179" cy="23" r="20" fill="#E0302A" opacity=".45" filter="url(#sgb)"/>
  <g clip-path="url(#sop)"><g id="dpair" style="transition:opacity .4s"><g id="dl" style="transition:transform .7s cubic-bezier(.6,0,.3,1)"><image href="img/sas_l.webp" x="${OX}" y="${OY}" width="${LW}" height="${OH}" preserveAspectRatio="none"/></g><g id="dr" style="transition:transform .7s cubic-bezier(.6,0,.3,1)"><image href="img/sas_r.webp" x="${OX+LW}" y="${OY}" width="${RW}" height="${OH}" preserveAspectRatio="none"/></g>
  <text id="dn" x="180" y="${OY+OH-22}" text-anchor="middle" font-family="Allerta Stencil" font-size="15" style="fill:#E3F1F7;stroke:#05080B;stroke-width:3px;paint-order:stroke" letter-spacing="3">SAS 1</text></g></g>
  <g id="c"></g>
@@ -877,7 +877,7 @@ G.forage={t:'FORAGE',n:'Forage',c:'Adresse',time:22,noTimer:true,d:'Guide la for
    x.fillStyle='#E3F1F7';x.font='11px "Allerta Stencil",sans-serif';x.textAlign='center';x.fillText('ÉCHANTILLON',cxx,tj+46);x.textAlign='left'}
   const tipY=dy+TIP,cT=cx(y+TIP),dist=hw(y+TIP)-Math.abs(px-cT);warn=dist<14;
   {const hl=x.createRadialGradient(px,tipY+30,4,px,tipY+70,150);hl.addColorStop(0,'rgba(255,226,160,.38)');hl.addColorStop(1,'rgba(255,226,160,0)');x.fillStyle=hl;x.beginPath();x.moveTo(px-8,tipY);x.lineTo(px-110,h);x.lineTo(px+110,h);x.lineTo(px+8,tipY);x.closePath();x.fill()}
-  if(ok('fo_tete')&&ok('fo_tige')){const TW=15,TH=TW*621/80,off=(t*60)%TH;for(let j=-TH+off-((dy-24)%TH);j<dy-20;j+=TH)x.drawImage(IM.fo_tige,px-TW/2,j,TW,Math.min(TH,dy-18-j));const HW=26,HH=HW*559/200;x.drawImage(IM.fo_tete,px-HW/2,tipY-HH+2,HW,HH)}else{x.fillStyle='#1E262C';x.fillRect(px-2,-2,4,6);
+  if(ok('fo_tete')&&ok('fo_tige')){const TW=15,TH=TW*700/95,off=(t*60)%TH;for(let j=-TH+off-((dy-24)%TH);j<dy-20;j+=TH)x.drawImage(IM.fo_tige,px-TW/2,j,TW,Math.min(TH,dy-18-j));const HW=26,HH=HW*700/269;x.drawImage(IM.fo_tete,px-HW/2,tipY-HH+2,HW,HH)}else{x.fillStyle='#1E262C';x.fillRect(px-2,-2,4,6);
   x.fillStyle='#4C5862';x.fillRect(px-7,-2,14,dy-14);x.strokeStyle='#05080B';x.lineWidth=2;x.strokeRect(px-7,-2,14,dy-14);x.fillStyle='#8A949C';x.fillRect(px-5,-2,3,dy-14);
   const off=(t*90)%16;x.strokeStyle='#2A333A';x.lineWidth=2;for(let j=-16+off;j<dy-14;j+=16){x.beginPath();x.moveTo(px-7,j);x.lineTo(px+7,j+5);x.stroke()}
   x.fillStyle='#3A4852';x.fillRect(px-11,dy-16,22,10);x.strokeRect(px-11,dy-16,22,10);
