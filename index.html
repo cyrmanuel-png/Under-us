@@ -278,22 +278,22 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .overf .win .lab,.overf .win p{color:#fff;text-shadow:0 1px 0 #05080B,0 0 6px #05080B}
 .overf .win[style]{flex:none!important}
 .ovsp{flex:1 0 min(30vh,280px)}
-.frame.overf.ovh{background-color:#16082A}.frame.overf.ovc{background-color:#0E1C2A}
+.frame.overf.ovh{background-color:#7A819F}.frame.overf.ovc{background-color:#44597F}
 .overf.ovh .win h2{color:#F0DEFF;text-shadow:0 3px 0 #05080B,2px 0 0 #05080B,-2px 0 0 #05080B,0 -2px 0 #05080B,0 0 16px #8A2BE2}
 .overf .tally.over{flex:none;background:rgba(5,8,11,.55);padding:4px}
 
 /* v1.0 : cartes de rôle (pack 7) */
-.role{justify-content:flex-start;padding:77% 16px 16px;border:2px solid var(--encre)}
-.role.ch{background:#131D25 url(img/role_ch.webp) center top/cover no-repeat}
-.role.ho{background:#1A0B2C url(img/role_ho.webp) center top/cover no-repeat}
+.role{justify-content:flex-start;padding:93% 16px 16px;border:2px solid var(--encre)}
+.role.ch{background:#4A596C url(img/role_ch.webp) center top/cover no-repeat}
+.role.ho{background:#4D3F52 url(img/role_ho.webp) center top/cover no-repeat}
 .role h2,.role .lab,.role p{position:relative;text-shadow:0 2px 0 #05080B,0 0 8px #05080B}
 .role .mates{background:rgba(5,8,11,.6)}
 
 /* v1.1 chef de mission */
 .chefc{flex:1;min-height:0;container-type:size;display:flex;justify-content:center;align-items:flex-start;margin:0 -6px}
 .chefi{position:relative;width:min(100cqw,56.25cqh);height:min(100cqh,177.78cqw);background:url(img/chef_bg.webp) 0 0/100% 100% no-repeat}
-.chav{position:absolute;left:27.1%;top:11.1%;width:45.4%;aspect-ratio:1;border-radius:50%;box-shadow:inset 0 0 18px rgba(0,0,0,.7)}
-.chtx{position:absolute;left:9%;right:9%;top:47%;text-align:center;color:#DCEBF1}
+.chav{position:absolute;left:24.6%;top:11.1%;width:49.4%;aspect-ratio:1;border-radius:50%;box-shadow:inset 0 0 18px rgba(0,0,0,.7)}
+.chtx{position:absolute;left:9%;right:9%;top:53%;text-align:center;color:#DCEBF1}
 .chtx .lab{color:#F2B21E;letter-spacing:.18em}
 .chtx h2{margin:2px 0 6px;font-size:clamp(22px,4.6cqh,34px);color:#fff;text-shadow:0 3px 0 #05080B}
 .chtx p{font-size:clamp(12px,2.1cqh,15px);line-height:1.35;margin:0 0 6px}
@@ -556,7 +556,7 @@ function home(){
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
   </div>
-  <span class="ver">PROTO 1.7</span>
+  <span class="ver">PROTO 1.8</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};
