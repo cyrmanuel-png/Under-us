@@ -120,6 +120,11 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 
 /* v0.3 : rôles, vote, quarantaine */
+.ovl{overflow-y:auto;align-items:flex-start}.ovl>.pan{margin:auto 0}
+.st.hit .plate{animation:hitb .45s steps(2,end) infinite}
+@keyframes hitb{50%{filter:brightness(1.6) saturate(2);box-shadow:0 0 0 4px #E8321E,0 0 22px #E8321E}}
+.st{position:relative}.hitb{position:absolute;right:6px;top:22px;z-index:3;background:#E8321E;color:#fff;border:2px solid var(--encre);font-family:var(--f-titre);font-weight:600;font-size:18px;padding:1px 7px;transform:rotate(-6deg);box-shadow:2px 2px 0 var(--encre)}
+.gath{display:flex;flex-direction:column;align-items:center;gap:4px;background:#2A0E0C;border:1.5px solid var(--rouge);padding:8px}.gath .lab{color:#FFB0A8}
 .row2 .big{flex:1 1 0;width:auto;min-width:0}
 .row2 .big .in{font-size:17px;padding:11px 6px}
 .hrow{display:flex;align-items:center;gap:8px;background:var(--encre);padding:5px 8px;box-shadow:inset -1px -1px 0 #3E6378}
@@ -384,7 +389,7 @@ async function boot(){
 /* ===== Accueil ===== */
 let size='terrain';
 function home(){
- screen(header('UNDER US','PROTO 0.3')+`
+ screen(header('UNDER US','PROTO 0.4')+`
  <div class="tag">IL EST DÉJÀ PARMI VOUS</div>
  <div class="lab mute">TAILLE DE LA PARTIE</div>
  <div class="sizes">${Object.entries(SIZES).map(([k,v])=>`<button class="sz${k===size?' on':''}" data-k="${k}">${plate(`<b>${v.label}</b><span>${presetFor(k).plafond} min par système</span>`)}</button>`).join('')}</div>
@@ -496,7 +501,7 @@ function hubReveal(prev){
 async function startMission(){
  S('countdown');const c=C(),t0=now()+3500,ids=Object.keys(stations),max=maxMs(ids.length);const upd={};
  ids.forEach(id=>{upd['stations/'+id+'/endAt']=t0+Math.round(max*(c.departMin+Math.random()*Math.max(0,c.departMax-c.departMin))/100)});
- Object.assign(upd,{'meta/state':'game','meta/startAt':t0,'meta/coolUntil':t0,'meta/reason':null,'meta/pausedAt':null,'meta/revealOrder':null});
+ Object.assign(upd,{'meta/state':'game','meta/startAt':t0,'meta/coolUntil':t0+C().recharge*60000,'meta/reason':null,'meta/pausedAt':null,'meta/revealOrder':null});
  await R().update(upd);
 }
 function hubGame(){
@@ -521,8 +526,8 @@ function hubTick(){
  {const a=alive().length,t=crew().length;const h=`<span class="lab mute">VIVANTS ${a}/${t}</span>`+crewBand(false);if(h!==crewHtml){crewHtml=h;$('#hCrew').innerHTML=h}}
  const ref=meta.state==='game'?now():(meta.pausedAt||now());
  if(meta.startAt)$('#hClock').textContent=fmt(Math.max(0,ref-meta.startAt));
- g.innerHTML=list.map(([id,s])=>{const r=s.endAt-ref,ratio=r/max,fz=(s.frozenUntil||0)>ref;const off=players[id]&&players[id].online===false;const cls=fz?'':ratio<.12?'crit':ratio<.4?'warn':'';
-  return `<div class="st dep ${cls}"><div class="plate"><div class="in"><div class="r1"><span class="t">${esc(s.game)}</span><span class="no">${String(s.num).padStart(2,'0')}</span></div><div class="loc">${esc(s.loc)}</div><div class="seg"><span class="gh">88:88</span><span class="v">${fmt(r)}</span></div><div class="bar"><div style="width:${Math.max(2,Math.min(100,ratio*100))}%"></div></div>${fz?`<div class="ice"><b>GELÉE</b><span class="mono">${fmt(s.frozenUntil-ref)}</span></div>`:''}${off?'<div class="ice off"><b>HORS LIGNE</b></div>':''}</div></div></div>`}).join('');
+ g.innerHTML=list.map(([id,s])=>{const r=s.endAt-ref,ratio=r/max,fz=(s.frozenUntil||0)>ref;const off=players[id]&&players[id].online===false;const hit=meta.state==='game'&&now()-(s.hitAt||0)<4500;const cls=(fz?'':ratio<.12?'crit':ratio<.4?'warn':'')+(hit?' hit':'');
+  return `<div class="st dep ${cls}"><div class="plate"><div class="in"><div class="r1"><span class="t">${esc(s.game)}</span><span class="no">${String(s.num).padStart(2,'0')}</span></div><div class="loc">${esc(s.loc)}</div><div class="seg"><span class="gh">88:88</span><span class="v">${fmt(r)}</span></div><div class="bar"><div style="width:${Math.max(2,Math.min(100,ratio*100))}%"></div></div>${fz?`<div class="ice"><b>GELÉE</b><span class="mono">${fmt(s.frozenUntil-ref)}</span></div>`:''}${off?'<div class="ice off"><b>HORS LIGNE</b></div>':''}${hit?`<div class="hitb">−${C().penalite} s</div>`:''}</div></div></div>`}).join('');
  const live=list.filter(([,s])=>!((s.frozenUntil||0)>ref)).sort((a,b)=>a[1].endAt-b[1].endAt)[0];
  if(meta.state==='game'&&live)$('#hUrg').innerHTML=`Le plus urgent : <b>${esc(live[1].game)} ${String(live[1].num).padStart(2,'0')}</b> · ${esc(live[1].loc)} · ${fmt(live[1].endAt-ref)}`;
  L('crit',meta.state==='game'&&list.some(([,s])=>(s.endAt-ref)/max<.12));
@@ -569,9 +574,10 @@ async function meetingStart(){
 function meetingPanel(newChef){
  const o=$('#hOvl');clearMeet();mPhase='call';
  const v=meta.victim&&players[meta.victim];
- o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">${esc(meta.reason||'RÉUNION')}</span><h3>TOUS AU HUB</h3>${v?`<div class="victim"><i style="background:${esc(v.color||'#8A949C')}"></i><b>${esc(pname(meta.victim))}</b><span>retrouvé mort · se tait jusqu’à la fin</span></div>`:''}${newChef?`<p style="color:#FFD0B0">Nouveau chef de mission : <b>${esc(pname(newChef))}</b> ★</p>`:''}<p>Les stations sonnent, les compteurs sont figés. Quand tout le monde est là, lancez le débat : l’alarme s’arrête.</p>${bigBtn('startDeb','TOUT LE MONDE EST LÀ · DÉBAT '+fmt(debateSec()*1000))}${bigBtn('endMeet','REPRENDRE SANS VOTER','alt')}</div>`;o.hidden=false;
+ o.innerHTML=`<div class="pan red"><span class="lab" style="color:#FF8A84">${esc(meta.reason||'RÉUNION')}</span><h3>TOUS AU HUB</h3>${v?`<div class="victim"><i style="background:${esc(v.color||'#8A949C')}"></i><b>${esc(pname(meta.victim))}</b><span>retrouvé mort · se tait jusqu’à la fin</span></div>`:''}${newChef?`<p style="color:#FFD0B0">Nouveau chef de mission : <b>${esc(pname(newChef))}</b> ★</p>`:''}<p>Les stations sonnent, les compteurs sont figés. Quand tout le monde est là, lancez le débat : l’alarme s’arrête.</p>${meta.victim?`<div class="gath"><span class="lab">RASSEMBLEMENT · LE DÉBAT DÉMARRE DANS</span><span class="big7 sm" id="gT">1:00</span></div>`:''}${bigBtn('startDeb','TOUT LE MONDE EST LÀ · DÉBAT '+fmt(debateSec()*1000))}${bigBtn('endMeet','REPRENDRE SANS VOTER','alt')}</div>`;o.hidden=false;
  $('#endMeet').onclick=endMeeting;
  $('#startDeb').onclick=()=>{S('tap');R('meta/allHere').set(true);debate()};
+ if(meta.victim){const t0=meta.pausedAt||now();const tick=()=>{const left=60000-(now()-t0);const e=$('#gT');if(e)e.textContent=fmt(Math.max(0,left));if(left<=10000&&left>0&&Math.floor(left/1000)!==tick.l){tick.l=Math.floor(left/1000);S('debateTick')}if(left<=0){S('meetCall');R('meta/allHere').set(true);debate()}};tick();mIv=setInterval(tick,250)}
 }
 function debate(){
  const o=$('#hOvl');clearMeet();mPhase='debate';let t=debateSec();
@@ -596,12 +602,14 @@ function tally(ballots){
  clearMeet();mPhase='tally';const cnt={};Object.values(ballots).forEach(x=>cnt[x]=(cnt[x]||0)+1);
  const rows=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);const top=rows.length?rows[0][1]:0;const tied=rows.filter(r=>r[1]===top).map(r=>r[0]);
  const o=$('#hOvl');S('tally');
- o.innerHTML=`<div class="pan"><span class="lab mute">DÉPOUILLEMENT</span><h3>RÉSULTAT</h3><div class="tally">${rows.map(([id,n])=>`<div class="tr${n===top?' top':''}"><i style="background:${esc((players[id]||{}).color||'#8A949C')}"></i><b>${esc(pname(id))}</b><span class="mono">${n} voix</span><div class="who">${Object.entries(ballots).filter(([,t])=>t===id).map(([v])=>esc(pname(v))).join(', ')}</div></div>`).join('')}</div><div id="tAct"></div></div>`;o.hidden=false;
+ o.innerHTML=`<div class="pan"><span class="lab mute">DÉPOUILLEMENT</span><h3>RÉSULTAT</h3><div id="tAct"></div><div class="tally">${rows.map(([id,n])=>`<div class="tr${n===top?' top':''}"><i style="background:${esc((players[id]||{}).color||'#8A949C')}"></i><b>${esc(pname(id))}</b><span class="mono">${n} voix</span><div class="who">${Object.entries(ballots).filter(([,t])=>t===id).map(([v])=>esc(pname(v))).join(', ')}</div></div>`).join('')}</div></div>`;o.hidden=false;
  if(!tied.length){mTo.push(setTimeout(endMeeting,2500));return}
  if(tied.length===1){$('#tAct').innerHTML=bigBtn('tGo','ENVOYER '+esc(pname(tied[0]))+' EN QUARANTAINE','red');$('#tGo').onclick=()=>quarantine(tied[0]);return}
  const ch=meta.chef;S('chef');
- $('#tAct').innerHTML=`<p style="color:#FFD0B0">Égalité ! Le chef de mission <b>${esc(pname(ch))}</b> ★ tranche seul parmi les ex æquo.</p><div class="vgrid">${tied.map(id=>`<button class="vb" data-t="${esc(id)}"><i style="background:${esc((players[id]||{}).color||'#8A949C')}"></i>${esc(pname(id))}</button>`).join('')}</div><div id="tConf"></div>`;
+ $('#tAct').innerHTML=`<p style="color:#FFD0B0">Égalité ! Le chef de mission <b>${esc(pname(ch))}</b> ★ tranche seul parmi les ex æquo. Sans décision, c’est lui qui sort.</p><span class="big7 sm" id="cT">10</span><div class="vgrid">${tied.map(id=>`<button class="vb" data-t="${esc(id)}"><i style="background:${esc((players[id]||{}).color||'#8A949C')}"></i>${esc(pname(id))}</button>`).join('')}</div><div id="tConf"></div>`;
  o.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const tg=b.dataset.t;S('tap');$('#tConf').innerHTML=`<div class="conf"><p>${esc(pname(ch))}, tu envoies <b>${esc(pname(tg))}</b> en quarantaine ?</p><div class="row2">${bigBtn('tNo','ANNULER','alt')}${bigBtn('tYes','CONFIRMER','red')}</div></div>`;$('#tNo').onclick=()=>{$('#tConf').innerHTML=''};$('#tYes').onclick=()=>quarantine(tg)});
+ let ct=10;mIv=setInterval(()=>{ct--;const e=$('#cT');if(e)e.textContent=Math.max(0,ct);if(ct<=3&&ct>0)S('debateTick');
+  if(ct<=0){clearInterval(mIv);mIv=null;S('voteLate');vib([80,40,80]);$('#tAct').innerHTML=`<div class="conf"><p><b>${esc(pname(ch))}</b> n’a pas tranché à temps : le chef part en quarantaine.</p></div>`;mTo.push(setTimeout(()=>quarantine(ch),2200))}},1000);
 }
 function quarantine(id){
  clearMeet();mPhase='quar';const p=players[id]||{},h=roles[id]==='h';const o=$('#hOvl');S('quarantine');
@@ -730,7 +738,7 @@ function miniGame(){
   if(win){await R('stations/'+uid+'/endAt').set(now()+maxMs())}
   else{vib([80,40,80]);await R('stations/'+uid+'/frozenUntil').set(now()+C().gel*1000);
    const ids=Object.keys(stations);const v=ids[Math.floor(Math.random()*ids.length)];
-   await R('stations/'+v+'/endAt').transaction(x=>x==null?x:x-C().penalite*1000)}
+   await R('stations/'+v+'/endAt').transaction(x=>x==null?x:x-C().penalite*1000);await R('stations/'+v+'/hitAt').set(now())}
   render()};
  window.addEventListener('message',gameMsg);
 }
