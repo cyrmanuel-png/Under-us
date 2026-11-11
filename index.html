@@ -270,6 +270,17 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .szt{padding:7px 40px 9px 12px;gap:3px}.szt b{font-size:22px}.szt>span{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .szck{top:auto;bottom:10px}
 .szl{gap:10px}
+
+/* v0.9 : scènes de fin (pack 6) */
+.frame.overf{background:#0E1C2A center top/100% auto no-repeat}
+.overf .win{background:none;border:0;padding:4px 0;text-align:center}
+.overf .win h2{color:#fff;text-shadow:0 3px 0 #05080B,2px 0 0 #05080B,-2px 0 0 #05080B,0 -2px 0 #05080B,0 0 14px rgba(5,8,11,.7)}
+.overf .win .lab,.overf .win p{color:#fff;text-shadow:0 1px 0 #05080B,0 0 6px #05080B}
+.overf .win[style]{flex:none!important}
+.ovsp{flex:1 0 min(30vh,280px)}
+.frame.overf.ovh{background-color:#16082A}.frame.overf.ovc{background-color:#0E1C2A}
+.overf.ovh .win h2{color:#F0DEFF;text-shadow:0 3px 0 #05080B,2px 0 0 #05080B,-2px 0 0 #05080B,0 -2px 0 #05080B,0 0 16px #8A2BE2}
+.overf .tally.over{flex:none;background:rgba(5,8,11,.55);padding:4px}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -436,6 +447,8 @@ const crew=()=>{const k=meta.state!=='lobby'&&meta.crew;return Object.entries(pl
 const alive=()=>crew().filter(([,p])=>!p.out);
 const avIdx=c=>{const i=COLORS.indexOf(c);return i<0?0:i};
 const avs=(c,h)=>`background:${esc(c||'#8A949C')} url(img/av${h?'h':''}${avIdx(c)}.webp) center/cover no-repeat`;
+const FIN_IMG={c:'img/fin_chercheurs.webp',h:'img/fin_hotes.webp'};
+function overDecor(w){const f=document.querySelector('.frame');if(f&&FIN_IMG[w]){f.classList.add('overf','ov'+w);f.style.backgroundImage=`url(${FIN_IMG[w]})`;const wn=f.querySelector('.win');if(wn)wn.insertAdjacentHTML('afterend','<div class="ovsp"></div>')}}
 const pname=id=>((players[id]||{}).name||'?').toUpperCase();
 const defHosts=n=>n<=6?1:n<=10?2:3;
 const maxHosts=n=>Math.max(1,Math.floor((n-1)/2));
@@ -524,7 +537,7 @@ function home(){
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
   </div>
-  <span class="ver">PROTO 0.8</span>
+  <span class="ver">PROTO 0.9</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};
@@ -789,6 +802,7 @@ function hubOver(){
  clearMeet();L('music',false);L('crit',false);L('wind',false);const w=meta.winner||'h';S(w==='c'?'winCh':'winHo');
  const rows=crew().map(([id,p])=>`<div class="tr ${roles[id]==='h'?'hoR':''}"><i style="${avs(p.color,roles[id]==='h')}"></i><b>${esc(pname(id))}</b><span class="lab">${roles[id]==='h'?'HÔTE':'CHERCHEUR'}</span><div class="who">${p.out==='mort'?'mort':p.out==='quar'?'en quarantaine':'vivant'}${id===meta.chef?' · chef ★':''}</div></div>`).join('');
  screen(header('FIN DE PARTIE')+`<div class="win ${w==='c'?'ch':'ho'}"><span class="lab">${esc(meta.reason||'')}</span><h2>${w==='c'?'LES CHERCHEURS GAGNENT':'LES HÔTES GAGNENT'}</h2><p>${w==='c'?'Le parasite est enfermé dehors. La station est sauvée.':'Le parasite a pris la station.'}</p></div><div class="tally over">${rows}</div>${bigBtn('again','REJOUER · MÊMES JOUEURS')}${bigBtn('newG','NOUVELLE PARTIE','alt')}`);
+ overDecor(w);
  $('#again').onclick=async()=>{lastState=null;overSet=false;const upd={'meta/state':'lobby','meta/reason':null,'meta/pausedAt':null,'meta/winner':null,'meta/victim':null,'meta/chef':null,'meta/revealIdx':null,'meta/startAt':null,'meta/crew':null,stations:null,roles:null};crew().forEach(([id])=>upd['players/'+id+'/out']=null);await R().update(upd)};
  $('#newG').onclick=()=>{location.href=location.pathname};
 }
@@ -853,7 +867,7 @@ function stShow(key,prev){
  if(key==='meeting'){L('wind',false);S((meta.reason||'').startsWith('Corps')?'body':'meetCall');setTimeout(()=>{if(meta.state==='meeting'&&!meta.allHere)L('alarm',true)},900);
   screen(head+`<div class="sys alarm"><span class="lab">⚠ ALERTE ⚠</span><h2>RÉUNION D’URGENCE</h2><p>${esc(meta.reason||'')}. Rends-toi au hub tout de suite.</p></div>`)}
  if(key.startsWith('paused')){L('wind',false);screen(head+`<div class="sys paused"><div class="spin"></div><span class="lab" style="color:var(--orange)">PAUSE GÉNÉRALE</span><h2>PARTIE EN PAUSE</h2><p>${esc(meta.reason||'')}</p></div>`)}
- if(key.startsWith('over')){L('wind',false);const w=meta.winner||'h';S(w==='c'?'winCh':'winHo');screen(head+`<div class="win ${w==='c'?'ch':'ho'}" style="flex:1"><span class="lab">${esc(meta.reason||'')}</span><h2>${w==='c'?'LES CHERCHEURS GAGNENT':'LES HÔTES GAGNENT'}</h2><p>Les rôles sont affichés sur le hub.</p></div>`)}
+ if(key.startsWith('over')){L('wind',false);const w=meta.winner||'h';S(w==='c'?'winCh':'winHo');screen(head+`<div class="win ${w==='c'?'ch':'ho'}" style="flex:1"><span class="lab">${esc(meta.reason||'')}</span><h2>${w==='c'?'LES CHERCHEURS GAGNENT':'LES HÔTES GAGNENT'}</h2><p>Les rôles sont affichés sur le hub.</p></div>`);overDecor(w)}
 }
 function bodyScreen(){stView='body';S('tap');screen(header('CORPS TROUVÉ')+'<div class="ovl" id="sOvl"></div>');bodyPicker($('#sOvl'))}
 /* mini-jeu : générateur (tirer quand l'aiguille est dans le vert) */
