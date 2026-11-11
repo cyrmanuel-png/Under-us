@@ -281,6 +281,13 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .frame.overf.ovh{background-color:#16082A}.frame.overf.ovc{background-color:#0E1C2A}
 .overf.ovh .win h2{color:#F0DEFF;text-shadow:0 3px 0 #05080B,2px 0 0 #05080B,-2px 0 0 #05080B,0 -2px 0 #05080B,0 0 16px #8A2BE2}
 .overf .tally.over{flex:none;background:rgba(5,8,11,.55);padding:4px}
+
+/* v1.0 : cartes de rôle (pack 7) */
+.role{justify-content:flex-start;padding:77% 16px 16px;border:2px solid var(--encre)}
+.role.ch{background:#131D25 url(img/role_ch.webp) center top/cover no-repeat}
+.role.ho{background:#1A0B2C url(img/role_ho.webp) center top/cover no-repeat}
+.role h2,.role .lab,.role p{position:relative;text-shadow:0 2px 0 #05080B,0 0 8px #05080B}
+.role .mates{background:rgba(5,8,11,.6)}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -537,7 +544,7 @@ function home(){
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
   </div>
-  <span class="ver">PROTO 0.9</span>
+  <span class="ver">PROTO 1.0</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};
