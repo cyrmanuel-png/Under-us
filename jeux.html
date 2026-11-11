@@ -817,67 +817,34 @@ G.labo={t:'LABO',n:'Échantillons',c:'Mémoire',time:38,noDeco:true,d:'Touche le
  bs.forEach(b=>api.on(b,'pointerdown',()=>{if(lock||b._up||b._done)return;b._up=1;show(b,1);up.push(b);beep(520,.03);if(up.length===2){const [p,q]=up;if(deck[p.dataset.i]===deck[q.dataset.i]){[p,q].forEach(t=>{t._done=1;t.querySelector('.okg').setAttribute('opacity','.8')});up=[];pairs++;pE.textContent=pairs+'/6';beep(880);if(pairs===6)api.after(()=>api.win(),300)}else{lock=true;err++;eE.innerHTML=pips(err,7,'ko');beep(150);if(err>=7){api.fail('Échantillons mélangés');return}api.after(()=>{[p,q].forEach(t=>{t._up=0;show(t,0)});up=[];lock=false},700)}}}))}};
 /* 7 SAS */
 G.sas={t:'SAS',n:'Sas de sécurité',c:'Mémoire',time:55,d:'Trois portes blindées à ouvrir l’une après l’autre. Chaque code s’affiche 2 secondes, en grande partie recouvert de givre : devine les chiffres cachés et retape-le. 2 erreurs permises au total.',init(a,api){
- const K='#05080B';
- const door=(n,sc)=>{const W=220,H=250,x0=180-W/2,y0=150-H/2,M=x0+W/2;
-  const riv=(xx,yy)=>`<circle cx="${xx}" cy="${yy}" r="2.4" fill="#A3AEB6" stroke="${K}" stroke-width=".9"/><circle cx="${xx-.7}" cy="${yy-.7}" r=".9" fill="#E3EAEE"/>`;
-  const leaf=(side)=>{const L=side<0,lx=L?x0:M,ex=L?x0:x0+W,cx=M;/* demi-battant */
-   const rivs=[...Array(9)].map((_,i)=>riv(L?lx+7:lx+W/2-7,y0+12+i*28)).join('');
-   const wheel=`<g transform="translate(${cx} ${y0+104})"><clipPath id="wc${n}${L?'l':'r'}"><rect x="${L?-46:0}" y="-46" width="46" height="92"/></clipPath><g clip-path="url(#wc${n}${L?'l':'r'})"><circle r="40" fill="#2A333A" stroke="${K}" stroke-width="3"/><circle r="31" fill="none" stroke="#C4CED4" stroke-width="6"/><circle r="31" fill="none" stroke="${K}" stroke-width="1.5"/><circle r="25" fill="none" stroke="${K}" stroke-width="1.2"/>${[0,1,2,3].map(i=>`<path d="M0 0 L${(Math.cos(i*.785*2+.39)*30).toFixed(1)} ${(Math.sin(i*.785*2+.39)*30).toFixed(1)}" stroke="#8A949C" stroke-width="5"/>`).join('')}<circle r="9" fill="#5E6A74" stroke="${K}" stroke-width="2"/></g></g>`;
-   return `<rect x="${lx}" y="${y0}" width="${W/2}" height="${H}" fill="url(#sdL)" stroke="${K}" stroke-width="2.5"/>
-   <rect x="${lx+(L?14:8)}" y="${y0+16}" width="${W/2-22}" height="${H-56}" fill="rgba(0,0,0,.18)" stroke="${K}" stroke-width="1.5"/><path d="M${lx+(L?14:8)} ${y0+H-40} V${y0+16} H${lx+(L?14:8)+W/2-22}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
-   <path d="M${lx+(L?16:10)} ${y0+150} L${lx+(L?W/2-10:W/2-16)} ${y0+H-44} M${lx+(L?W/2-10:W/2-16)} ${y0+150} L${lx+(L?16:10)} ${y0+H-44}" stroke="#3A4249" stroke-width="7"/><path d="M${lx+(L?16:10)} ${y0+150} L${lx+(L?W/2-10:W/2-16)} ${y0+H-44}" stroke="#8A949C" stroke-width="2"/>
-   <rect x="${lx}" y="${y0+H-30}" width="${W/2}" height="30" fill="url(#shz)" stroke="${K}" stroke-width="2"/>
-   ${rivs}${wheel}
-   <text x="${L?lx+W/4+4:lx+W/4-4}" y="${y0+H-54}" text-anchor="middle" font-family="Allerta Stencil" font-size="20" fill="rgba(5,8,11,.85)">${L?'SAS':n}</text>
-   <path d="M${lx} ${y0+H-30} l8 -10 l7 6 l9 -14 l8 9 l10 -7 l7 10 l9 -8 l8 12 l10 -6 l8 8 l9 -10 l${W/2-93} 10 V${y0+H-30}Z" fill="#E6F2F7" stroke="${K}" stroke-width="1.2" opacity=".95"/>
-   <path d="M${lx} ${y0} H${lx+W/2} V${y0+6} l-10 7 l-8 -4 l-12 9 l-9 -6 l-14 8 l-10 -5 l-12 7 l-${W/2-75} -6Z" fill="#E6F2F7" stroke="${K}" stroke-width="1.2"/>`};
-  return `<g transform="translate(180 150) scale(${sc}) translate(-180 -150)">
-  <path fill-rule="evenodd" d="M${x0-22} ${y0-40} h${W+44} v${H+44} h-${W+44}Z M${x0-4} ${y0-4} v${H+4} h${W+8} v-${H+4}Z" fill="#3A4249" stroke="${K}" stroke-width="3"/>
-  <path fill-rule="evenodd" d="M${x0-16} ${y0-16} h${W+32} v${H+20} h-${W+32}Z M${x0-4} ${y0-4} v${H+4} h${W+8} v-${H+4}Z" fill="url(#shz)" stroke="${K}" stroke-width="2"/>
-  ${[0,1,2,3,4,5].map(i=>riv(x0-18+(i%2)*(W+36),y0+20+Math.floor(i/2)*100)).join('')}
-  <rect x="${x0-4}" y="${y0-4}" width="${W+8}" height="${H+4}" fill="none" stroke="#05080B" stroke-width="4"/>
-  <rect id="sg${n}" x="${M-1.5}" y="${y0}" width="3" height="${H}" fill="#FFB07E" opacity=".9"/>
-  <g class="dl" id="dl${n}" style="transition:transform .7s cubic-bezier(.6,0,.3,1)">${leaf(-1)}</g>
-  <g class="dr" id="dr${n}" style="transition:transform .7s cubic-bezier(.6,0,.3,1)">${leaf(1)}</g>
-  <rect x="${M-30}" y="${y0-38}" width="60" height="20" rx="3" fill="#2A333A" stroke="${K}" stroke-width="2"/>
-  <circle id="lh${n}" cx="${M}" cy="${y0-28}" r="22" fill="#E0302A" opacity=".25"/>
-  <rect id="lp${n}" x="${M-20}" y="${y0-33}" width="40" height="10" rx="3" fill="#E0302A" stroke="${K}" stroke-width="1.5"/><rect x="${M-16}" y="${y0-31.5}" width="14" height="2.5" rx="1" fill="rgba(255,255,255,.5)"/>
-  </g>`};
- a.innerHTML=`<div style="position:absolute;inset:0;display:flex;flex-direction:column">
- <div style="position:relative;flex:1;min-height:0"><svg viewBox="0 0 360 300" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%">
- <defs><pattern id="shz" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="16" fill="#F2B21E"/><rect x="8" width="8" height="16" fill="${K}"/></pattern><radialGradient id="sgl"><stop offset="0" stop-color="#FFE9B0"/><stop offset="1" stop-color="#FF9A3A"/></radialGradient><linearGradient id="sdL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4C5862"/><stop offset=".3" stop-color="#8A949C"/><stop offset=".55" stop-color="#6E7A84"/><stop offset="1" stop-color="#3A4249"/></linearGradient><linearGradient id="sdC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE7B0" stop-opacity=".5"/><stop offset="1" stop-color="#FFE7B0" stop-opacity="0"/></linearGradient></defs>
- <rect width="360" height="300" fill="#0E1419"/>
- <g id="cor" style="transform-box:view-box;transform-origin:180px 150px;transform:translate(0px,16px) scale(.88);transition:transform .7s cubic-bezier(.5,0,.3,1)">
-  <path d="M0 0 L120 90 V210 L0 300Z" fill="#1E262C" stroke="${K}" stroke-width="2"/><path d="M360 0 L240 90 V210 L360 300Z" fill="#1A2126" stroke="${K}" stroke-width="2"/><path d="M0 0 H360 L240 90 H120Z" fill="#141A1F"/><path d="M0 300 H360 L240 210 H120Z" fill="#11171B"/>
-  ${[0,1,2,3].map(k=>`<path d="M${30*k+10} ${8+22*k} V${292-22*k}" stroke="#2A353D" stroke-width="2"/><path d="M${350-30*k} ${8+22*k} V${292-22*k}" stroke="#2A353D" stroke-width="2"/>`).join('')}
-  ${[0,1,2].map(k=>{const t=k/3,yy=4+t*86,x1=20+t*100,x2=340-t*100;return `<rect x="${x1+12}" y="${yy}" width="${x2-x1-24}" height="${5-k}" fill="#FFF2C8"/><path d="M${x1+12} ${yy+5} L${x1-10} ${yy+60-k*12} H${x2+10} L${x2-12} ${yy+5}Z" fill="url(#sdC)" opacity=".5"/>`}).join('')}
-  <path d="M8 40 L118 118 M8 52 L118 126" stroke="#0A1014" stroke-width="5"/><path d="M8 40 L118 118" stroke="#3E7A99" stroke-width="2.5"/><path d="M352 60 L242 132" stroke="#0A1014" stroke-width="6"/><path d="M352 60 L242 132" stroke="#B84A10" stroke-width="3"/>
-  ${[0,1,2,3,4,5,6].map(k=>`<path d="M${120-k*20} ${210+k*13} H${240+k*20}" stroke="#1E262C" stroke-width="1.5"/>`).join('')}${[-3,-2,-1,0,1,2,3].map(k=>`<path d="M${180+k*20} 210 L${180+k*60} 300" stroke="#1E262C" stroke-width="1.5"/>`).join('')}
-  <rect x="140" y="112" width="80" height="76" fill="url(#sgl)"/><text x="180" y="156" text-anchor="middle" font-family="Allerta Stencil" font-size="9" fill="#5A2A04">STATION</text>
-  ${door(3,.34)}${door(2,.58)}${door(1,1)}
- </g>
- <path d="M0 0 H130 L118 12 L104 6 L90 22 L76 10 L62 28 L48 14 L34 34 L20 18 L0 40Z" fill="#B5D0DB" stroke="${K}" stroke-width="1.4"/><path d="M360 0 H230 L242 12 L256 6 L270 22 L284 10 L298 28 L312 14 L326 34 L340 18 L360 40Z" fill="#B5D0DB" stroke="${K}" stroke-width="1.4"/>
- <path d="M0 300 V250 L10 262 L16 244 L26 270 L36 258 L42 280 L56 274 L60 300Z" fill="#B5D0DB" stroke="${K}" stroke-width="1.4"/><path d="M360 300 V246 L350 260 L344 240 L334 268 L322 256 L318 280 L304 274 L300 300Z" fill="#B5D0DB" stroke="${K}" stroke-width="1.4"/>
- <rect width="360" height="300" fill="#CFE3EC" opacity=".08"/>
- </svg><div class="statrow" style="position:absolute;left:0;right:0;top:0;background:rgba(5,8,11,.55)"><span>PORTES <span id="pd"></span></span><span>ERREURS <span id="e"></span></span></div></div>
- <div style="padding:6px 10px 8px;background:#1A2228;border-top:3px solid ${K};display:flex;flex-direction:column;align-items:center;gap:6px">
-  <div style="display:flex;align-items:center;gap:10px;width:100%;justify-content:center"><span class="lab" id="m" style="color:var(--orange)">CODE DU SAS</span></div>
-  <div class="sascode" id="c"></div>
-  <div class="keys sasK" id="k" style="visibility:hidden">${[1,2,3,4,5,6,7,8,9,'C',0,'←'].map(n=>`<button data-n="${n}">${n}</button>`).join('')}</div>
- </div></div>`;
- const c=a.querySelector('#c'),k=a.querySelector('#k'),m=a.querySelector('#m'),eE=a.querySelector('#e'),pE=a.querySelector('#pd'),cor=a.querySelector('#cor');
+ const K='#05080B',OX=98,OY=31.5,OW=164,OH=150,LW=OW*443/876,RW=OW-LW,KX=[104.3,179.7,255.3],KY=[277,327,377.2,427.6],KW=64,KH=45,SX=62.3,SY=204.9,SW=235.1,SH=41.4,LAB=[1,2,3,4,5,6,7,8,9,'C',0,'←'];
+ const key=(n,q)=>{const x=KX[q%3],y=KY[Math.floor(q/3)];return `<g class="sk" data-n="${n}" style="cursor:pointer"><image class="kr" href="img/sas_key.webp" x="${x-KW/2}" y="${y-KH/2}" width="${KW}" height="${KH}" preserveAspectRatio="none"/><image class="kp" href="img/sas_key_on.webp" x="${x-KW/2}" y="${y-KH/2}" width="${KW}" height="${KH}" preserveAspectRatio="none" style="display:none"/><text x="${x}" y="${y+8}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="26" font-weight="700" style="fill:#E3F1F7;stroke:#05080B;stroke-width:3px;paint-order:stroke" pointer-events="none">${n}</text></g>`};
+ a.innerHTML=`<svg viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
+ <defs><clipPath id="sop"><rect x="${OX}" y="${OY}" width="${OW}" height="${OH}"/></clipPath><filter id="sgb" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6"/></filter></defs>
+ <image href="img/sas_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/>
+ <circle id="lh" cx="180" cy="15" r="20" fill="#E0302A" opacity=".45" filter="url(#sgb)"/>
+ <g clip-path="url(#sop)"><g id="dpair" style="transition:opacity .4s"><g id="dl" style="transition:transform .7s cubic-bezier(.6,0,.3,1)"><image href="img/sas_l.webp" x="${OX}" y="${OY}" width="${LW}" height="${OH}" preserveAspectRatio="none"/></g><g id="dr" style="transition:transform .7s cubic-bezier(.6,0,.3,1)"><image href="img/sas_r.webp" x="${OX+LW}" y="${OY}" width="${RW}" height="${OH}" preserveAspectRatio="none"/></g>
+ <text id="dn" x="180" y="${OY+OH-22}" text-anchor="middle" font-family="Allerta Stencil" font-size="15" style="fill:#E3F1F7;stroke:#05080B;stroke-width:3px;paint-order:stroke" letter-spacing="3">SAS 1</text></g></g>
+ <g id="c"></g>
+ <g id="k" style="visibility:hidden">${LAB.map(key).join('')}</g>
+ </svg><div class="statrow" style="position:absolute;left:0;right:0;top:0"><span>PORTES <span id="pd"></span></span><span id="m" class="lab" style="color:#FF6A1A;align-self:center">CODE DU SAS</span><span>ERREURS <span id="e"></span></span></div>`;
+ const c=a.querySelector('#c'),k=a.querySelector('#k'),m=a.querySelector('#m'),eE=a.querySelector('#e'),pE=a.querySelector('#pd'),dl=a.querySelector('#dl'),dr=a.querySelector('#dr'),dp=a.querySelector('#dpair'),dn=a.querySelector('#dn'),lh=a.querySelector('#lh');
  let code='',typed='',lock=true,err=0,door_=1;const upd=()=>{eE.innerHTML=pips(err,3,'ko');pE.innerHTML=pips(door_-1,3,'ok')};upd();
+ const msg=(t,col)=>{m.textContent=t;m.style.color=col};
+ const DW=SW/5;
+ const ice=(q,top)=>{const x0=SX+q*DW+2,x1=x0+DW-4,h=SH*(.56+Math.random()*.1);const y0=top?SY:SY+SH-h,ye=top?SY+h:SY+SH-h;const n=8,pts=[];for(let t=0;t<=n;t++){const xx=x0+(x1-x0)*t/n,yy=ye+(top?1:-1)*(t%2?-6:2);pts.push(xx.toFixed(1)+' '+yy.toFixed(1))}
+  return top?`<path d="M${x0} ${y0} H${x1} V${ye} L${pts.reverse().join(' L')}Z" fill="#D3E6EE" stroke="#8FB4C4" stroke-width="1.5"/>`:`<path d="M${x0} ${SY+SH} H${x1} V${ye} L${pts.reverse().join(' L')}Z" fill="#D3E6EE" stroke="#8FB4C4" stroke-width="1.5"/>`};
+ const digits=(str,iced)=>[...str].map((d,q)=>`<text x="${SX+q*DW+DW/2}" y="${SY+SH-7}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="36" fill="#FF9A4A" style="filter:drop-shadow(0 0 4px rgba(255,154,74,.7))">${d}</text>${iced&&iced.includes(q)?ice(q,Math.random()<.5):''}`).join('');
  api.info('Trois sas givrés te séparent de la station.');
- const ice=top=>`<span aria-hidden="true" class="ice" style="${top?'top:-8px':'bottom:-8px'};height:${ri(56,64)}%;clip-path:polygon(0 ${top?0:22}%,12% ${top?100:0}%,26% ${top?78:16}%,40% ${top?100:0}%,55% ${top?72:24}%,70% ${top?100:0}%,84% ${top?80:12}%,100% ${top?92:0}%,100% ${top?0:100}%,0 ${top?0:100}%)"></span>`;
- const show=()=>{code=Array.from({length:5},()=>ri(0,9)).join('');typed='';lock=true;k.style.visibility='hidden';m.textContent='CODE DU SAS '+door_;m.style.color='var(--orange)';const iced=shuffle([0,1,2,3,4]).slice(0,3);
-  c.innerHTML=[...code].map((d,i)=>`<span class="sd">${d}${iced.includes(i)?ice(Math.random()<.5):''}</span>`).join('')+'<span class="frost" aria-hidden="true"></span>';
-  api.after(()=>{c.innerHTML='<span class="sd">_</span>'.repeat(5);k.style.visibility='visible';m.textContent='TAPE LE CODE';lock=false},2000)};
+ const show=()=>{code=Array.from({length:5},()=>ri(0,9)).join('');typed='';lock=true;k.style.visibility='hidden';msg('CODE DU SAS '+door_,'#FF6A1A');const iced=shuffle([0,1,2,3,4]).slice(0,3);
+  c.innerHTML=digits(code,iced);
+  api.after(()=>{c.innerHTML=digits('_____');k.style.visibility='visible';msg('TAPE LE CODE','#FF6A1A');lock=false},2000)};
  show();
- k.querySelectorAll('button').forEach(b=>api.on(b,'click',()=>{if(lock)return;const n=b.dataset.n;beep(600,.03);if(n==='C')typed='';else if(n==='←')typed=typed.slice(0,-1);else typed+=n;c.innerHTML=[...(typed+'_____').slice(0,5)].map(d=>`<span class="sd">${d}</span>`).join('');
-  if(typed.length===5){lock=true;if(typed===code){const n=door_;a.querySelector('#lp'+n).setAttribute('fill','#4BE38A');a.querySelector('#lh'+n).setAttribute('fill','#4BE38A');a.querySelector('#sg'+n).style.display='none';beep(500,.1,'sawtooth',.05);api.after(()=>{a.querySelector('#dl'+n).style.transform='translateX(-120px)';a.querySelector('#dr'+n).style.transform='translateX(120px)'},150);door_++;upd();m.textContent='PORTE '+n+' OUVERTE';m.style.color='var(--vert)';
-    if(n>=3){api.after(()=>api.win(),1000)}else{api.after(()=>{cor.style.transform=`translate(0px,16px) scale(${(n===1?1/.58:1/.34)*.88})`},800);api.after(show,1600)}}
-   else{err++;upd();beep(150);buzz(60);if(err>=3)api.fail('Sas verrouillé');else{m.textContent='CODE REFUSÉ · NOUVEAU CODE';m.style.color='var(--rouge)';api.after(show,1100)}}}}))}};
-
+ k.querySelectorAll('.sk').forEach(b=>api.on(b,'pointerdown',()=>{if(lock)return;const n=b.dataset.n;b.querySelector('.kr').style.display='none';b.querySelector('.kp').style.display='';api.after(()=>{b.querySelector('.kr').style.display='';b.querySelector('.kp').style.display='none'},120);beep(600,.03);
+  if(n==='C')typed='';else if(n==='←')typed=typed.slice(0,-1);else typed+=n;c.innerHTML=digits((typed+'_____').slice(0,5));
+  if(typed.length===5){lock=true;if(typed===code){const nd=door_;lh.setAttribute('fill','#4BE38A');beep(500,.1,'sawtooth',.05);api.after(()=>{dl.style.transform=`translateX(-${LW+4}px)`;dr.style.transform=`translateX(${RW+4}px)`},150);door_++;upd();msg('PORTE '+nd+' OUVERTE','#4BE38A');
+    if(nd>=3){api.after(()=>api.win(),1000)}else{api.after(()=>{dp.style.opacity='0'},1000);api.after(()=>{dl.style.transition=dr.style.transition='none';dl.style.transform=dr.style.transform='';dn.textContent='SAS '+door_;void dl.getBBox();dl.style.transition=dr.style.transition='';dp.style.opacity='1';lh.setAttribute('fill','#E0302A')},1450);api.after(show,1700)}}
+   else{err++;upd();beep(150);buzz(60);if(err>=3)api.fail('Sas verrouillé');else{msg('CODE REFUSÉ · NOUVEAU CODE','#E0302A');api.after(show,1100)}}}}))}};
 /* 8 FORAGE */
 G.forage={t:'FORAGE',n:'Forage',c:'Adresse',time:22,noTimer:true,d:'Guide la foreuse en faisant glisser ton doigt à gauche et à droite, n’importe où sur l’écran. La pointe de la mèche ne doit jamais toucher la roche : suis la veine de glace jusqu’à l’échantillon de glace ancienne, tout au fond. (En partie : en inclinant le téléphone.)',init(a,api){
  const {c,x,w,h}=canvas(a);const D=2300,dy=h*.24,TIP=40;let y=0,t=0,px=w/2,tx=w/2,warn=0,chips=[];
