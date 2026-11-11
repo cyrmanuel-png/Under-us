@@ -623,54 +623,31 @@ $('#backBtn').onclick=()=>{ended=true;stopAll();$('#game').hidden=true;$('#home'
 
 /* 1 GÉNÉ */
 G.gene={t:'GÉNÉ',n:'Générateur',c:'Rythme',time:40,d:'Tire la poignée du lanceur quand l’aiguille du cadran passe dans la zone verte. 5 démarrages réussis, 3 ratés maximum. L’aiguille accélère.',init(a,api){
- const K='#05080B',CX=158,CY=314,R=62;
+ const K='#05080B',S=360/1086,CX=541.5*S,CY=738*S,RF=215*S,R=RF*.74;
  const P=(an,r)=>[CX+Math.sin(an*Math.PI/180)*r,CY-Math.cos(an*Math.PI/180)*r];
  const arc=(a0,a1,r)=>{const [x0,y0]=P(a0,r),[x1,y1]=P(a1,r);return `M${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1}`};
  const toA=x=>-75+x*1.5;
- const ticks=Array.from({length:16},(_,i)=>{const an=-75+i*10,[x0,y0]=P(an,R),[x1,y1]=P(an,R-(i%2?7:13));return `<path d="M${x0} ${y0} L${x1} ${y1}" stroke="${an>55?'#C0201A':K}" stroke-width="${i%2?1.5:2.8}"/>`}).join('');
- const nums=[-75,-45,-15,15,45,75].map((an,i)=>{const [x,y]=P(an,R-24);return `<text x="${x}" y="${y+4}" text-anchor="middle" font-family="Share Tech Mono" font-size="11" fill="${K}">${i*2}</text>`}).join('');
- const fins=(x)=>Array.from({length:11},(_,i)=>`<rect x="${x}" y="${236+i*16}" width="16" height="9" fill="#B8470E" stroke="${K}" stroke-width="1.6"/><rect x="${x}" y="${236+i*16}" width="16" height="2.5" fill="#FFB07E"/>`).join('');
+ const NL=RF*.86,NH=NL/(651/727),NW=NH*144/727,HW=140,HH=HW*170/240,HPH=HW*284/240,HY=352;
  a.innerHTML=`<svg viewBox="0 0 360 560" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
- <defs><pattern id="ghz" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="16" fill="#F2B21E"/><rect x="8" width="8" height="16" fill="${K}"/></pattern>
- <radialGradient id="gface" cx="45%" cy="38%" r="70%"><stop offset="0" stop-color="#FFF6E2"/><stop offset="1" stop-color="#D8C9A6"/></radialGradient>
- <radialGradient id="gspot" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#FFE9B0" stop-opacity=".22"/><stop offset="1" stop-color="#FFE9B0" stop-opacity="0"/></radialGradient></defs>
- <rect width="360" height="560" fill="#0E1419"/>${Array.from({length:23},(_,i)=>`<rect x="${i*16}" y="0" width="3" height="470" fill="#070B0E"/><rect x="${i*16+6}" y="0" width="2" height="470" fill="#222C34"/>`).join('')}
- <ellipse cx="180" cy="300" rx="210" ry="260" fill="url(#gspot)"/>
- <rect y="470" width="360" height="90" fill="#0B1014" stroke="${K}" stroke-width="2"/>${Array.from({length:30},(_,i)=>`<rect x="${(i%15)*24+2}" y="${478+Math.floor(i/15)*24}" width="20" height="20" fill="none" stroke="#222C34" stroke-width="2"/>`).join('')}
- <rect y="462" width="360" height="10" fill="url(#ghz)" stroke="${K}" stroke-width="2"/>
- <path d="M300 0 V60 Q300 80 320 80 H360" fill="none" stroke="${K}" stroke-width="11"/><path d="M300 0 V60 Q300 80 320 80 H360" fill="none" stroke="#FF6A1A" stroke-width="6"/><path d="M298 0 V58" stroke="#FFB07E" stroke-width="2"/>
- <rect x="8" y="40" width="74" height="58" fill="#3A4852" stroke="${K}" stroke-width="2.5"/><rect x="8" y="40" width="74" height="4" fill="#6E7A84"/><rect x="16" y="50" width="58" height="22" fill="${K}"/><text x="45" y="66" text-anchor="middle" font-family="Share Tech Mono" font-size="15" fill="#E0302A" id="volt">000V</text><circle cx="28" cy="86" r="4.5" fill="#E0302A" stroke="${K}"/><circle cx="45" cy="86" r="4.5" fill="#33404A" stroke="${K}" id="l2"/><circle cx="62" cy="86" r="4.5" fill="#33404A" stroke="${K}" id="l3"/>
- <g id="gen">
- <ellipse cx="180" cy="452" rx="156" ry="12" fill="#000" opacity=".7"/>
- <path d="M44 446 V164 Q44 148 60 148 H300 Q316 148 316 164 V446" fill="none" stroke="${K}" stroke-width="14" stroke-linejoin="round"/><path d="M44 446 V164 Q44 148 60 148 H300 Q316 148 316 164 V446" fill="none" stroke="#7E8A94" stroke-width="8" stroke-linejoin="round"/><path d="M42 446 V164 Q42 146 60 146 H300" fill="none" stroke="#C4CED4" stroke-width="2"/><path d="M40 448 H320" stroke="${K}" stroke-width="12"/><path d="M40 448 H320" stroke="#4C5862" stroke-width="7"/>
- <rect x="62" y="158" width="234" height="58" rx="15" fill="#E25A12" stroke="${K}" stroke-width="3.5"/><rect x="66" y="194" width="226" height="18" rx="8" fill="#A8410C"/><path d="M74 166 H284" stroke="#FFC9A0" stroke-width="5" stroke-linecap="round"/><rect x="236" y="144" width="32" height="18" rx="4" fill="#2A2A2A" stroke="${K}" stroke-width="2"/><rect x="240" y="146" width="24" height="4" fill="#555"/><text x="150" y="196" text-anchor="middle" font-family="Allerta Stencil" font-size="16" fill="${K}">DIESEL · G-2</text>
- <rect x="294" y="94" width="24" height="66" rx="7" fill="#5E6A74" stroke="${K}" stroke-width="2.5"/><rect x="297" y="98" width="6" height="58" rx="3" fill="#A3AEB6"/><path d="M299 108 H316 M299 120 H316 M299 132 H316" stroke="${K}" stroke-width="1.5"/><path d="M306 94 V78" stroke="${K}" stroke-width="10"/><path d="M306 94 V78" stroke="#3A4249" stroke-width="6"/>
+ <rect width="360" height="560" fill="#0B1014"/>
+ <g id="gen"><image href="img/gen_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/></g>
  <g id="smoke"></g>
- <rect x="58" y="222" width="202" height="210" fill="#E25A12" stroke="${K}" stroke-width="3.5"/><rect x="60" y="224" width="198" height="9" fill="#FF8A3A"/><rect x="232" y="224" width="26" height="206" fill="#B8470E"/><rect x="60" y="420" width="198" height="10" fill="#8A3208"/>${fins(64)}${fins(238)}
- <rect x="260" y="234" width="54" height="158" rx="22" fill="#4C5862" stroke="${K}" stroke-width="3.5"/><rect x="265" y="238" width="10" height="150" rx="5" fill="#A3AEB6"/><rect x="298" y="238" width="10" height="150" rx="5" fill="#2E3840"/>${Array.from({length:7},(_,i)=>`<path d="M280 ${258+i*18} H302" stroke="${K}" stroke-width="5" stroke-linecap="round"/>`).join('')}
- <circle cx="${CX}" cy="${CY}" r="${R+22}" fill="#6A2406" stroke="${K}" stroke-width="3"/><circle cx="${CX+3}" cy="${CY+4}" r="${R+16}" fill="#000" opacity=".55"/>
- <circle cx="${CX}" cy="${CY}" r="${R+15}" fill="#8A949C" stroke="${K}" stroke-width="3"/><path d="${arc(-150,-20,R+11)}" fill="none" stroke="#E8EEF1" stroke-width="5" stroke-linecap="round"/><path d="${arc(30,160,R+11)}" fill="none" stroke="#3A4249" stroke-width="5" stroke-linecap="round"/>
- ${[45,135,225,315].map(r=>{const [x,y]=P(r,R+11);return `<circle cx="${x}" cy="${y}" r="3.5" fill="#C4CED4" stroke="${K}" stroke-width="1.2"/><path d="M${x-2.4} ${y} H${x+2.4}" stroke="${K}" stroke-width="1"/>`}).join('')}
- <circle cx="${CX}" cy="${CY}" r="${R+6}" fill="${K}"/><circle cx="${CX}" cy="${CY}" r="${R+4}" fill="url(#gface)"/>
- <path d="${arc(-75,55,R-4)}" fill="none" stroke="#C9B88E" stroke-width="10"/><path d="${arc(55,75,R-4)}" fill="none" stroke="#E0302A" stroke-width="10"/>
- <path id="zone" d="" fill="none" stroke="#1FBF5E" stroke-width="13"/><path id="zone2" d="" fill="none" stroke="#7CFFB0" stroke-width="3"/>
- ${ticks}${nums}<text x="${CX}" y="${CY+26}" text-anchor="middle" font-family="Allerta Stencil" font-size="10" fill="${K}">COMPRESSION</text><text x="${CX}" y="${CY+40}" text-anchor="middle" font-family="Share Tech Mono" font-size="9" fill="#5A4A2A">bar ×10</text>
- <g id="nd"><path d="M${CX} ${CY+14} V${CY-R+4}" stroke="${K}" stroke-width="6" stroke-linecap="round"/><path d="M${CX} ${CY+12} V${CY-R+6}" stroke="#E0302A" stroke-width="3" stroke-linecap="round"/><circle cx="${CX}" cy="${CY+12}" r="5" fill="${K}"/></g><circle cx="${CX}" cy="${CY}" r="8" fill="#3A4852" stroke="${K}" stroke-width="2"/><circle cx="${CX-2}" cy="${CY-2}" r="2.5" fill="#A3AEB6"/>
- <path d="${arc(-60,-15,R-2)}" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" opacity=".55"/><path d="${arc(-40,-28,R-16)}" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".45"/>
- <circle cx="${CX}" cy="414" r="20" fill="#3A4852" stroke="${K}" stroke-width="3"/><circle cx="${CX}" cy="414" r="12" fill="#26323A" stroke="${K}" stroke-width="2"/><path d="${'M'+(CX-17)+' 406 A20 20 0 0 1 '+(CX+6)+' 395'}" fill="none" stroke="#A3AEB6" stroke-width="2.5"/>
- </g>
- <path id="cord" d="M${CX} 432 V472" stroke="${K}" stroke-width="6"/><path id="cord2" d="M${CX} 432 V472" stroke="#F2F4F5" stroke-width="3"/>
- <g id="hdl" style="cursor:pointer"><rect x="60" y="452" width="200" height="108" fill="transparent"/>
- <g id="hdlG"><rect class="hpulse" x="${CX-62}" y="456" width="124" height="38" rx="19" fill="none" stroke="#F2B21E" stroke-width="3"/><path d="M${CX-46} 475 H${CX+46}" stroke="${K}" stroke-width="28" stroke-linecap="round"/><path d="M${CX-46} 475 H${CX+46}" stroke="#E0302A" stroke-width="21" stroke-linecap="round"/><path d="M${CX-44} 468 H${CX+44}" stroke="#FF9A94" stroke-width="5" stroke-linecap="round"/><path d="M${CX-42} 482 H${CX+42}" stroke="#8A1410" stroke-width="4" stroke-linecap="round"/>${[-30,-18,18,30].map(d=>`<path d="M${CX+d} 466 V484" stroke="#8A1410" stroke-width="2"/>`).join('')}<rect x="${CX-8}" y="460" width="16" height="28" rx="4" fill="#2A2A2A" stroke="${K}" stroke-width="2"/></g>
- <g class="harrow"><path d="M${CX+86} 470 L${CX+98} 484 L${CX+110} 470" fill="none" stroke="#F2B21E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M${CX+86} 486 L${CX+98} 500 L${CX+110} 486" fill="none" stroke="#F2B21E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></g>
- <text x="${CX+98}" y="526" text-anchor="middle" font-family="Allerta Stencil" font-size="12" fill="#F2B21E">TIRE</text></g>
- </svg><div class="statrow" style="position:absolute;left:86px;right:0;top:0"><span>DÉMARRAGES <span id="ok"></span></span><span>RATÉS <span id="ko"></span></span></div>`;
+ <g transform="translate(0 452)"><rect x="8" y="40" width="74" height="58" fill="#3A4852" stroke="${K}" stroke-width="2.5"/><rect x="8" y="40" width="74" height="4" fill="#6E7A84"/><rect x="16" y="50" width="58" height="22" fill="${K}"/><text x="45" y="66" text-anchor="middle" font-family="Share Tech Mono" font-size="15" fill="#E0302A" id="volt">000V</text><circle cx="28" cy="86" r="4.5" fill="#E0302A" stroke="${K}"/><circle cx="45" cy="86" r="4.5" fill="#33404A" stroke="${K}" id="l2"/><circle cx="62" cy="86" r="4.5" fill="#33404A" stroke="${K}" id="l3"/></g>
+ <path id="zone" d="" fill="none" stroke="#1FBF5E" stroke-width="18" opacity=".9"/><path id="zone2" d="" fill="none" stroke="#7CFFB0" stroke-width="3"/>
+ <g id="nd"><image href="img/gen_needle.webp" x="${CX-NW/2}" y="${CY-NH*.901}" width="${NW}" height="${NH}"/></g>
+ <path id="cord" d=""/><path id="cord2" d=""/>
+ <g id="hdl" style="cursor:pointer"><rect x="30" y="340" width="300" height="220" fill="transparent"/>
+ <g id="hdlG"><rect class="hpulse" x="${CX-76}" y="${HY+HH*.773-21}" width="152" height="42" rx="21" fill="none" stroke="#F2B21E" stroke-width="3"/>
+ <image id="hR" href="img/gen_handle.webp" x="${CX-HW/2}" y="${HY}" width="${HW}" height="${HH}"/><image id="hP" href="img/gen_handle_pull.webp" x="${CX-HW/2}" y="${HY}" width="${HW}" height="${HPH}" style="display:none"/></g>
+ <g transform="translate(0 -60)"><g class="harrow"><path d="M${CX+86} 470 L${CX+98} 484 L${CX+110} 470" fill="none" stroke="#F2B21E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M${CX+86} 486 L${CX+98} 500 L${CX+110} 486" fill="none" stroke="#F2B21E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></g>
+ <text x="${CX+98}" y="526" text-anchor="middle" font-family="Allerta Stencil" font-size="12" fill="#F2B21E">TIRE</text></g></g></g>
+ </svg><div class="statrow" style="position:absolute;left:0;right:0;top:0"><span>DÉMARRAGES <span id="ok"></span></span><span>RATÉS <span id="ko"></span></span></div>`;
  const zone=a.querySelector('#zone'),zone2=a.querySelector('#zone2'),nd=a.querySelector('#nd'),hg=a.querySelector('#hdlG'),cord=[a.querySelector('#cord'),a.querySelector('#cord2')],sm=a.querySelector('#smoke'),gen=a.querySelector('#gen'),volt=a.querySelector('#volt');
  let ok=0,ko=0,zs=0,x=0,dir=1,sp=70,busy=false;const W=15;
- const place=()=>{zs=rnd(8,92-W);const d=arc(toA(zs),toA(zs+W),R-4);zone.setAttribute('d',d);zone2.setAttribute('d',d)};
+ const place=()=>{zs=rnd(8,92-W);const d=arc(toA(zs),toA(zs+W),RF*.6);zone.setAttribute('d',d);zone2.setAttribute('d',d)};
  const upd=()=>{a.querySelector('#ok').innerHTML=pips(ok,5,'ok');a.querySelector('#ko').innerHTML=pips(ko,3,'ko');volt.textContent=String(ok*80).padStart(3,'0')+'V';a.querySelector('#l2').setAttribute('fill',ok>=2?'#F2B21E':'#33404A');a.querySelector('#l3').setAttribute('fill',ok>=4?'#4BE38A':'#33404A')};place();upd();
- const puff=(c,n)=>{for(let k=0;k<n;k++){const el=document.createElementNS('http://www.w3.org/2000/svg','circle');el.setAttribute('cx',306+rnd(-4,4));el.setAttribute('cy',74);el.setAttribute('r',rnd(7,12));el.setAttribute('fill',c);el.setAttribute('class','gpuff');el.style.animationDelay=(k*.12)+'s';sm.appendChild(el);setTimeout(()=>el.remove(),1600)}};
- const pull=()=>{hg.style.transition='transform .12s ease-out';hg.style.transform='translateY(56px)';cord.forEach(c=>c.setAttribute('d',`M${CX} 432 V528`));api.after(()=>{hg.style.transition='transform .35s cubic-bezier(.3,1.6,.5,1)';hg.style.transform='translateY(0)';cord.forEach(c=>c.setAttribute('d',`M${CX} 432 V472`))},160)};
+ const puff=(c,n)=>{for(let k=0;k<n;k++){const el=document.createElementNS('http://www.w3.org/2000/svg','circle');el.setAttribute('cx',325+rnd(-4,4));el.setAttribute('cy',70);el.setAttribute('r',rnd(7,12));el.setAttribute('fill',c);el.setAttribute('class','gpuff');el.style.animationDelay=(k*.12)+'s';sm.appendChild(el);setTimeout(()=>el.remove(),1600)}};
+ const hR=a.querySelector('#hR'),hP=a.querySelector('#hP');const pull=()=>{hR.style.display='none';hP.style.display='';api.after(()=>{hR.style.display='';hP.style.display='none'},200)};
  api.info('Le groupe électrogène tousse… Vise le vert.');
  api.loop(dt=>{x+=dir*sp*dt;if(x>100){x=100;dir=-1}if(x<0){x=0;dir=1}nd.setAttribute('transform',`rotate(${toA(x)} ${CX} ${CY})`)});
  api.on(a.querySelector('#hdl'),'pointerdown',()=>{if(busy)return;busy=true;api.after(()=>busy=false,280);pull();

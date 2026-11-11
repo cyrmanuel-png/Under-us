@@ -288,6 +288,18 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .role.ho{background:#1A0B2C url(img/role_ho.webp) center top/cover no-repeat}
 .role h2,.role .lab,.role p{position:relative;text-shadow:0 2px 0 #05080B,0 0 8px #05080B}
 .role .mates{background:rgba(5,8,11,.6)}
+
+/* v1.1 chef de mission */
+.chefc{flex:1;min-height:0;container-type:size;display:flex;justify-content:center;align-items:flex-start;margin:0 -6px}
+.chefi{position:relative;width:min(100cqw,56.25cqh);height:min(100cqh,177.78cqw);background:url(img/chef_bg.webp) 0 0/100% 100% no-repeat}
+.chav{position:absolute;left:27.1%;top:11.1%;width:45.4%;aspect-ratio:1;border-radius:50%;box-shadow:inset 0 0 18px rgba(0,0,0,.7)}
+.chtx{position:absolute;left:9%;right:9%;top:47%;text-align:center;color:#DCEBF1}
+.chtx .lab{color:#F2B21E;letter-spacing:.18em}
+.chtx h2{margin:2px 0 6px;font-size:clamp(22px,4.6cqh,34px);color:#fff;text-shadow:0 3px 0 #05080B}
+.chtx p{font-size:clamp(12px,2.1cqh,15px);line-height:1.35;margin:0 0 6px}
+.chtx .small{opacity:.75;font-size:clamp(11px,1.8cqh,13px)}
+.chbt{position:absolute;left:8%;right:8%;bottom:8%}
+.chbt .big{width:100%}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -544,7 +556,7 @@ function home(){
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
   </div>
-  <span class="ver">PROTO 1.0</span>
+  <span class="ver">PROTO 1.1</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};
@@ -648,7 +660,7 @@ function hubReveal(prev){
  const order=(meta.revealOrder||[]).filter(id=>players[id]),i=meta.revealIdx||0;
  if(i>=order.length){
   if(prev&&prev.startsWith('reveal'))S('chef');
-  screen(header('CHEF DE MISSION')+`<div class="msg"><span class="lab mute">TIRÉ AU SORT</span><div class="avat big" style="${avs((players[meta.chef]||{}).color)}"></div><h2>${esc(pname(meta.chef))}</h2><p>Dirige la mission. En cas d’égalité au vote, c’est lui qui tranche, seul, parmi les ex æquo. Il peut être chercheur… ou hôte.</p><p class="small">Si le chef disparaît, un nouveau chef est tiré au sort parmi les vivants.</p></div>${bigBtn('goM','LANCER LA MISSION')}`);
+  screen(header('CHEF DE MISSION')+`<div class="chefc"><div class="chefi"><i class="chav" style="${avs((players[meta.chef]||{}).color)}"></i><div class="chtx"><span class="lab">TIRÉ AU SORT</span><h2>${esc(pname(meta.chef))}</h2><p>Dirige la mission. En cas d’égalité au vote, c’est lui qui tranche, seul, parmi les ex æquo. Il peut être chercheur… ou hôte.</p><p class="small">Si le chef disparaît, un nouveau chef est tiré au sort parmi les vivants.</p></div><div class="chbt">${bigBtn('goM','LANCER LA MISSION')}</div></div></div>`);
   $('#goM').onclick=startMission;return}
  const id=order[i],p=players[id]||{};
  screen(header('RÉVÉLATION DES RÔLES',`${i+1} / ${order.length}`)+`<div class="msg"><span class="lab mute">PASSE LE HUB À</span><div class="avat big" style="${avs(p.color)}"></div><h2>${esc(pname(id))}</h2><p>Les autres détournent les yeux. Seul ${esc(p.name||'')} regarde l’écran.</p></div>${bigBtn('see','JE SUIS '+esc(pname(id))+' · VOIR MON RÔLE')}`);
