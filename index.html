@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0B1218">
+<meta name="theme-color" content="#0B1014">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Under Us">
 <title>Under Us</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap">
 <style>
@@ -325,6 +332,12 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .intro.out{opacity:0}
 .intro video{width:100%;height:100%;object-fit:contain;background:#000}
 .intro .iskip{position:absolute;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));padding:10px 18px;font:600 16px/1 var(--f-titre,sans-serif);letter-spacing:2px;color:#F2F6F8;background:rgba(5,8,11,.6);border:2px solid rgba(242,246,248,.5);border-radius:6px}
+
+/* v3.9 appli */
+.inst{margin:8px auto 0;display:block;background:rgba(5,8,11,.6);border:2px solid rgba(242,246,248,.45);border-radius:6px;color:#F2F6F8;font:600 14px/1 var(--f-titre);letter-spacing:2px;padding:9px 16px}
+.instp{position:fixed;inset:0;z-index:90;background:rgba(5,8,11,.88);display:flex;align-items:center;justify-content:center;padding:20px}
+.instp .pan{max-width:340px;text-align:center}
+.instp ol{text-align:left;margin:12px 0 16px;padding-left:22px;line-height:1.6}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -569,6 +582,19 @@ function titleArt(){return `<svg class="logo" viewBox="0 0 360 236" role="img" a
 </g>
 </svg>`}
 function homeScene(){return `<div class="hsi"><img src="img/accueil_bg.webp" alt=""><span class="hbk"></span><span class="hwg"></span></div>`}
+let instEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e});
+window.addEventListener('appinstalled',()=>{instEvt=null;const b=document.getElementById('inst');if(b)b.remove()});
+const isApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+async function install(){
+ if(instEvt){instEvt.prompt();try{await instEvt.userChoice}catch(e){}instEvt=null;return}
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const steps=ios?['Ouvre cette page dans <b>Safari</b>.','Touche le bouton <b>Partager</b> (carré avec une flèche vers le haut).','Choisis <b>Sur l’écran d’accueil</b>, puis <b>Ajouter</b>.']:['Ouvre le menu du navigateur (<b>⋮</b> en haut à droite).','Choisis <b>Installer l’application</b> ou <b>Ajouter à l’écran d’accueil</b>.','Confirme.'];
+ const o=document.createElement('div');o.className='instp';
+ o.innerHTML=`<div class="pan"><span class="lab">INSTALLER UNDER US</span><ol>${steps.map(x=>'<li>'+x+'</li>').join('')}</ol>${bigBtn('instOk','COMPRIS')}</div>`;
+ document.body.appendChild(o);o.querySelector('#instOk').onclick=()=>o.remove();
+}
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 function home(){
  screen(`<div class="homebg">${homeScene()}<div class="blz"></div></div>
  <div class="homec">
@@ -579,11 +605,12 @@ function home(){
    <div class="hsep"><span>OU REJOINDRE UNE PARTIE</span></div>
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
+   ${isApp()?'':'<button class="inst" id="inst">⬇ INSTALLER L’APPLI</button>'}
   </div>
-  <span class="ver">PROTO 3.8</span>
+  <span class="ver">PROTO 3.9</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
- $('#newG').onclick=()=>{S('tap');sizePick()};
+ $('#newG').onclick=()=>{S('tap');sizePick()};{const ib=$('#inst');if(ib)ib.onclick=install}
  $('#jb').onclick=()=>{const v=$('#jc').value.trim().toUpperCase();if(v.length!==4){$('#jc').classList.add('err');return}joinRoom(v)};
 }
 function sizeIllu(k){return `<img src="img/size_${k}.webp" alt="" loading="eager">`}
