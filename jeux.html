@@ -912,7 +912,7 @@ G.serre={t:'SERRE',n:'Serre',c:'Réflexes',time:23,noDeco:true,d:'Les légumes d
   S.forEach((s,i)=>{if(s.t>=0){s.t+=dt/s.d;set(i,s.t);if(s.t>=1)api.fail('Plant gelé')}})});
  bs.forEach((b,i)=>api.on(b,'pointerdown',()=>{if(S[i].t>=0){S[i].t=-1;set(i,0);wet(i);saved++;sE.textContent=saved+'/18';beep(760,.05);if(saved>=18)api.win()}else{beep(200,.04)}}))}};
 /* 10 RADIO */
-G.radio={t:'RADIO',n:'Radio',c:'Adresse',time:55,noDeco:true,d:'Le signal de la base dérive. Tourne la grosse molette pour garder l’aiguille rouge dans la bande verte 3 secondes d’affilée. 4 liaisons à verrouiller : après chacune, le signal saute sur une autre fréquence.',init(a,api){
+G.radio={t:'RADIO',n:'Radio',c:'Adresse',time:35,noDeco:true,d:'Le signal de la base dérive. Tourne la grosse molette pour garder l’aiguille rouge dans la bande verte 3 secondes d’affilée. 4 liaisons à verrouiller : après chacune, le signal saute sur une autre fréquence.',init(a,api){
  const K='#05080B',X0=40,X1=320,sx=v=>X0+(X1-X0)*v/100,MX=106,MY=252,KX=268.5,KY=225.4,NH=69,NW=NH*60/292;
  const ticks=Array.from({length:41},(_,i)=>{const x=sx(i*2.5);return `<path d="M${x} 106 V${i%5===0?92:99}" stroke="#FFD08A" stroke-width="${i%5===0?2:1}"/>`}).join('')+Array.from({length:9},(_,i)=>`<text x="${sx(i*12.5)}" y="87" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="11" fill="#FFD08A">${118+i}</text>`).join('');
  const mt=Array.from({length:13},(_,i)=>{const an=(-60+i*10)*Math.PI/180;const r1=66,r2=i%2?60:56;return `<path d="M${MX+Math.sin(an)*r1} ${MY-Math.cos(an)*r1} L${MX+Math.sin(an)*r2} ${MY-Math.cos(an)*r2}" stroke="${i>9?'#C0302A':K}" stroke-width="${i%2?1.2:2.2}"/>`}).join('');
