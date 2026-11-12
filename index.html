@@ -315,6 +315,10 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .qz.rc .qrv b{background-image:url(img/qz_rev_ch.webp)}.qz.rh .qrv b{background-image:url(img/qz_rev_ho.webp)}
 .qz.rev .qrv{opacity:1}
 .qz.rh .qrv i{animation:qpop .6s}
+
+/* v3.4 salle de réunion */
+.ovl.mbg{background:#0B0F13 url(img/meet_bg.webp) center/cover no-repeat}
+.ovl.mbg>.pan{background:rgba(12,16,20,.82);box-shadow:0 10px 40px rgba(0,0,0,.7)}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -570,7 +574,7 @@ function home(){
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
   </div>
-  <span class="ver">PROTO 3.3</span>
+  <span class="ver">PROTO 3.4</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};
@@ -742,14 +746,15 @@ async function reportBody(id){
 function onHubState(st,prev){
  const o=$('#hOvl');if(!o)return;
  $('#hPause').textContent=st==='paused'?'▶':'II';
- if(st==='game'){clearMeet();o.hidden=true;o.innerHTML='';L('wind',true);L('music',true);return}
+ if(st==='game'){clearMeet();unMeetBg();o.hidden=true;o.innerHTML='';L('wind',true);L('music',true);return}
  L('music',false);L('crit',false);
  if(st==='meeting'){S(meta.victim?'body':'meetCall');meetingStart()}
  if(st==='paused'){o.innerHTML=`<div class="pan"><span class="lab" style="color:var(--orange)">PAUSE GÉNÉRALE</span><h3>PARTIE EN PAUSE</h3><p>${esc(meta.reason||'')}</p>${meta.auto?'<p class="small">Reprise automatique dès que la station revient.</p>':bigBtn('resumeB','REPRENDRE')}</div>`;o.hidden=false;const b=$('#resumeB');if(b)b.onclick=resumeRoom}
 }
 /* ===== Réunion : appel → débat → vote → dépouillement → quarantaine ===== */
 let mPhase='',mIv=null,mTo=[];
-function clearMeet(){clearInterval(mIv);mIv=null;mTo.forEach(clearTimeout);mTo=[]}
+function clearMeet(){clearInterval(mIv);mIv=null;mTo.forEach(clearTimeout);mTo=[];const ov=$('#hOvl');if(ov)ov.classList.add('mbg')}
+function unMeetBg(){const ov=$('#hOvl');if(ov)ov.classList.remove('mbg')}
 function debateSec(){const c=C(),n=alive().length;return c.debat+c.debatJoueur*Math.max(0,n-6)}
 async function meetingStart(){
  clearMeet();mPhase='call';
@@ -807,9 +812,9 @@ function quarantine(id){
  mTo.push(setTimeout(async()=>{await R('players/'+id+'/out').set('quar');if(await checkWin())return;const nc=await ensureChef();
   if(nc){o.innerHTML=`<div class="pan"><span class="lab mute">CHEF DE MISSION</span><h3>${esc(pname(nc))} ★</h3><p>Nouveau chef tiré au sort parmi les vivants.</p></div>`;S('chef');mTo.push(setTimeout(endMeeting,2600))}else endMeeting()},6000));
 }
-async function endMeeting(){clearMeet();mPhase='';await resumeRoom(true)}
+async function endMeeting(){clearMeet();unMeetBg();mPhase='';await resumeRoom(true)}
 function openSettings(editable){
- const o=$('#hOvl');if(!o)return;const c=C();const ed=editable&&meta.state==='lobby';
+ const o=$('#hOvl');if(!o)return;if(!mPhase)unMeetBg();const c=C();const ed=editable&&meta.state==='lobby';
  o.innerHTML=`<div class="pan setpan"><h3>RÉGLAGES · ${SIZES[meta.size||'terrain'].label}</h3><p>${ed?'Modifiables jusqu’au lancement, mémorisés sur ce téléphone.':'Partie en cours : lecture seule.'}</p><div class="setbody">
   ${FIELDS.map(([t,rows])=>`<div class="lab sgrp">${t.toUpperCase()}</div>${rows.map(([k,l,u])=>`<label class="srow" for="cf_${k}"><span>${l}</span><span style="display:flex;align-items:center;gap:5px"><input id="cf_${k}" data-k="${k}" type="number" inputmode="decimal" value="${c[k]}" ${ed?'':'disabled'} ><i class="u">${u}</i></span></label>`).join('')}`).join('')}</div>
   <div class="row2">${ed?bigBtn('cfReset','PAR DÉFAUT','alt'):''}${bigBtn('cfOk',ed?'ENREGISTRER':'FERMER')}</div></div>`;
