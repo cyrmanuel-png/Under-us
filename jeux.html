@@ -654,14 +654,15 @@ G.gene={t:'GÉNÉ',n:'Générateur',c:'Rythme',time:40,d:'Tire la poignée du la
   else{ko++;beep(90,.25,'sawtooth',.06);buzz(40);puff('#1A1A1A',4);if(ko>=3)api.after(()=>api.fail('Moteur noyé'),300)}upd()})}};
 
 /* 2 INFIRM */
-G.infirm={t:'INFIRM.',n:'Infirmerie',c:'Rythme',time:35,d:'Touche l’écran pile quand un pic du cœur passe dans la fenêtre orange. Le cœur s’emballe à chaque réussite. 7 pics captés, 3 ratés maximum.',init(a,api){
+G.infirm={t:'INFIRM.',n:'Infirmerie',c:'Rythme',time:35,noDeco:true,d:'Touche l’écran pile quand un pic du cœur passe dans la fenêtre orange. Le cœur s’emballe à chaque réussite. 7 pics captés, 3 ratés maximum.',init(a,api){
  const {c,x,w,h}=canvas(a);
  /* écran = trou du boîtier (coordonnées du décor 360×560 mises à l'échelle "slice") */
- const s=Math.max(w/360,h/560),ox=(w-360*s)/2,oy=(h-560*s)/2;
- const X0=Math.max(4,ox+16*s),X1=Math.min(w-4,ox+344*s),Y0=oy+16*s,Y1=oy+466*s,SW=X1-X0,SH=Y1-Y0;
- const EY0=Y0+SH*.15,EY1=Y0+SH*.6,base=EY0+(EY1-EY0)*.62,AMP=(EY1-EY0)*.78;
+ a.style.background='#0B1014 url(img/infirm_bg.webp) center/contain no-repeat';
+ const s=Math.min(w/360,h/480),ox=(w-360*s)/2,oy=(h-480*s)/2;
+ const X0=ox+59*s,X1=ox+304.3*s,Y0=oy+62.3*s,Y1=oy+208.2*s,SW=X1-X0,SH=Y1-Y0;
+ const EY0=Y0+SH*.17,EY1=Y1-SH*.02,base=EY0+(EY1-EY0)*.62,AMP=(EY1-EY0)*.78;
  const mx=X0+SW*.3;let peaks=[],next=.6,ok=0,ko=0,spd=100,flashR=0,flashG=0,beat=0,tt=0;
- const st=document.createElement('div');st.className='statrow';st.style.marginTop=Math.max(0,Y0+2)+'px';a.appendChild(st);
+ const st=document.createElement('div');st.className='statrow';st.style.cssText='position:absolute;left:0;right:0;top:0';a.appendChild(st);
  const upd=()=>st.innerHTML=`<span>CAPTÉS ${pips(ok,7,'ok')}</span><span>RATÉS ${pips(ko,3,'ko')}</span>`;upd();
  api.info('Moniteur cardiaque du patient. Garde le rythme.');
  /* calque fixe : lignes de balayage + reflet de vitre */
@@ -679,12 +680,9 @@ G.infirm={t:'INFIRM.',n:'Infirmerie',c:'Rythme',time:35,d:'Touche l’écran pil
   flashR=Math.max(0,flashR-dt*2.5);flashG=Math.max(0,flashG-dt*2.5);beat=Math.max(0,beat-dt*3);
   x.clearRect(0,0,w,h);
   /* fond écran + quadrillage millimétré */
-  x.fillStyle='#04110B';x.fillRect(X0,Y0,SW,SH);
-  x.lineWidth=1;for(let i=X0;i<X1;i+=10){x.strokeStyle=(Math.round((i-X0)/10)%5)?'rgba(40,110,70,.12)':'rgba(60,150,95,.24)';x.beginPath();x.moveTo(i,EY0);x.lineTo(i,EY1);x.stroke()}
-  for(let j=EY0;j<EY1;j+=10){x.strokeStyle=(Math.round((j-EY0)/10)%5)?'rgba(40,110,70,.12)':'rgba(60,150,95,.24)';x.beginPath();x.moveTo(X0,j);x.lineTo(X1,j);x.stroke()}
   /* bandeau patient */
   x.fillStyle='rgba(75,227,138,.10)';x.fillRect(X0,Y0,SW,SH*.135);x.strokeStyle='rgba(75,227,138,.35)';x.beginPath();x.moveTo(X0,Y0+SH*.135);x.lineTo(X1,Y0+SH*.135);x.stroke();
-  mono('LIT 02 · B. MORIN',12,'#9CF5C0',X0+8,Y0+SH*.118);mono('II  x1  25mm/s',10,'#4BE38A',X1-8,Y0+SH*.118,'right');
+  mono('LIT 02 · B. MORIN',11,'#9CF5C0',X0+8,Y0+SH*.118);mono('25mm/s',9,'#4BE38A',X1-8,Y0+SH*.118,'right');
   /* fenêtre de capture */
   x.fillStyle=`rgba(255,106,26,${.13+flashG*.25})`;x.fillRect(mx-20,EY0,40,EY1-EY0);
   x.strokeStyle='#FF6A1A';x.lineWidth=2;[[mx-20,1],[mx+20,-1]].forEach(([bx,dir])=>{x.beginPath();x.moveTo(bx+dir*8,EY0+2);x.lineTo(bx,EY0+2);x.lineTo(bx,EY1-2);x.lineTo(bx+dir*8,EY1-2);x.stroke()});
@@ -696,22 +694,21 @@ G.infirm={t:'INFIRM.',n:'Infirmerie',c:'Rythme',time:35,d:'Touche l’écran pil
   x.strokeStyle='#B8FFD4';x.lineWidth=2;path();x.stroke();
   peaks.forEach(p=>{if(p.hit){const k=Math.min(1,(mx-p.x+30)/60);x.strokeStyle=`rgba(75,227,138,${1-k})`;x.lineWidth=2.5;x.beginPath();x.arc(p.x,base-AMP,8+k*16,0,7);x.stroke()}});
   /* bas d'écran : SpO2 (pléthysmo) + respiration + chiffres */
-  const BY0=EY1+SH*.03,BH=(Y1-BY0)*.5,NB=(Y1-BY0)/4;x.strokeStyle='rgba(156,216,238,.25)';x.beginPath();x.moveTo(X0,EY1+SH*.015);x.lineTo(X1,EY1+SH*.015);x.stroke();
-  const TW=SW*.58;
+  const BY0=oy+219.5*s,BH=103.7*s/2,NB=26.7*s;
+  const TW=160.5*s;
   x.save();x.beginPath();x.rect(X0,BY0,TW,BH*2);x.clip();
   x.strokeStyle='#5FD4E8';x.lineWidth=2;x.shadowColor='#5FD4E8';x.shadowBlur=6;x.beginPath();
   for(let i=X0;i<=X0+TW;i+=2){let v=0;peaks.forEach(p=>{const dd=i-(p.x+34);if(dd>-30&&dd<60){const t=(dd+30)/90;v+=Math.sin(t*Math.PI)*.8+(t>.55&&t<.75?Math.sin((t-.55)/.2*Math.PI)*.18:0)}});const y=BY0+BH*.8-v*BH*.6;i===X0?x.moveTo(i,y):x.lineTo(i,y)}x.stroke();
   x.strokeStyle='#F2D21E';x.shadowColor='#F2D21E';x.beginPath();for(let i=X0;i<=X0+TW;i+=3){const y=BY0+BH*1.5-Math.sin(i/38-tt*1.6)*BH*.28;i===X0?x.moveTo(i,y):x.lineTo(i,y)}x.stroke();x.restore();
   mono('SpO2',9,'#5FD4E8',X0+4,BY0+10);mono('RESP',9,'#F2D21E',X0+4,BY0+BH+10);
-  const NX=X0+TW+8,NW=X1-NX-6;
+  const NX=ox+235*s,NW=X1-NX-6;
   /* colonne de chiffres : FC, SpO2, RESP, PNI */
-  const hr=Math.round(spd*.7),big=Math.min(40,NB*.8);
-  mono('FC',10,'#4BE38A',NX,BY0+11);mono(String(hr),big,hr>130?'#FF6A5A':'#4BE38A',X1-8,BY0+NB*.9,'right');
-  const hx=NX+10,hy=BY0+NB*.62,hs=5+beat*3;x.fillStyle=beat>.2?'#FF6A5A':'#7A2A2A';x.beginPath();x.moveTo(hx,hy+hs);x.bezierCurveTo(hx-hs*1.6,hy,hx-hs,hy-hs*1.2,hx,hy-hs*.4);x.bezierCurveTo(hx+hs,hy-hs*1.2,hx+hs*1.6,hy,hx,hy+hs);x.fill();
-  mono('SpO2 %',10,'#5FD4E8',NX,BY0+NB+11);mono('98',big*.8,'#5FD4E8',X1-8,BY0+NB*1.85,'right');
-  mono('RESP',10,'#F2D21E',NX,BY0+NB*2+11);mono('16',big*.7,'#F2D21E',X1-8,BY0+NB*2.85,'right');
-  mono('PNI',10,'#E3F1F7',NX,BY0+NB*3+11);mono('118/76',big*.5,'#E3F1F7',X1-8,BY0+NB*3.8,'right');
-  x.strokeStyle='rgba(156,216,238,.25)';x.beginPath();x.moveTo(NX-4,EY1+SH*.015);x.lineTo(NX-4,Y1-4);[1,2,3].forEach(k=>{x.moveTo(NX,BY0+NB*k-2);x.lineTo(X1-4,BY0+NB*k-2)});x.stroke();
+  const hr=Math.round(spd*.7),big=Math.min(34,NB*.78);
+  mono('FC',8,'#4BE38A',NX,BY0+10);mono(String(hr),big,hr>130?'#FF6A5A':'#4BE38A',X1-8,BY0+NB*.9,'right');
+  const hx=NX+8,hy=BY0+NB*.66,hs=5+beat*3;x.fillStyle=beat>.2?'#FF6A5A':'#7A2A2A';x.beginPath();x.moveTo(hx,hy+hs);x.bezierCurveTo(hx-hs*1.6,hy,hx-hs,hy-hs*1.2,hx,hy-hs*.4);x.bezierCurveTo(hx+hs,hy-hs*1.2,hx+hs*1.6,hy,hx,hy+hs);x.fill();
+  mono('SpO2',8,'#5FD4E8',NX,BY0+NB+10);mono('98',big*.8,'#5FD4E8',X1-8,BY0+NB*1.85,'right');
+  mono('RESP',8,'#F2D21E',NX,BY0+NB*2+10);mono('16',big*.7,'#F2D21E',X1-8,BY0+NB*2.85,'right');
+  mono('PNI',8,'#E3F1F7',NX,BY0+NB*3+10);mono('118/76',big*.48,'#E3F1F7',X1-8,BY0+NB*3.8,'right');
   x.drawImage(ov,0,0,w,h);
   if(flashR>0){x.strokeStyle=`rgba(224,48,42,${flashR})`;x.lineWidth=6;x.strokeRect(X0+3,Y0+3,SW-6,SH-6);mono('⚠ RATÉ',13,`rgba(255,106,90,${flashR})`,X0+SW/2,EY1-8,'center')}
  });
