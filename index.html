@@ -523,7 +523,7 @@ async function boot(){
   db.ref('.info/serverTimeOffset').on('value',s=>offset=s.val()||0);
  }catch(e){fatal('Impossible de joindre Firebase ('+(e.code||e.message)+'). Vérifie la connexion 4G/5G.');return}
  const q=new URLSearchParams(location.search);const r=(q.get('r')||'').toUpperCase(),h=(q.get('hub')||'').toUpperCase();
- if(h){const m=(await db.ref('rooms/'+h+'/meta').get()).val();if(m&&m.hub===uid){code=h;role='hub';listenRoom();keepAwake();return}}
+ if(h){const m=(await dbGet('rooms/'+h+'/meta')).val();if(m&&m.hub===uid){code=h;role='hub';listenRoom();keepAwake();return}}
  if(r)joinRoom(r);else home();
 }
 
@@ -574,7 +574,7 @@ function home(){
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
   </div>
-  <span class="ver">PROTO 3.5</span>
+  <span class="ver">PROTO 3.6</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};
@@ -593,14 +593,17 @@ function sizePick(){
 
 /* ===== HUB ===== */
 let creating=false;
+const dbGet=(path,ms=8000)=>Promise.race([db.ref(path).once('value'),new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),ms))]);
 async function createRoom(){
- if(creating)return;creating=true;const cb=$('#create');if(cb){cb.disabled=true;cb.textContent='CRÉATION…'}
+ if(creating)return;creating=true;const cb=$('#create');const lbl=cb?cb.innerHTML:'';if(cb){cb.disabled=true;cb.textContent='CRÉATION…'}
  S('tap');const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let c='';
- for(let k=0;k<6;k++){c=Array.from({length:4},()=>A[Math.floor(Math.random()*A.length)]).join('');const s=await db.ref('rooms/'+c+'/meta').get();if(!s.exists())break}
- code=c;role='hub';
- await R('meta').set({hub:uid,size,cfg:presetFor(size),state:'lobby',created:firebase.database.ServerValue.TIMESTAMP});
- history.replaceState(null,'','?hub='+code);
- creating=false;listenRoom();hubLobby();keepAwake();
+ try{
+  for(let k=0;k<6;k++){c=Array.from({length:4},()=>A[Math.floor(Math.random()*A.length)]).join('');const s=await dbGet('rooms/'+c+'/meta');if(!s.exists())break}
+  code=c;role='hub';
+  await R('meta').set({hub:uid,size,cfg:presetFor(size),state:'lobby',created:firebase.database.ServerValue.TIMESTAMP});
+ }catch(e){creating=false;code=null;role=null;if(cb){cb.disabled=false;cb.innerHTML=lbl}if(cb){cb.insertAdjacentHTML('afterend','<p class="small" style="text-align:center;color:#FF9A4A">Connexion lente, réappuie.</p>')}return}
+ creating=false;history.replaceState(null,'','?hub='+code);
+ listenRoom();hubLobby();keepAwake();
 }
 function listenRoom(){
  R('meta').on('value',s=>{meta=s.val()||{};render()});
@@ -850,13 +853,13 @@ function hubOver(){
 /* ===== STATION ===== */
 let me={name:'',color:COLORS[0],loc:''},stView='';
 async function joinRoom(c){
- code=c;const m=await db.ref('rooms/'+code+'/meta').get();
+ code=c;const m=await db.ref('rooms/'+code+'/meta').once('value');
  if(!m.exists()){screen(header('UNDER US')+`<div class="msg"><h2>CODE INCONNU</h2><p>Aucune partie « ${esc(code)} ». Vérifie le code affiché sur le hub.</p></div>`+bigBtn('back','RETOUR'));$('#back').onclick=()=>{location.href=location.pathname};return}
  role='station';history.replaceState(null,'','?r='+code);
- {const pl=(await db.ref('rooms/'+code+'/players').get()).val()||{},mm=m.val()||{},cf=Object.assign({},PRESETS[mm.size||'terrain'],mm.cfg||{});
+ {const pl=(await db.ref('rooms/'+code+'/players').once('value')).val()||{},mm=m.val()||{},cf=Object.assign({},PRESETS[mm.size||'terrain'],mm.cfg||{});
   const ready=Object.entries(pl).filter(([id,p])=>p.ready&&id!==uid).length;
   if(!pl[uid]&&ready>=cf.stMax){screen(header('UNDER US')+`<div class="msg"><h2>PARTIE COMPLÈTE</h2><p>Cette partie a déjà ${cf.stMax} stations, le maximum réglé sur le hub.</p></div>`);return}}
- const ex=(await R('players/'+uid).get()).val();if(ex){me=Object.assign(me,ex)}
+ const ex=(await R('players/'+uid).once('value')).val();if(ex){me=Object.assign(me,ex)}
  const pref=R('players/'+uid);
  db.ref('.info/connected').on('value',s=>{if(s.val()){pref.child('online').onDisconnect().set(false);pref.child('online').set(true)}});
  listenRoom();
