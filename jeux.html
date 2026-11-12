@@ -1045,57 +1045,26 @@ G.anten={t:'ANTEN.',n:'Antenne',c:'Logique',time:25,noDeco:true,d:'Attrape la fi
   drawRest()})}};
 
 /* 15 CUVE */
-G.cuve={t:'CUVE',n:'Cuves d’eau',c:'Adresse',time:40,d:'Garde la vanne appuyée pour remplir la cuve et relâche pour t’arrêter dans la zone verte. Attention, l’eau coule encore un peu après. 3 cuves à remplir sans dépasser.',init(a,api){
- const K='#05080B',GX=152,GW=56,GT=118,GB=388,GH=GB-GT;/* hublot de niveau */
- const ticks=Array.from({length:11},(_,i)=>{const y=GB-i*GH/10;return `<path d="M${GX+GW+4} ${y} H${GX+GW+(i%5?12:20)}" stroke="#DCEBF1" stroke-width="${i%5?1.4:2.2}"/>${i%5?'':`<text x="${GX+GW+24}" y="${y+4}" font-family="Share Tech Mono" font-size="11" fill="#DCEBF1">${i*10}</text>`}`}).join('');
- const minis=[0,1,2].map(i=>`<g transform="translate(${118+i*62} 26)"><rect x="-16" y="-14" width="32" height="30" rx="6" fill="#4C5862" stroke="${K}" stroke-width="2"/><rect x="-11" y="-9" width="22" height="20" rx="3" fill="#0E161C" stroke="${K}" stroke-width="1"/><rect class="mq" data-i="${i}" x="-11" y="11" width="22" height="0" fill="#5FB9DE"/><path d="M-16 -2 H16" stroke="${K}" stroke-width="1.2" opacity=".5"/></g>`).join('');
- a.innerHTML=`<div class="statrow"><span>CUVES <span id="n"></span></span><span class="mono" id="pc" style="font-size:16px;color:var(--glace)">0 %</span></div>
- <svg id="cv" viewBox="0 0 360 470" preserveAspectRatio="xMidYMid meet" style="position:absolute;left:0;right:0;top:30px;width:100%;height:calc(100% - 170px);z-index:2">
- <defs><linearGradient id="cvT" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2A333A"/><stop offset=".18" stop-color="#8A949C"/><stop offset=".32" stop-color="#C4CED4"/><stop offset=".55" stop-color="#6E7A84"/><stop offset="1" stop-color="#232B31"/></linearGradient>
- <linearGradient id="cvW" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1E6A92"/><stop offset=".35" stop-color="#5FB9DE"/><stop offset=".6" stop-color="#3E9BC8"/><stop offset="1" stop-color="#174F6E"/></linearGradient>
- <linearGradient id="cvG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".2" stop-color="#fff" stop-opacity=".35"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/></linearGradient>
- <clipPath id="cvC"><rect x="${GX}" y="${GT}" width="${GW}" height="${GH}" rx="10"/></clipPath></defs>
- ${minis}
- <!-- arrivée d'eau -->
- <path d="M40 60 H150 Q180 60 180 86 V96" fill="none" stroke="${K}" stroke-width="18"/><path d="M40 60 H150 Q180 60 180 86 V96" fill="none" stroke="#6E7A84" stroke-width="13"/><path d="M40 56 H150" stroke="#A3AEB6" stroke-width="3"/>
- <g transform="translate(92 60)"><rect x="-10" y="-14" width="20" height="28" rx="3" fill="#3A4852" stroke="${K}" stroke-width="2"/><circle id="vlamp" r="5" fill="#2A353D" stroke="${K}" stroke-width="1.5"/></g>
- <!-- corps de la cuve -->
- <ellipse cx="180" cy="430" rx="104" ry="14" fill="rgba(0,0,0,.45)"/>
- <path d="M84 120 Q84 92 180 88 Q276 92 276 120 V410 Q276 424 180 426 Q84 424 84 410Z" fill="url(#cvT)" stroke="${K}" stroke-width="3"/>
- <path d="M84 120 Q180 140 276 120" fill="none" stroke="${K}" stroke-width="2"/><path d="M90 116 Q180 134 270 116" fill="none" stroke="#E3EAEE" stroke-width="1.5" opacity=".6"/>
- ${[170,250,330].map(y=>`<path d="M85 ${y} Q180 ${y+14} 275 ${y}" fill="none" stroke="${K}" stroke-width="2.2"/><path d="M85 ${y+3} Q180 ${y+17} 275 ${y+3}" fill="none" stroke="#C4CED4" stroke-width="1" opacity=".6"/>`).join('')}
- ${[100,124,236,260].map(x=>[150,230,310,390].map(y=>R(x,y+((x-180)/96)**2*-8+8,2.4)).join('')).join('')}
- <rect x="104" y="378" width="40" height="22" fill="#F2E05A" stroke="${K}" stroke-width="1.5" transform="rotate(-4 124 389)"/><text x="124" y="392" text-anchor="middle" font-family="Allerta Stencil" font-size="7" fill="${K}" transform="rotate(-4 124 389)">EAU</text>
- <!-- hublot de niveau -->
- <rect x="${GX-8}" y="${GT-8}" width="${GW+16}" height="${GH+16}" rx="14" fill="#3A4249" stroke="${K}" stroke-width="2.5"/><rect x="${GX-8}" y="${GT-8}" width="${GW+16}" height="5" rx="2.5" fill="#8A949C"/>
- ${[GT-2,GB+2].map(y=>R(GX-2,y,2.6)+R(GX+GW+2,y,2.6)).join('')}
- <rect x="${GX}" y="${GT}" width="${GW}" height="${GH}" rx="10" fill="#0B141A"/>
- <g clip-path="url(#cvC)">
-  <path d="M${GX} ${GT} H${GX+GW}" stroke="#16242C" stroke-width="2"/>
-  <rect id="wz" x="${GX}" y="${GT}" width="${GW}" height="20" fill="rgba(75,227,138,.34)"/><path id="wzl" d="" stroke="#4BE38A" stroke-width="2.5" stroke-dasharray="6 4"/>
-  <rect id="jet" x="178" y="${GT}" width="0" height="0" fill="#A9DDF2" opacity=".85"/>
-  <g id="wg"><rect id="wb" x="${GX}" y="${GB}" width="${GW}" height="0" fill="url(#cvW)"/><path id="ws" d="" fill="#A9DDF2" stroke="#E6F6FC" stroke-width="1.5"/></g>
-  <g id="bub"></g>
-  <rect x="${GX}" y="${GT}" width="${GW}" height="${GH}" fill="url(#cvG)"/>
- </g>
- <rect x="${GX}" y="${GT}" width="${GW}" height="${GH}" rx="10" fill="none" stroke="${K}" stroke-width="2"/>
- ${ticks}
- <!-- repères de zone verte (taquets laiton) -->
- 
- <!-- voyant trop-plein -->
- <g transform="translate(248 140)"><circle r="13" fill="#3A4249" stroke="${K}" stroke-width="2"/><circle id="ovl" r="8" fill="#5A1A16" stroke="${K}" stroke-width="1.5"/><text y="26" text-anchor="middle" font-family="Allerta Stencil" font-size="7" fill="#DCEBF1">TROP</text></g>
- </svg>
- <div style="position:absolute;left:0;right:0;bottom:10px;display:flex;flex-direction:column;align-items:center;gap:4px;z-index:7">
-  <button id="fill" aria-label="Maintenir la vanne pour remplir" style="touch-action:none;border:0;background:none;padding:0;width:112px;height:112px">
-   <svg viewBox="-60 -60 120 120" style="width:100%;height:100%;overflow:visible"><circle r="54" fill="rgba(0,0,0,.45)" cx="3" cy="5"/>
-   <g id="whl"><circle r="50" fill="none" stroke="${K}" stroke-width="13"/><circle r="50" fill="none" stroke="#E0302A" stroke-width="8"/><circle r="50" fill="none" stroke="#FF8A7A" stroke-width="2" stroke-dasharray="40 40" opacity=".7"/>
-   ${[0,1,2,3,4].map(i=>`<path d="M0 0 L${(Math.cos(i*1.2566)*46).toFixed(1)} ${(Math.sin(i*1.2566)*46).toFixed(1)}" stroke="${K}" stroke-width="9" stroke-linecap="round"/><path d="M0 0 L${(Math.cos(i*1.2566)*46).toFixed(1)} ${(Math.sin(i*1.2566)*46).toFixed(1)}" stroke="#B8231C" stroke-width="5" stroke-linecap="round"/>`).join('')}
-   ${[0,1,2,3,4].map(i=>`<circle cx="${(Math.cos(i*1.2566+.63)*50).toFixed(1)}" cy="${(Math.sin(i*1.2566+.63)*50).toFixed(1)}" r="5" fill="#E0302A" stroke="${K}" stroke-width="2"/>`).join('')}
-   <circle r="16" fill="#8A949C" stroke="${K}" stroke-width="2.5"/><circle r="9" fill="#4C5862" stroke="${K}" stroke-width="1.5"/><circle cx="-4" cy="-5" r="4" fill="#C4CED4"/></g></svg>
-  </button>
-  <span class="lab" style="color:#FFB07E">MAINTENIR LA VANNE</span>
- </div>`;
- const $$=q=>a.querySelector(q),pc=$$('#pc'),nE=$$('#n'),btn=$$('#fill'),whl=$$('#whl'),wb=$$('#wb'),ws=$$('#ws'),jet=$$('#jet'),bub=$$('#bub'),ovl=$$('#ovl'),vl=$$('#vlamp');
+G.cuve={t:'CUVE',n:'Cuves d’eau',c:'Adresse',time:40,noDeco:true,d:'Garde la vanne appuyée pour remplir la cuve et relâche pour t’arrêter dans la zone verte. Attention, l’eau coule encore un peu après. 3 cuves à remplir sans dépasser.',init(a,api){
+ const K='#05080B',GX=161.4,GW=36.8,GT=151.2,GB=337.6,GH=178.7,CB=341.4,QX=[121.5,179.8,238.2],QY=42.6;
+ a.innerHTML=`<div class="statrow" style="position:absolute;left:0;right:0;top:0;z-index:3"><span>CUVES <span id="n"></span></span><span class="mono" id="pc" style="font-size:16px;color:var(--glace)">0 %</span></div>
+ <svg id="cv" viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%;z-index:2;touch-action:none">
+ <defs><linearGradient id="cvW" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1E6A92"/><stop offset=".35" stop-color="#5FB9DE"/><stop offset=".6" stop-color="#3E9BC8"/><stop offset="1" stop-color="#174F6E"/></linearGradient>
+ <clipPath id="cvC"><rect x="${GX}" y="${GT}" width="${GW}" height="${CB-GT}" rx="8"/></clipPath></defs>
+ <image href="img/cuve_bg.webp" x="0" y="0" width="360" height="480" preserveAspectRatio="none"/>
+ ${QX.map((x,i)=>`<image class="mq" data-i="${i}" href="img/cu_sq_off.webp" x="${x-15.5}" y="${QY-15.5}" width="31" height="31"/>`).join('')}
+ <circle id="vlamp" cx="88" cy="68" r="3.5" fill="#2A353D" stroke="${K}" stroke-width="1"/>
+ <g clip-path="url(#cvC)"><rect id="wz" x="${GX}" y="0" width="${GW}" height="10" fill="#4BE38A" opacity=".28"/>
+ <rect id="jet" x="178" y="${GT}" width="4" height="0" fill="#9CD8EE" opacity=".85"/>
+ <rect id="wb" x="${GX}" y="${GB}" width="${GW}" height="0" fill="url(#cvW)"/><path id="ws" d="" fill="#9CD8EE" opacity=".9"/><g id="bub"></g>
+ <path id="wzl" d="" stroke="#4BE38A" stroke-width="2.5" stroke-dasharray="5 3"/></g>
+ <image id="ovlOff" href="img/cu_red_off.webp" x="${243.6-11}" y="${205-11}" width="22" height="22"/><image id="ovlOn" href="img/cu_red_on.webp" x="${243.6-16}" y="${205-16}" width="32" height="32" style="display:none"/>
+ <text x="243.6" y="227" text-anchor="middle" font-family="Allerta Stencil" font-size="7.5" fill="#05080B">TROP</text>
+ <g transform="translate(180 427.6)"><g id="fill" style="cursor:pointer"><circle r="52" fill="transparent"/><g id="whl"><image href="img/cu_valve.webp" x="-44" y="-44" width="88" height="88"/></g></g></g>
+ <text x="180" y="473" text-anchor="middle" font-family="Allerta Stencil" font-size="11" fill="#FFB07E" style="paint-order:stroke;stroke:#05080B;stroke-width:3px">MAINTENIR LA VANNE</text>
+ </svg>`;
+ const ovl={setAttribute:(k,v)=>{const on=v==='#FF4A3A';a.querySelector('#ovlOn').style.display=on?'':'none';a.querySelector('#ovlOff').style.display=on?'none':''}};
+ const $$=q=>a.querySelector(q),pc=$$('#pc'),nE=$$('#n'),btn=$$('#fill'),whl=$$('#whl'),wb=$$('#wb'),ws=$$('#ws'),jet=$$('#jet'),bub=$$('#bub'),vl=$$('#vlamp');
  let lvl=0,flow=0,hold=false,n=0,lo,hi,done=false,rot=0,tt=0,bubs=[];
  const Y=v=>GB-v/100*GH;
  const setup=()=>{lvl=0;flow=0;done=false;const zh=[16,11,7][Math.min(n,2)];lo=rnd(38,86-zh);hi=lo+zh;
@@ -1109,13 +1078,13 @@ G.cuve={t:'CUVE',n:'Cuves d’eau',c:'Adresse',time:40,d:'Garde la vanne appuyé
   const L=Math.min(lvl,100),sy=Y(L),amp=1.2+flow*.12;
   wb.setAttribute('y',sy);wb.setAttribute('height',GB-sy);
   let d=`M${GX} ${sy+6}`;for(let xx=GX;xx<=GX+GW;xx+=4)d+=` L${xx} ${(sy+Math.sin(xx/7+tt*6)*amp).toFixed(1)}`;d+=` L${GX+GW} ${sy+6}Z`;ws.setAttribute('d',d);
-  if(flow>0){jet.setAttribute('width',(2+flow/38*8).toFixed(1));jet.setAttribute('x',(180-(1+flow/38*4)).toFixed(1));jet.setAttribute('height',Math.max(0,sy-GT));
+  if(flow>0){jet.setAttribute('width',(2+flow/38*8).toFixed(1));jet.setAttribute('x',(179.8-(1+flow/38*4)).toFixed(1));jet.setAttribute('height',Math.max(0,sy-GT));
    if(Math.random()<flow/38*.6)bubs.push({x:rnd(GX+10,GX+GW-10),y:sy+rnd(6,30),r:rnd(1.5,3.5)})}else jet.setAttribute('height',0);
   bubs.forEach(b=>{b.y-=40*dt});bubs=bubs.filter(b=>b.y>sy+2);bub.innerHTML=bubs.map(b=>`<circle cx="${b.x.toFixed(1)}" cy="${b.y.toFixed(1)}" r="${b.r.toFixed(1)}" fill="none" stroke="#E6F6FC" stroke-width="1"/>`).join('');
   const over=lvl>hi;ovl.setAttribute('fill',over?(Math.floor(tt*6)%2?'#FF4A3A':'#8A1A14'):'#5A1A16');wb.setAttribute('fill',over?'#E07A3A':'url(#cvW)');
   pc.textContent=Math.round(lvl)+' %';pc.style.color=over?'#FF9A4A':'var(--glace)';
   if(lvl>=100){api.fail('Débordement');return}
-  if(!hold&&flow===0&&lvl>0){if(lvl>hi){api.fail('Trop rempli');return}if(lvl>=lo){done=true;const m=a.querySelector(`.mq[data-i="${n}"]`);if(m){m.setAttribute('y',-9);m.setAttribute('height',20)}n++;nE.innerHTML=pips(n,3,'ok');beep(880);if(n>=3)api.win();else api.after(setup,700)}}})}};
+  if(!hold&&flow===0&&lvl>0){if(lvl>hi){api.fail('Trop rempli');return}if(lvl>=lo){done=true;const m=a.querySelector(`.mq[data-i="${n}"]`);if(m)m.setAttribute('href','img/cu_sq_on.webp');n++;nE.innerHTML=pips(n,3,'ok');beep(880);if(n>=3)api.win();else api.after(setup,700)}}})}};
 /* 16 CTRL */
 G.ctrl={t:'CTRL',n:'Salle de contrôle',c:'Réflexes',time:40,d:'Des fenêtres d’alerte envahissent l’écran du poste. Ferme-les en trouvant leur croix, cachée à un endroit différent à chaque fois. Toucher à côté en ouvre une autre. Au-delà de 7 fenêtres, le système plante.',init(a,api){
  const vein=Array.from({length:7},(_,i)=>{const sx=[0,100,0,100,30,70,50][i],sy=[10,30,80,90,0,100,0][i];let d=`M${sx} ${sy}`,x0=sx,y0=sy;for(let k=0;k<6;k++){x0+=(50-x0)*.22+rnd(-9,9);y0+=(50-y0)*.22+rnd(-9,9);d+=` Q${(x0+rnd(-6,6)).toFixed(1)} ${(y0+rnd(-6,6)).toFixed(1)} ${x0.toFixed(1)} ${y0.toFixed(1)}`}return `<path d="${d}" fill="none" stroke="#8A2BE2" stroke-width="${(2.6-i*.2).toFixed(1)}" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="${d}" fill="none" stroke="#C98BFF" stroke-width="1" vector-effect="non-scaling-stroke" opacity=".8"/>`}).join('');
