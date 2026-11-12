@@ -874,7 +874,7 @@ G.forage={t:'FORAGE',n:'Forage',c:'Adresse',time:22,noTimer:true,d:'Guide la for
    x.fillStyle='#E3F1F7';x.font='11px "Allerta Stencil",sans-serif';x.textAlign='center';x.fillText('ÉCHANTILLON',cxx,tj+46);x.textAlign='left'}
   const tipY=dy+TIP,cT=cx(y+TIP),dist=hw(y+TIP)-Math.abs(px-cT);warn=dist<14;
   {const hl=x.createRadialGradient(px,tipY+30,4,px,tipY+70,150);hl.addColorStop(0,'rgba(255,226,160,.38)');hl.addColorStop(1,'rgba(255,226,160,0)');x.fillStyle=hl;x.beginPath();x.moveTo(px-8,tipY);x.lineTo(px-110,h);x.lineTo(px+110,h);x.lineTo(px+8,tipY);x.closePath();x.fill()}
-  if(ok('fo_tete')&&ok('fo_tige')){const TW=15,TH=TW*700/95,off=(t*60)%TH;for(let j=-TH+off-((dy-24)%TH);j<dy-20;j+=TH)x.drawImage(IM.fo_tige,px-TW/2,j,TW,Math.min(TH,dy-18-j));const HW=26,HH=HW*700/269;x.drawImage(IM.fo_tete,px-HW/2,tipY-HH+2,HW,HH)}else{x.fillStyle='#1E262C';x.fillRect(px-2,-2,4,6);
+  if(ok('fo_tete')&&ok('fo_tige')){const TW=15,TH=TW*700/95,off=(t*60)%TH;{const im=IM.fo_tige,ih=im.naturalHeight,L=90,bot=dy-18,top=bot-L;for(let k=0;k<L;k+=3){const yy=top+k,v=(((yy-off)%TH)+TH)%TH,sh=Math.min(3,TH-v);x.globalAlpha=Math.pow(k/L,1.4);x.drawImage(im,0,v/TH*ih,im.naturalWidth,sh/TH*ih,px-TW/2,yy,TW,sh)}x.globalAlpha=1}const HW=26,HH=HW*700/269;x.drawImage(IM.fo_tete,px-HW/2,tipY-HH+2,HW,HH)}else{x.fillStyle='#1E262C';x.fillRect(px-2,-2,4,6);
   x.fillStyle='#4C5862';x.fillRect(px-7,-2,14,dy-14);x.strokeStyle='#05080B';x.lineWidth=2;x.strokeRect(px-7,-2,14,dy-14);x.fillStyle='#8A949C';x.fillRect(px-5,-2,3,dy-14);
   const off=(t*90)%16;x.strokeStyle='#2A333A';x.lineWidth=2;for(let j=-16+off;j<dy-14;j+=16){x.beginPath();x.moveTo(px-7,j);x.lineTo(px+7,j+5);x.stroke()}
   x.fillStyle='#3A4852';x.fillRect(px-11,dy-16,22,10);x.strokeRect(px-11,dy-16,22,10);

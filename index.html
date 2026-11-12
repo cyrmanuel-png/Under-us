@@ -574,7 +574,7 @@ function home(){
    <div class="join"><input id="jc" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Code de la partie">${bigBtn('jb','REJOINDRE','alt')}</div>
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
   </div>
-  <span class="ver">PROTO 3.4</span>
+  <span class="ver">PROTO 3.5</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};
@@ -587,18 +587,20 @@ function sizePick(){
  <div class="szq"><span class="lab">OÙ SE DÉROULE LA MISSION ?</span><span class="small">Les temps s’adaptent à la taille. Tout reste réglable dans le salon.</span></div>
  <div class="szl">${Object.entries(SIZES).map(([k,v])=>{const p=presetFor(k);return `<button class="szc${k===size?' on':''}" data-k="${k}" aria-pressed="${k===size}"><div class="szi">${sizeIllu(k)}</div><div class="szt"><b>${v.label}</b><span>${SIZE_TXT[k]}</span><div class="szm"><i>${ico.t}${p.plafond} min / système</i><i>${ico.p}${p.stMin} à ${p.stMax} stations</i></div></div><span class="szck" aria-hidden="true">✓</span></button>`}).join('')}</div>
  ${bigBtn('create','CRÉER LA PARTIE')}<button class="ghost ice2" id="back">← RETOUR</button>`);
- document.querySelectorAll('.szc').forEach(b=>b.onclick=()=>{size=b.dataset.k;S('tap');document.querySelectorAll('.szc').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)})});
+ document.querySelectorAll('.szc').forEach(b=>b.onpointerup=b.onclick=e=>{if(e)e.preventDefault();if(size===b.dataset.k&&b.classList.contains('on')&&e&&e.type==='click')return;size=b.dataset.k;S('tap');document.querySelectorAll('.szc').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)})});
  $('#create').onclick=createRoom;$('#back').onclick=()=>{S('tap');home()};
 }
 
 /* ===== HUB ===== */
+let creating=false;
 async function createRoom(){
+ if(creating)return;creating=true;const cb=$('#create');if(cb){cb.disabled=true;cb.textContent='CRÉATION…'}
  S('tap');const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let c='';
  for(let k=0;k<6;k++){c=Array.from({length:4},()=>A[Math.floor(Math.random()*A.length)]).join('');const s=await db.ref('rooms/'+c+'/meta').get();if(!s.exists())break}
  code=c;role='hub';
  await R('meta').set({hub:uid,size,cfg:presetFor(size),state:'lobby',created:firebase.database.ServerValue.TIMESTAMP});
  history.replaceState(null,'','?hub='+code);
- listenRoom();hubLobby();keepAwake();
+ creating=false;listenRoom();hubLobby();keepAwake();
 }
 function listenRoom(){
  R('meta').on('value',s=>{meta=s.val()||{};render()});
@@ -935,6 +937,8 @@ function miniGame(){
 }
 
 boot();
+/* Entrée = valider */
+document.addEventListener('keydown',e=>{if(e.key!=='Enter'||e.isComposing)return;const t=e.target;if(!t||t.tagName!=='INPUT')return;const map={jc:'#jb',npN:'#npOk',nm:'#act',loc:'#act'};let b=map[t.id]&&document.querySelector(map[t.id]);if(!b&&t.id&&t.id.startsWith('cf_'))b=document.querySelector('#cfOk');if(t.id==='nm'){const l=document.querySelector('#loc');if(l&&l.value.trim().length<3){e.preventDefault();l.focus();return}}if(b){e.preventDefault();t.blur();b.click()}});
 })();
 
 </script>
