@@ -728,7 +728,7 @@ G.chauf={t:'CHAUF',n:'Chaudière',c:'Rythme',time:35,d:'La pression chute en con
  <path d="M${GL+9} ${T0} V${T1}" stroke="#FFFFFF" stroke-width="4" opacity=".14" stroke-linecap="round"/>
  <g id="smoke" pointer-events="none"></g>
  <text x="64" y="200" text-anchor="middle" font-family="Allerta Stencil" font-size="8" fill="#C4DEE9">STABILISÉ</text><text id="st" x="64" y="224" text-anchor="middle" font-family="Share Tech Mono" font-size="20" fill="#4BE38A">0,0</text><rect x="33" y="231" width="62" height="5" fill="#16202A"/><rect id="sb" x="33" y="231" width="0" height="5" fill="#4BE38A"/>
- ${[266.9,297.7,328.2].map((x,k)=>`<image id="f${k+1}" href="img/ch_lamp_off.webp" x="${x-12.5}" y="${219.5-12}" width="24" height="24"/>`).join('')}
+ ${[268.5,298.2,328.3].map((x,k)=>`<image id="f${k+1}" data-cx="${x}" href="img/ch_lamp_off.webp" x="${x-12}" y="${219.9-12}" width="24" height="24"/>`).join('')}
  <g id="vbtn" style="cursor:pointer"><rect x="30" y="300" width="300" height="260" fill="transparent"/>
  <circle class="vglow" cx="${VX}" cy="380" r="58" fill="#F2B21E" opacity=".3" filter="url(#vglo)"/>
  <image id="bR" href="img/ch_btn.webp" x="${VX-52}" y="327" width="104" height="108"/><image id="bP" href="img/ch_btn_on.webp" x="${VX-52}" y="330" width="104" height="102" style="display:none"/>
@@ -742,7 +742,7 @@ G.chauf={t:'CHAUF',n:'Chaudière',c:'Rythme',time:35,d:'La pression chute en con
   v-=34*dt;p+=v*dt;v*=.94;p-=10*dt;if(p<0)p=0;const ly=py(Math.min(p,100));liq.setAttribute('y',ly);liq.setAttribute('height',Math.max(0,T1-ly));men.setAttribute('y',ly-2);
   zr.setAttribute('y',py(hi));zr.setAttribute('height',py(lo)-py(hi));zb.setAttribute('d',`M${GL-6} ${py(hi)} H${GL+2} V${py(lo)} H${GL-6} M${GR+6} ${py(hi)} H${GR-2} V${py(lo)} H${GR+6}`);
   const inside=p>=lo&&p<=hi;if(inside){ins+=dt;st.textContent=ins.toFixed(1).replace('.',',');sb.setAttribute('width',Math.min(62,ins/10*62));if(ins>=10)api.win()}
-  liq.setAttribute('opacity',inside?1:.85);fl.forEach((f,i)=>{const on=p>25+i*25;if(f._on!==on){f._on=on;f.setAttribute('href',on?'img/ch_lamp_on.webp':'img/ch_lamp_off.webp')}});
+  liq.setAttribute('opacity',inside?1:.85);fl.forEach((f,i)=>{const on=p>25+i*25;if(f._on!==on){f._on=on;f.setAttribute('href',on?'img/ch_lamp_on.webp':'img/ch_lamp_off.webp');const cx=+f.dataset.cx,d=on?24*170/134:24;f.setAttribute('x',cx-d/2);f.setAttribute('y',219.9-d/2);f.setAttribute('width',d);f.setAttribute('height',d)}});
   if(Math.random()<dt*(1+p/12))puff(TX+4,4,'#DCE2E5',p>70);if(Math.random()<dt*1.2)puff(150,10,'#B9B0A6',false);
   bt-=dt;if(bt<=0&&p>8){bt=.25;const b=document.createElementNS(NS,'circle');b.setAttribute('cx',TX+rnd(-16,16));b.setAttribute('cy',T1-6);b.setAttribute('r',rnd(1.5,3.5));b.setAttribute('fill','#FFD3A0');b.setAttribute('class','cbub');b.style.setProperty('--h',(-(T1-ly-10))+'px');bub.appendChild(b);setTimeout(()=>b.remove(),1300)}
   if(p<10)api.fail('Plus de pression');if(p>92)api.fail('Surpression')});
