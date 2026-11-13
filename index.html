@@ -475,7 +475,7 @@ const GAMEDEF={gene:['GÉNÉ','Générateur'],infirm:['INFIRM.','Infirmerie'],ch
 const GAMES=Object.values(GAMEDEF).map(d=>d[0]);
 const gameKey=t=>Object.keys(GAMEDEF).find(k=>GAMEDEF[k][0]===t)||'gene';
 const gameName=t=>(GAMEDEF[gameKey(t)]||[t,t])[1];
-const COLORS=['#FF6A1A','#3E7A99','#D7261E','#8A949C','#2E5E4A','#9CCBE0','#C2A23A','#5A4632','#E8792E','#B5443A','#5E7FA8','#6E8B4A','#D9A532','#E07B39','#7A7F86','#A9B4BC','#C46A2F','#7C2E35','#4F6A8F','#2F3D5C','#B8502D','#556B3A','#E3C9A0','#3A4B66'];
+const COLORS=['#FF6A1A','#3E7A99','#D7261E','#8A949C','#2E5E4A','#9CCBE0','#C2A23A','#5A4632','#E8792E','#B5443A','#5E7FA8','#6E8B4A','#D9A532','#E07B39','#7A7F86','#A9B4BC','#C46A2F','#7C2E35','#4F6A8F','#2F3D5C','#B8502D','#556B3A','#E3C9A0','#3A4B66','#D4A12A','#6B5444','#E06A2C','#8C6A4F','#4C6E9A','#C9572B'];
 /* Réglages par scénario (questionnaire du 1/11). Unités : min, %, s. Modifiables dans les réglages du hub. */
 const PRESETS={
  maison:{stMin:3,stMax:5,partie:20,plafond:5,departMin:60,departMax:100,parStation:0,gel:20,penalite:20,recharge:4,debat:90,debatJoueur:30,vote:10},
@@ -502,7 +502,7 @@ let db=null,uid=null,offset=0,code=null,role=null,meta={},players={},stations={}
 /* équipage : joueurs avec station prête + joueurs sans station créés sur le hub */
 const crew=()=>{const k=meta.state!=='lobby'&&meta.crew;return Object.entries(players).filter(([id,p])=>k?!!k[id]:(p.ready||p.nophone))};
 const alive=()=>crew().filter(([,p])=>!p.out);
-const AV_F=[2,3,5,8,9,10,11,16,18,20,22],AV_H=[0,1,4,6,7,12,13,14,15,17,19,21,23];
+const AV_F=[2,3,5,8,9,10,11,16,18,20,22,24,25,26,27],AV_H=[0,1,4,6,7,12,13,14,15,17,19,21,23,28,29];
 function avGrid(sel){const b=i=>{const c=COLORS[i];return `<button class="col${c===sel?' on':''}" data-c="${c}" style="${avs(c)}" aria-label="Personnage ${i+1}"></button>`};return `<div class="colors"><div class="avg">${AV_F.map(b).join('')}</div><div class="avg">${AV_H.map(b).join('')}</div></div>`}
 const avIdx=c=>{const i=COLORS.indexOf(c);return i<0?0:i};
 const avs=(c,h)=>`background:${esc(c||'#8A949C')} url(img/av${h?'h':''}${avIdx(c)}.webp) center/cover no-repeat`;
