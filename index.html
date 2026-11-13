@@ -263,7 +263,7 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .frame.homef{padding:0;background:#03070D}
 
 /* v0.7 : avatars (pack 4) */
-.colors{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;width:100%}.col{width:100%;height:auto;aspect-ratio:1;box-shadow:2px 3px 0 var(--encre)}.col.on{outline:4px solid var(--orange);outline-offset:2px;transform:scale(1.08)}
+.colors{display:flex;gap:14px;width:100%;align-items:flex-start}.avg{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.avg+.avg{border-left:2px dashed rgba(156,203,224,.35);padding-left:14px}.col{width:100%;height:auto;aspect-ratio:1;box-shadow:2px 3px 0 var(--encre)}.col.on{outline:4px solid var(--orange);outline-offset:2px;transform:scale(1.08)}
 .pl .dot{width:40px;height:40px;border:2px solid var(--encre);border-radius:50%;flex:none}
 .cm i{width:22px;height:22px}.vb i{width:34px;height:34px;border-width:2px}.tr i{width:30px;height:30px}
 .tr{grid-template-columns:32px 1fr auto}.victim i{width:40px;height:40px;opacity:1;filter:grayscale(.7) brightness(1.15)}
@@ -502,6 +502,8 @@ let db=null,uid=null,offset=0,code=null,role=null,meta={},players={},stations={}
 /* équipage : joueurs avec station prête + joueurs sans station créés sur le hub */
 const crew=()=>{const k=meta.state!=='lobby'&&meta.crew;return Object.entries(players).filter(([id,p])=>k?!!k[id]:(p.ready||p.nophone))};
 const alive=()=>crew().filter(([,p])=>!p.out);
+const AV_F=[2,3,5,8,9,10,11,16,18,20,22],AV_H=[0,1,4,6,7,12,13,14,15,17,19,21,23];
+function avGrid(sel){const b=i=>{const c=COLORS[i];return `<button class="col${c===sel?' on':''}" data-c="${c}" style="${avs(c)}" aria-label="Personnage ${i+1}"></button>`};return `<div class="colors"><div class="avg">${AV_F.map(b).join('')}</div><div class="avg">${AV_H.map(b).join('')}</div></div>`}
 const avIdx=c=>{const i=COLORS.indexOf(c);return i<0?0:i};
 const avs=(c,h)=>`background:${esc(c||'#8A949C')} url(img/av${h?'h':''}${avIdx(c)}.webp) center/cover no-repeat`;
 const FIN_IMG={c:'img/fin_chercheurs.webp',h:'img/fin_hotes.webp'};
@@ -669,7 +671,7 @@ function addPlayer(){
  const o=$('#hOvl');let col=COLORS[Math.floor(Math.random()*COLORS.length)];
  o.innerHTML=`<div class="pan"><h3>JOUEUR SANS STATION</h3><p>Pour quelqu’un qui joue sans téléphone (ou pour le porteur du hub). Il voit son rôle sur le hub.</p>
  <input class="txt" id="npN" maxlength="10" placeholder="PRÉNOM" autocomplete="off" style="font-family:var(--f-titre);font-size:22px;letter-spacing:2px;text-transform:uppercase">
- <div class="colors" style="justify-content:center">${COLORS.map(c=>`<button class="col${c===col?' on':''}" data-c="${c}" style="${avs(c)}" aria-label="Personnage ${COLORS.indexOf(c)+1}"></button>`).join('')}</div>
+ ${avGrid(col)}
  <div class="row2">${bigBtn('npX','ANNULER','alt')}${bigBtn('npOk','AJOUTER')}</div></div>`;o.hidden=false;$('#npN').focus();
  o.querySelectorAll('.col').forEach(b=>b.onclick=()=>{col=b.dataset.c;o.querySelectorAll('.col').forEach(x=>x.classList.toggle('on',x===b));S('tap')});
  $('#npX').onclick=()=>{o.hidden=true;o.innerHTML=''};
@@ -913,7 +915,7 @@ function stPerso(){
  screen(header('NOUVEAU MEMBRE','PARTIE '+code)+`
  <label class="lab mute" for="nm">TON PRÉNOM</label><input class="txt" id="nm" maxlength="10" value="${esc(me.name)}" placeholder="PRÉNOM" autocomplete="off">
  <div class="lab mute">TON PERSONNAGE</div>
- <div class="colors">${COLORS.map(c=>`<button class="col${c===me.color?' on':''}" data-c="${c}" style="${avs(c)}" aria-label="Personnage ${COLORS.indexOf(c)+1}"></button>`).join('')}</div>
+ ${avGrid(me.color)}
  <label class="lab mute" for="loc">OÙ POSES-TU TA STATION ?</label><input class="txt" id="loc" maxlength="40" value="${esc(me.loc)}" placeholder="Ex. Garage, sur l’établi" autocomplete="off">
  <div class="chips">${['Cuisine','Salon','Garage','Grenier','Cave','Chambre','Entrée','Jardin'].map(r=>`<button class="chip" data-r="${r}">${r}</button>`).join('')}</div>
  <div class="lab mute">AVANT D’ACTIVER</div>
