@@ -263,7 +263,7 @@ input.err{box-shadow:inset 0 0 0 2px var(--rouge)}
 .frame.homef{padding:0;background:#03070D}
 
 /* v0.7 : avatars (pack 4) */
-.col{width:58px;height:58px;box-shadow:2px 3px 0 var(--encre)}.col.on{outline:4px solid var(--orange);outline-offset:2px}
+.colors{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;width:100%}.col{width:100%;height:auto;aspect-ratio:1;box-shadow:2px 3px 0 var(--encre)}.col.on{outline:4px solid var(--orange);outline-offset:2px;transform:scale(1.08)}
 .pl .dot{width:40px;height:40px;border:2px solid var(--encre);border-radius:50%;flex:none}
 .cm i{width:22px;height:22px}.vb i{width:34px;height:34px;border-width:2px}.tr i{width:30px;height:30px}
 .tr{grid-template-columns:32px 1fr auto}.victim i{width:40px;height:40px;opacity:1;filter:grayscale(.7) brightness(1.15)}
@@ -475,7 +475,7 @@ const GAMEDEF={gene:['GÉNÉ','Générateur'],infirm:['INFIRM.','Infirmerie'],ch
 const GAMES=Object.values(GAMEDEF).map(d=>d[0]);
 const gameKey=t=>Object.keys(GAMEDEF).find(k=>GAMEDEF[k][0]===t)||'gene';
 const gameName=t=>(GAMEDEF[gameKey(t)]||[t,t])[1];
-const COLORS=['#FF6A1A','#3E7A99','#D7261E','#8A949C','#2E5E4A','#9CCBE0','#C2A23A','#5A4632'];
+const COLORS=['#FF6A1A','#3E7A99','#D7261E','#8A949C','#2E5E4A','#9CCBE0','#C2A23A','#5A4632','#E8792E','#B5443A','#5E7FA8','#6E8B4A','#D9A532','#E07B39','#7A7F86','#A9B4BC','#C46A2F','#7C2E35','#4F6A8F','#2F3D5C','#B8502D','#556B3A','#E3C9A0','#3A4B66'];
 /* Réglages par scénario (questionnaire du 1/11). Unités : min, %, s. Modifiables dans les réglages du hub. */
 const PRESETS={
  maison:{stMin:3,stMax:5,partie:20,plafond:5,departMin:60,departMax:100,parStation:0,gel:20,penalite:20,recharge:4,debat:90,debatJoueur:30,vote:10},
@@ -607,7 +607,7 @@ function home(){
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
    ${isApp()?'':'<button class="inst" id="inst">⬇ INSTALLER L’APPLI</button>'}
   </div>
-  <span class="ver">PROTO 3.9</span>
+  <span class="ver">PROTO 4.0</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};{const ib=$('#inst');if(ib)ib.onclick=install}
