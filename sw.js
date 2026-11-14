@@ -1,5 +1,5 @@
 /* Under Us : pages toujours fraîches (réseau d'abord), images en cache */
-const C='uu-v2';
+const C='uu-v3';
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./index.html','./jeux.html','./img/logo.webp','./img/accueil_bg.webp']).catch(()=>{})))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
