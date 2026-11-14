@@ -633,10 +633,10 @@ function backAction(){
  const clickIf=sel=>{const e=vis(sel);if(e){e.click();return true}return false};
  if(clickIf('.iskip'))return true;
  if(clickIf('#instOk'))return true;
- if(gameFrame){closeGame();render();return true}
+ if(gameFrame){toastBack();return true}
  for(const id of ['#npX','#bpX','#vNo','#tNo','#cfOk'])if(clickIf(id))return true;
  if(clickIf('#back'))return true;
- if(stView==='perso'&&code){if(me&&me.ready){stView='';lastState=null;render()}else location.href=location.pathname;return true}
+ if(stView==='perso'&&code&&!(me&&me.ready)){location.href=location.pathname;return true}
  if(code){toastBack();return true}
  return false;
 }
