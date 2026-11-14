@@ -368,6 +368,7 @@ body{padding:0}
 .sg{flex:1 1 auto;min-height:0;justify-content:center;align-content:center}
 .st .plate>.in{container-type:inline-size}
 .st .seg{font-size:clamp(14px,21cqw,34px)}
+.bkt{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);z-index:200;background:rgba(5,8,11,.92);border:2px solid var(--orange);color:#FFE0C8;font-family:var(--f-label);font-size:12px;padding:8px 14px;opacity:0;pointer-events:none;transition:.25s}.bkt.on{opacity:1;transform:translate(-50%,0)}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -626,6 +627,23 @@ async function install(){
  o.innerHTML=`<div class="pan"><span class="lab">INSTALLER UNDER US</span><ol>${steps.map(x=>'<li>'+x+'</li>').join('')}</ol>${bigBtn('instOk','COMPRIS')}</div>`;
  document.body.appendChild(o);o.querySelector('#instOk').onclick=()=>o.remove();
 }
+/* v4.2 : touche retour d'Android (et geste retour) */
+function vis(sel){const e=document.querySelector(sel);return e&&e.offsetParent!==null?e:null}
+function backAction(){
+ const clickIf=sel=>{const e=vis(sel);if(e){e.click();return true}return false};
+ if(clickIf('.iskip'))return true;
+ if(clickIf('#instOk'))return true;
+ if(gameFrame){closeGame();render();return true}
+ for(const id of ['#npX','#bpX','#vNo','#tNo','#cfOk'])if(clickIf(id))return true;
+ if(clickIf('#back'))return true;
+ if(stView==='perso'&&code){if(me&&me.ready){stView='';lastState=null;render()}else location.href=location.pathname;return true}
+ if(code){toastBack();return true}
+ return false;
+}
+function toastBack(){let t=document.getElementById('bkT');if(!t){t=document.createElement('div');t.id='bkT';t.className='bkt';document.body.appendChild(t)}t.textContent='Partie en cours : le retour est bloqué';t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1800)}
+try{history.replaceState({uu:'base'},'');history.pushState({uu:'guard'},'')}catch(e){}
+document.addEventListener('pointerdown',()=>{try{if(!history.state||history.state.uu!=='guard')history.pushState({uu:'guard'},'')}catch(e){}},true);
+window.addEventListener('popstate',()=>{if(backAction()){try{history.pushState({uu:'guard'},'')}catch(e){}}else{try{history.back()}catch(e){}}});
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 function home(){
  screen(`<div class="homebg">${homeScene()}<div class="blz"></div></div>
@@ -639,7 +657,7 @@ function home(){
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
    ${isApp()?'':'<button class="inst" id="inst">⬇ INSTALLER L’APPLI</button>'}
   </div>
-  <span class="ver">PROTO 4.1</span>
+  <span class="ver">PROTO 4.2</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};{const ib=$('#inst');if(ib)ib.onclick=install}
@@ -998,7 +1016,7 @@ function miniGame(){
  w.innerHTML=`<div class="lab" style="color:var(--glace)">SYSTÈME ${esc(gameName(mine.game).toUpperCase())}</div><h2 style="margin:0">CHARGEMENT…</h2><div id="gfHelp" style="display:none;flex-direction:column;gap:10px;width:100%;max-width:320px"><p style="margin:0">Le système ne répond pas.</p>${bigBtn('gfRetry','RÉESSAYER')}<button class="ghost" id="gfCancel">RETOUR À LA STATION</button></div>`;
  const f=document.createElement('iframe');f.title=gameName(mine.game);f.allow='autoplay';
  f.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;background:#0B1218;opacity:0;transition:opacity .2s';
- const load=()=>{f.style.opacity='0';f.src='jeux.html?g='+gameKey(mine.game)+'&t='+Date.now()};
+ const load=()=>{f.style.opacity='0';const u='jeux.html?g='+gameKey(mine.game)+'&t='+Date.now();if(f.getAttribute('src')){try{f.contentWindow.location.replace(u)}catch(e){f.src=u}}else f.src=u};
  w.appendChild(f);document.body.appendChild(w);gameFrame=w;load();
  let tmo=setTimeout(()=>{const h=w.querySelector('#gfHelp');if(h)h.style.display='flex'},8000);
  w.querySelector('#gfRetry').onclick=()=>{w.querySelector('#gfHelp').style.display='none';load();clearTimeout(tmo);tmo=setTimeout(()=>{w.querySelector('#gfHelp').style.display='flex'},8000)};
