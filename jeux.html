@@ -1116,7 +1116,7 @@ G.ctrl={t:'CTRL',n:'Salle de contrôle',c:'Réflexes',time:40,noDeco:true,d:'Des
   const fake=Math.random()<.4?'<br><span class="fake">OK</span>':'';p.innerHTML=`<div class="ph">${tt}</div><div class="pb"><span class="ic${!gl&&Math.random()<.4?' i':''}" aria-hidden="true">${gl?'?':'!'}</span><span>${tx}${fake}</span></div>`;
   const x=document.createElement('button');x.className='x';x.textContent='✕';x.setAttribute('aria-label','Fermer');const sz=ri(14,24);x.style.width=x.style.height=sz+'px';const spot=ri(0,5);
   if(spot===0){x.style.top='2px';x.style.right='3px'}else if(spot===1){x.style.top='2px';x.style.left='3px'}else if(spot===2){x.style.bottom='3px';x.style.right='3px'}else if(spot===3){x.style.bottom='3px';x.style.left='3px'}else if(spot===4){x.style.top='45%';x.style.left=ri(30,70)+'%'}else{x.style.bottom='3px';x.style.left='50%';x.style.opacity='.55'}
-  p.appendChild(x);pc.appendChild(p);beep(gl?180:420,.06,gl?'sawtooth':'square',.03);
+  p.appendChild(x);pc.appendChild(p);{const lim=val.offsetTop-p.offsetHeight-6;if(parseFloat(p.style.top)>lim)p.style.top=Math.max(0,lim)+'px'}beep(gl?180:420,.06,gl?'sawtooth':'square',.03);
   x.addEventListener('pointerdown',e=>{e.stopPropagation();p.remove();open--;closed++;beep(900,.04);upd()});
   p.addEventListener('pointerdown',e=>{if(e.target===x)return;spawn();buzz(30)});upd()};
  spawn();spawn();
