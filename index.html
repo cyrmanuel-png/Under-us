@@ -369,6 +369,8 @@ body{padding:0}
 .st .plate>.in{container-type:inline-size}
 .st .seg{font-size:clamp(14px,21cqw,34px)}
 .bkt{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);z-index:200;background:rgba(5,8,11,.92);border:2px solid var(--orange);color:#FFE0C8;font-family:var(--f-label);font-size:12px;padding:8px 14px;opacity:0;pointer-events:none;transition:.25s}.bkt.on{opacity:1;transform:translate(-50%,0)}
+.del.arm{width:auto;padding:0 8px;background:var(--rouge,#D7261E);color:#fff;font-family:var(--f-label);font-size:11px;letter-spacing:1px}
+.pl .led+.del{margin-left:6px}
 </style>
 <link rel="prefetch" href="jeux.html">
 </head>
@@ -657,7 +659,7 @@ function home(){
    <p class="small hhelp">Le téléphone qui crée la partie devient le hub. Les autres scannent son QR code et deviennent des stations.</p>
    ${isApp()?'':'<button class="inst" id="inst">⬇ INSTALLER L’APPLI</button>'}
   </div>
-  <span class="ver">PROTO 4.2</span>
+  <span class="ver">PROTO 4.3</span>
  </div>`);
  document.querySelector('.frame').classList.add('homef');
  $('#newG').onclick=()=>{S('tap');sizePick()};{const ib=$('#inst');if(ib)ib.onclick=install}
@@ -711,7 +713,9 @@ function hubLobby(){
  const setH=d=>{const n=crew().length;R('meta/nHosts').set(Math.min(maxHosts(n),Math.max(1,nHosts()+d)));S('tap')};
  $('#hMinus').onclick=()=>setH(-1);$('#hPlus').onclick=()=>setH(1);
  $('#addP').onclick=addPlayer;
- $('#plist').onclick=e=>{const b=e.target.closest('[data-del]');if(b){R('players/'+b.dataset.del).remove();S('tap')}};
+ $('#plist').onclick=e=>{const b=e.target.closest('[data-del]');if(!b)return;S('tap');
+  if(!b.classList.contains('arm')){b.classList.add('arm');b.textContent='RETIRER ?';clearTimeout(b._t);b._t=setTimeout(()=>{b.classList.remove('arm');b.textContent='✕'},3000);return}
+  const id=b.dataset.del,p=players[id]||{};const upd={};upd['players/'+id]=null;upd['stations/'+id]=null;if(!p.nophone)upd['kicked/'+id]=true;R('').update(upd)};
  $('#launch').onclick=launch;lobbyHtml='';hubRender();
 }
 let lobbyHtml='';
@@ -740,7 +744,7 @@ function hubRender(){
   const list=Object.entries(players);const ready=list.filter(([,p])=>p.ready&&!p.nophone);const total=crew().length,nh=nHosts();
   $('#cJ').textContent=total;$('#cR').textContent=ready.length;$('#hN').textContent=nh;
   $('#hInfo').textContent=total?`${total-nh} chercheur${total-nh>1?'s':''} · ${nh} hôte${nh>1?'s':''}`:'';
-  const html=list.map(([id,p])=>`<div class="pl"><span class="dot" style="${avs(p.color)}"></span><div class="nm"><b>${esc((p.name||'…').toUpperCase())}</b><span>${p.nophone?'Sans station · rôle vu sur le hub':p.ready?esc(p.loc||''):'Prépare sa station…'}</span></div>${p.nophone?`<button class="del" data-del="${esc(id)}" aria-label="Retirer ${esc(p.name)}">✕</button>`:`<span class="led ${p.online===false?'off':p.ready?'ok':'wait'}"></span>`}</div>`).join('')||'<p class="small">Personne pour l’instant.</p>';
+  const html=list.map(([id,p])=>`<div class="pl"><span class="dot" style="${avs(p.color)}"></span><div class="nm"><b>${esc((p.name||'…').toUpperCase())}</b><span>${p.nophone?'Sans station · rôle vu sur le hub':p.ready?esc(p.loc||''):'Prépare sa station…'}</span></div>${p.nophone?'':`<span class="led ${p.online===false?'off':p.ready?'ok':'wait'}"></span>`}<button class="del" data-del="${esc(id)}" aria-label="Retirer ${esc(p.name||'ce joueur')}">✕</button></div>`).join('')||'<p class="small">Personne pour l’instant.</p>';
   if(html!==lobbyHtml){lobbyHtml=html;$('#plist').innerHTML=html}
   const c=C(),b=$('#launch');const needP=2*nh+1;
   b.disabled=ready.length<c.stMin||total<needP;
@@ -954,11 +958,17 @@ async function joinRoom(c){
   const ready=Object.entries(pl).filter(([id,p])=>p.ready&&id!==uid).length;
   if(!pl[uid]&&ready>=cf.stMax){screen(header('UNDER US')+`<div class="msg"><h2>PARTIE COMPLÈTE</h2><p>Cette partie a déjà ${cf.stMax} stations, le maximum réglé sur le hub.</p></div>`);return}}
  const ex=(await R('players/'+uid).once('value')).val();if(ex){me=Object.assign(me,ex)}
+ await R('kicked/'+uid).remove();
  const pref=R('players/'+uid);
- db.ref('.info/connected').on('value',s=>{if(s.val()){pref.child('online').onDisconnect().set(false);pref.child('online').set(true)}});
+ db.ref('.info/connected').on('value',s=>{if(s.val()&&!kicked){pref.child('online').onDisconnect().set(false);pref.child('online').set(true)}});
+ R('kicked/'+uid).on('value',s=>{if(s.val())beKicked(pref)});
  listenRoom();
  if(ex&&ex.ready){stView='';render()}else stPerso();
 }
+let kicked=false;
+function beKicked(pref){if(kicked)return;kicked=true;try{pref.child('online').onDisconnect().cancel()}catch(e){}if(gameFrame){gameFrame.remove();gameFrame=null}
+ const o=document.querySelector('.ovl:not([hidden])');if(o)o.hidden=true;
+ screen(header('UNDER US','PARTIE '+code)+`<div class="msg"><h2>RETIRÉ DE LA PARTIE</h2><p>Le hub t’a retiré de la liste des joueurs. Tu peux rescanner le QR code du hub pour revenir.</p></div>`+bigBtn('back','RETOUR À L’ACCUEIL'));$('#back').onclick=()=>{location.href=location.pathname}}
 function stPerso(){
  stView='perso';
  screen(header('NOUVEAU MEMBRE','PARTIE '+code)+`
@@ -980,7 +990,7 @@ function stPerso(){
   stView='';render()};
 }
 const ROOMS_RE=/^(Cuisine|Salon|Garage|Grenier|Cave|Chambre|Entrée|Jardin)/;
-function stRender(){
+function stRender(){if(kicked)return;
  if(stView==='game'&&meta.state&&meta.state!=='game')closeGame();
  if(stView==='body'&&meta.state!=='game'&&meta.state!=='paused'){stView='';lastState=null}
  if(stView==='perso'||stView==='game'||stView==='body')return;
