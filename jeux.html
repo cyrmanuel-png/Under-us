@@ -832,7 +832,7 @@ G.labo={t:'LABO',n:'Échantillons',c:'Mémoire',time:38,noDeco:true,d:'Touche le
  api.info('Analyse des carottes de glace : retrouve les paires.');
  bs.forEach(b=>api.on(b,'pointerdown',()=>{if(lock||b._up||b._done)return;b._up=1;show(b,1);up.push(b);beep(520,.03);if(up.length===2){const [p,q]=up;if(deck[p.dataset.i]===deck[q.dataset.i]){[p,q].forEach(t=>{t._done=1;t.querySelector('.okg').setAttribute('opacity','.8')});up=[];pairs++;pE.textContent=pairs+'/6';beep(880);if(pairs===6)api.after(()=>api.win(),300)}else{lock=true;err++;eE.innerHTML=pips(err,7,'ko');beep(150);if(err>=7){api.fail('Échantillons mélangés');return}api.after(()=>{[p,q].forEach(t=>{t._up=0;show(t,0)});up=[];lock=false},700)}}}))}};
 /* 7 SAS */
-G.sas={t:'SAS',n:'Sas de sécurité',c:'Mémoire',time:55,noDeco:true,d:'Trois portes blindées à ouvrir l’une après l’autre. Chaque code s’affiche 2 secondes, en grande partie recouvert de givre : devine les chiffres cachés et retape-le. 2 erreurs permises au total.',init(a,api){
+G.sas={t:'SAS',n:'Sas de sécurité',c:'Mémoire',time:61,noDeco:true,d:'Trois portes blindées à ouvrir l’une après l’autre. Chaque code s’affiche 4 secondes, en grande partie recouvert de givre : devine les chiffres cachés et retape-le. 2 erreurs permises au total.',init(a,api){
  const K='#05080B',OX=96.1,OY=44.8,OW=169,OH=136,LW=OW*443/876,RW=OW-LW,KX=[114.5,179,243.8],KY=[284.8,329.5,374.6,420.3],KW=56,KH=42,SX=79.9,SY=216.1,SW=198.9,SH=37.8,LAB=[1,2,3,4,5,6,7,8,9,'C',0,'←'];
  const key=(n,q)=>{const x=KX[q%3],y=KY[Math.floor(q/3)];return `<g class="sk" data-n="${n}" style="cursor:pointer"><image class="kr" href="img/sas_key.webp" x="${x-KW/2}" y="${y-KH/2}" width="${KW}" height="${KH}" preserveAspectRatio="none"/><image class="kp" href="img/sas_key_on.webp" x="${x-KW/2}" y="${y-KH/2}" width="${KW}" height="${KH}" preserveAspectRatio="none" style="display:none"/><text x="${x}" y="${y+8}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="26" font-weight="700" style="fill:#E3F1F7;stroke:#05080B;stroke-width:3px;paint-order:stroke" pointer-events="none">${n}</text></g>`};
  a.innerHTML=`<svg viewBox="0 0 360 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
@@ -854,7 +854,7 @@ G.sas={t:'SAS',n:'Sas de sécurité',c:'Mémoire',time:55,noDeco:true,d:'Trois p
  api.info('Trois sas givrés te séparent de la station.');
  const show=()=>{code=Array.from({length:5},()=>ri(0,9)).join('');typed='';lock=true;k.style.visibility='hidden';msg('CODE DU SAS '+door_,'#FF6A1A');const iced=shuffle([0,1,2,3,4]).slice(0,3);
   c.innerHTML=digits(code,iced);
-  api.after(()=>{c.innerHTML=digits('_____');k.style.visibility='visible';msg('TAPE LE CODE','#FF6A1A');lock=false},2000)};
+  api.after(()=>{c.innerHTML=digits('_____');k.style.visibility='visible';msg('TAPE LE CODE','#FF6A1A');lock=false},4000)};
  show();
  k.querySelectorAll('.sk').forEach(b=>api.on(b,'pointerdown',()=>{if(lock)return;const n=b.dataset.n;b.querySelector('.kr').style.display='none';b.querySelector('.kp').style.display='';api.after(()=>{b.querySelector('.kr').style.display='';b.querySelector('.kp').style.display='none'},120);beep(600,.03);
   if(n==='C')typed='';else if(n==='←')typed=typed.slice(0,-1);else typed+=n;c.innerHTML=digits((typed+'_____').slice(0,5));
